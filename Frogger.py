@@ -1,5 +1,7 @@
 import arcade
 
+MOVEMENT_SPEED = 5
+
 class GameView(arcade.View):
     def __init__(self):
         super().__init__()
