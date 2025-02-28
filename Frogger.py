@@ -17,16 +17,21 @@ class GameView(arcade.View):
 
         # Load the spritesheet
         self.spritesheet = arcade.load_spritesheet('assets/spritesheet.png')
+    
+
+    def load_textures(self):
+        '''Loads sprite textures from the spritesheet'''
         # TODO: Figure out how to remove the black/grey backgrounds from sprites
+        # TODO: Add additional sprite textures like death animation, points, timer, etc
 
-
-        # -- Load the background -- #
+        # -- Load the background textures -- #
         self.background = self.spritesheet.get_texture(arcade.LBWH(1, 390, 28, 32))
         self.median = self.spritesheet.get_texture(arcade.LBWH(135, 196, SPRITE_SQUARE, SPRITE_SQUARE))
         self.top_homes = self.spritesheet.get_texture(arcade.LBWH(1, 188, SPRITE_SQUARE*2, SPRITE_SQUARE*1.5))
         self.top_grass = self.spritesheet.get_texture(arcade.LBWH(35, 188, SPRITE_SQUARE*.5, SPRITE_SQUARE*1.5))
 
         # -- Load the frog textures -- #
+        # TODO: add the different directions/movement animation textures
         self.frog_up = self.spritesheet.get_texture(arcade.LBWH(1, 1, SPRITE_SQUARE, SPRITE_SQUARE))
 
         # -- Load the vehicle textures -- #
@@ -41,7 +46,11 @@ class GameView(arcade.View):
         self.log_left = self.spritesheet.get_texture(arcade.LBWH(1, 134, SPRITE_SQUARE, SPRITE_SQUARE))
         self.log_middle = self.spritesheet.get_texture(arcade.LBWH(19, 134, SPRITE_SQUARE, SPRITE_SQUARE))
         self.log_right = self.spritesheet.get_texture(arcade.LBWH(37, 134, SPRITE_SQUARE, SPRITE_SQUARE))
-    
+
+        # -- Load the turtle textures -- #
+        # TODO: add the different movement/disappearing animation textures
+        self.turtle = self.spritesheet.get_texture(arcade.LBWH(19, 152, SPRITE_SQUARE, SPRITE_SQUARE))
+
 
     def draw_background(self):
         '''Draws the background image including median strips and ending homes.'''
@@ -63,55 +72,77 @@ class GameView(arcade.View):
 
     def create_example_sprites(self):
         '''Create some example sprites to demonstrate the process'''
-        # Example of frog starting in the middle
+        y = SCALED_SQUARE*1.5
+        # Example of frog starting in the middle of bottom median
         self.frog_sprites = arcade.SpriteList()
-        self.frog_sprites.append(arcade.Sprite(self.frog_up, scale=SCALE, center_x=WINDOW_WIDTH/2, center_y=SCALED_SQUARE*1.5))
+        self.frog_sprites.append(arcade.Sprite(self.frog_up, SCALE, WINDOW_WIDTH/2, y))
 
-        # Car/Truck examples
+        # Car/Truck examples - ordered by rows of highway
         self.car_1_sprites = arcade.SpriteList()
-        self.car_1_sprites.append(arcade.Sprite(self.car_1, scale=SCALE, center_x=WINDOW_WIDTH-SCALED_SQUARE*.5, center_y=SCALED_SQUARE*2.5))
+        y += SCALED_SQUARE
+        self.car_1_sprites.append(arcade.Sprite(self.car_1, SCALE, WINDOW_WIDTH-SCALED_SQUARE*.5, y))
         self.car_2_sprites = arcade.SpriteList()
-        self.car_2_sprites.append(arcade.Sprite(self.car_2, scale=SCALE, center_x=SCALED_SQUARE*.5, center_y=SCALED_SQUARE*3.5))
+        y += SCALED_SQUARE
+        self.car_2_sprites.append(arcade.Sprite(self.car_2, SCALE, SCALED_SQUARE*.5, y))
         self.car_3_sprites = arcade.SpriteList()
-        self.car_3_sprites.append(arcade.Sprite(self.car_3, scale=SCALE, center_x=WINDOW_WIDTH-SCALED_SQUARE*.5, center_y=SCALED_SQUARE*4.5))
+        y += SCALED_SQUARE
+        self.car_3_sprites.append(arcade.Sprite(self.car_3, SCALE, WINDOW_WIDTH-SCALED_SQUARE*.5, y))
         self.car_4_sprites = arcade.SpriteList()
-        self.car_4_sprites.append(arcade.Sprite(self.car_4, scale=SCALE, center_x=SCALED_SQUARE*.5, center_y=SCALED_SQUARE*5.5))
+        y += SCALED_SQUARE
+        self.car_4_sprites.append(arcade.Sprite(self.car_4, SCALE, SCALED_SQUARE*.5, y))
         self.truck_sprites = arcade.SpriteList()
-        self.truck_sprites.append(arcade.Sprite(self.truck, scale=SCALE, center_x=WINDOW_WIDTH-SCALED_SQUARE, center_y=SCALED_SQUARE*6.5))
+        y += SCALED_SQUARE
+        self.truck_sprites.append(arcade.Sprite(self.truck, SCALE, WINDOW_WIDTH-SCALED_SQUARE, y))
         
-        # Example of a small log
+        # Example of a small log - row 1 of water
         self.small_log_sprites = arcade.SpriteList()
-        x = SCALED_SQUARE/SCALE
-        y = SCALED_SQUARE*9.5
-        self.small_log_sprites.append(arcade.Sprite(self.log_left, scale=SCALE, center_x=x, center_y=y))
+        x = SCALED_SQUARE*.5
+        y = SCALED_SQUARE*8.5
+        self.small_log_sprites.append(arcade.Sprite(self.log_left, SCALE, x, y))
         x += SCALED_SQUARE
-        self.small_log_sprites.append(arcade.Sprite(self.log_middle, scale=SCALE, center_x=x, center_y=y))
+        self.small_log_sprites.append(arcade.Sprite(self.log_middle, SCALE, x, y))
         x += SCALED_SQUARE
-        self.small_log_sprites.append(arcade.Sprite(self.log_right, scale=SCALE, center_x=x, center_y=y))
+        self.small_log_sprites.append(arcade.Sprite(self.log_right, SCALE, x, y))
         x += SCALED_SQUARE
 
-        # Example of a medium log
+        # Example of 3 turtles - row 2 of water
+        self.triple_turtle_sprites = arcade.SpriteList()
+        x = WINDOW_WIDTH-SCALED_SQUARE*.5
+        y += SCALED_SQUARE
+        for i in range(3):
+            self.triple_turtle_sprites.append(arcade.Sprite(self.turtle, SCALE, x, y))
+            x -= SCALED_SQUARE
+
+        # Example of a medium log - row 3 of water
         self.medium_log_sprites = arcade.SpriteList()
-        x = SCALED_SQUARE/SCALE
-        y = SCALED_SQUARE*12.5
-        self.medium_log_sprites.append(arcade.Sprite(self.log_left, scale=SCALE, center_x=x, center_y=y))
+        x = SCALED_SQUARE*.5
+        y += SCALED_SQUARE
+        self.medium_log_sprites.append(arcade.Sprite(self.log_left, SCALE, x, y))
         x += SCALED_SQUARE
         for i in range(2):
-            self.medium_log_sprites.append(arcade.Sprite(self.log_middle, scale=SCALE, center_x=x, center_y=y))
+            self.medium_log_sprites.append(arcade.Sprite(self.log_middle, SCALE, x, y))
             x += SCALED_SQUARE
-        self.medium_log_sprites.append(arcade.Sprite(self.log_right, scale=SCALE, center_x=x, center_y=y))
+        self.medium_log_sprites.append(arcade.Sprite(self.log_right, SCALE, x, y))
         x += SCALED_SQUARE
 
-        # Example of a large log
+        # Example of 2 turtles - row 4 of water
+        self.double_turtle_sprites = arcade.SpriteList()
+        x = WINDOW_WIDTH-SCALED_SQUARE*.5
+        y += SCALED_SQUARE
+        for i in range(2):
+            self.triple_turtle_sprites.append(arcade.Sprite(self.turtle, SCALE, x, y))
+            x -= SCALED_SQUARE
+
+        # Example of a large log - row 5 of water
         self.large_log_sprites = arcade.SpriteList()
-        x = SCALED_SQUARE/SCALE
-        y = SCALED_SQUARE*10.5
-        self.large_log_sprites.append(arcade.Sprite(self.log_left, scale=SCALE, center_x=x, center_y=y))
+        x = SCALED_SQUARE*.5
+        y += SCALED_SQUARE
+        self.large_log_sprites.append(arcade.Sprite(self.log_left, SCALE, x, y))
         x += SCALED_SQUARE
         for i in range(4):
-            self.large_log_sprites.append(arcade.Sprite(self.log_middle, scale=SCALE, center_x=x, center_y=y))
+            self.large_log_sprites.append(arcade.Sprite(self.log_middle, SCALE, x, y))
             x += SCALED_SQUARE
-        self.large_log_sprites.append(arcade.Sprite(self.log_right, scale=SCALE, center_x=x, center_y=y))
+        self.large_log_sprites.append(arcade.Sprite(self.log_right, SCALE, x, y))
         x += SCALED_SQUARE
 
 
@@ -125,13 +156,16 @@ class GameView(arcade.View):
 
         self.draw_background()
 
+        # Draw example sprites
         self.car_1_sprites.draw()
         self.car_2_sprites.draw()
         self.car_3_sprites.draw()
         self.car_4_sprites.draw()
         self.truck_sprites.draw()
         self.small_log_sprites.draw()
+        self.triple_turtle_sprites.draw()
         self.medium_log_sprites.draw()
+        self.double_turtle_sprites.draw()
         self.large_log_sprites.draw()
         self.frog_sprites.draw()
     
@@ -156,6 +190,9 @@ def main():
 
     # Show GameView on screen
     window.show_view(game)
+
+    # Load textures
+    game.load_textures()
 
     # Create example sprites
     game.create_example_sprites()
