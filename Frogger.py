@@ -80,14 +80,38 @@ class GameView(arcade.View):
         self.truck_sprites.append(arcade.Sprite(self.truck, scale=SCALE, center_x=WINDOW_WIDTH-SCALED_SQUARE, center_y=SCALED_SQUARE*6.5))
         
         # Example of a small log
-        self.log_sprites = arcade.SpriteList()
+        self.small_log_sprites = arcade.SpriteList()
         x = SCALED_SQUARE/SCALE
         y = SCALED_SQUARE*9.5
-        self.log_sprites.append(arcade.Sprite(self.log_left, scale=SCALE, center_x=x, center_y=y))
+        self.small_log_sprites.append(arcade.Sprite(self.log_left, scale=SCALE, center_x=x, center_y=y))
         x += SCALED_SQUARE
-        self.log_sprites.append(arcade.Sprite(self.log_middle, scale=SCALE, center_x=x, center_y=y))
+        self.small_log_sprites.append(arcade.Sprite(self.log_middle, scale=SCALE, center_x=x, center_y=y))
         x += SCALED_SQUARE
-        self.log_sprites.append(arcade.Sprite(self.log_right, scale=SCALE, center_x=x, center_y=y))
+        self.small_log_sprites.append(arcade.Sprite(self.log_right, scale=SCALE, center_x=x, center_y=y))
+        x += SCALED_SQUARE
+
+        # Example of a medium log
+        self.medium_log_sprites = arcade.SpriteList()
+        x = SCALED_SQUARE/SCALE
+        y = SCALED_SQUARE*12.5
+        self.medium_log_sprites.append(arcade.Sprite(self.log_left, scale=SCALE, center_x=x, center_y=y))
+        x += SCALED_SQUARE
+        for i in range(2):
+            self.medium_log_sprites.append(arcade.Sprite(self.log_middle, scale=SCALE, center_x=x, center_y=y))
+            x += SCALED_SQUARE
+        self.medium_log_sprites.append(arcade.Sprite(self.log_right, scale=SCALE, center_x=x, center_y=y))
+        x += SCALED_SQUARE
+
+        # Example of a large log
+        self.large_log_sprites = arcade.SpriteList()
+        x = SCALED_SQUARE/SCALE
+        y = SCALED_SQUARE*10.5
+        self.large_log_sprites.append(arcade.Sprite(self.log_left, scale=SCALE, center_x=x, center_y=y))
+        x += SCALED_SQUARE
+        for i in range(4):
+            self.large_log_sprites.append(arcade.Sprite(self.log_middle, scale=SCALE, center_x=x, center_y=y))
+            x += SCALED_SQUARE
+        self.large_log_sprites.append(arcade.Sprite(self.log_right, scale=SCALE, center_x=x, center_y=y))
         x += SCALED_SQUARE
 
 
@@ -106,7 +130,9 @@ class GameView(arcade.View):
         self.car_3_sprites.draw()
         self.car_4_sprites.draw()
         self.truck_sprites.draw()
-        self.log_sprites.draw()
+        self.small_log_sprites.draw()
+        self.medium_log_sprites.draw()
+        self.large_log_sprites.draw()
         self.frog_sprites.draw()
     
     # Frame update
