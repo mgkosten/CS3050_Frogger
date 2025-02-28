@@ -16,23 +16,23 @@ class GameView(arcade.View):
 
         # Load the spritesheet
         self.spritesheet = arcade.load_spritesheet('assets/spritesheet.png')
+        # TODO: Figure out how to remove the black/grey backgrounds from sprites
 
 
-        # -- Create the background -- #
-        self.background = self.spritesheet.get_texture(arcade.LBWH(1, 65, 28, 32), y_up=True)
-        self.median = self.spritesheet.get_texture(arcade.LBWH(135, 275, SPRITE_SQUARE, SPRITE_SQUARE), y_up=True)
-        self.top_homes = self.spritesheet.get_texture(arcade.LBWH(1, 275, 32, 24), y_up=True)
-        self.top_grass = self.spritesheet.get_texture(arcade.LBWH(35, 275, 8, 24), y_up=True)
+        # -- Load the background -- #
+        self.background = self.spritesheet.get_texture(arcade.LBWH(1, 390, 28, 32))
+        self.median = self.spritesheet.get_texture(arcade.LBWH(135, 196, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.top_homes = self.spritesheet.get_texture(arcade.LBWH(1, 188, 32, 24))
+        self.top_grass = self.spritesheet.get_texture(arcade.LBWH(35, 188, 8, 24))
 
-    # Resets game
-    def reset(self):
-        pass
 
-    # Renders everything
-    def on_draw(self):
-        self.clear()
+        # -- Load the frog textures -- #
+        self.frog_up = self.spritesheet.get_texture(arcade.LBWH(1, 1, SPRITE_SQUARE, SPRITE_SQUARE))
+    
 
-        # Draw the background
+    def draw_background(self):
+        '''Draws the background image including median strips and ending homes.'''
+        # -- Draw the background -- #
         arcade.draw_texture_rect(self.background, arcade.LBWH(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT))
         for x in range(0, WINDOW_WIDTH, SCALED_SQUARE):
             # Draw starting median
@@ -46,9 +46,29 @@ class GameView(arcade.View):
             if x % (SCALED_SQUARE*3) == SCALED_SQUARE*2:
                 arcade.draw_texture_rect(self.top_grass, arcade.LBWH(x, SCALED_SQUARE*14, self.top_grass.width*SCALE, self.top_grass.height*SCALE))
                 arcade.draw_texture_rect(self.top_grass, arcade.LBWH(x+self.top_grass.width*SCALE, SCALED_SQUARE*14, self.top_grass.width*SCALE, self.top_grass.height*SCALE))
+
+
+    def create_example_sprites(self):
+        '''Create some example sprites to demonstrate the process'''
+        # Example of frog starting in the middle
+        self.frog_sprites = arcade.SpriteList()
+        self.frog_sprites.append(arcade.Sprite(self.frog_up, scale=SCALE, center_x=WINDOW_WIDTH/2, center_y=SCALED_SQUARE*1.5))
+
+
+    # Resets game
+    def reset(self):
+        pass
+
+    # Renders everything
+    def on_draw(self):
+        self.clear()
+
+        self.draw_background()
+
+        self.frog_sprites.draw()
     
     # Frame update
-    def on_update(self):
+    def on_update(self, delta_time):
         pass
 
     # Triggers when a key is released
@@ -69,6 +89,8 @@ def main():
     # Show GameView on screen
     window.show_view(game)
 
+    # Create example sprites
+    game.create_example_sprites()
 
     # Start the arcade game loop
     arcade.run()
