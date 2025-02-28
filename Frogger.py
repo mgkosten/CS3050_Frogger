@@ -1,13 +1,14 @@
 import arcade
 
-WINDOW_WIDTH = 28*16
-WINDOW_HEIGHT = 32*16
-WINDOW_TITLE = "Frogger"
+MOVEMENT_SPEED = 5 # Movement speed for the player should probably be equal to SCALED_SQUARE b/c that is the height of each row; A separate movement speed for the obstacles is a good idea
 
-MOVEMENT_SPEED = 5
+SCALE = 2 # I think I set this up in a way that you can change this SCALE constant to resize the window and everything is scaled appropriately
 SPRITE_SQUARE = 16
-SCALE = 2
 SCALED_SQUARE = SPRITE_SQUARE*SCALE
+
+WINDOW_WIDTH = 28*8*SCALE
+WINDOW_HEIGHT = 32*8*SCALE
+WINDOW_TITLE = "Frogger"
 
 class GameView(arcade.View):
     def __init__(self):
@@ -28,12 +29,18 @@ class GameView(arcade.View):
         # -- Load the frog textures -- #
         self.frog_up = self.spritesheet.get_texture(arcade.LBWH(1, 1, SPRITE_SQUARE, SPRITE_SQUARE))
 
-        # -- Load the car textures -- #
+        # -- Load the vehicle textures -- #
         self.car_1 = self.spritesheet.get_texture(arcade.LBWH(19, 116, SPRITE_SQUARE, SPRITE_SQUARE))
         self.car_2 = self.spritesheet.get_texture(arcade.LBWH(55, 116, SPRITE_SQUARE, SPRITE_SQUARE))
         self.car_3 = self.spritesheet.get_texture(arcade.LBWH(1, 116, SPRITE_SQUARE, SPRITE_SQUARE))
         self.car_4 = self.spritesheet.get_texture(arcade.LBWH(37, 116, SPRITE_SQUARE, SPRITE_SQUARE))
         self.truck = self.spritesheet.get_texture(arcade.LBWH(73, 116, SPRITE_SQUARE*2, SPRITE_SQUARE))
+
+        # -- Load the log textures -- #
+        # TODO: I can't figure out how to make get_texture_grid() work, but I think that it might be useful
+        self.log_left = self.spritesheet.get_texture(arcade.LBWH(1, 134, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.log_middle = self.spritesheet.get_texture(arcade.LBWH(19, 134, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.log_right = self.spritesheet.get_texture(arcade.LBWH(37, 134, SPRITE_SQUARE, SPRITE_SQUARE))
     
 
     def draw_background(self):
@@ -48,10 +55,10 @@ class GameView(arcade.View):
             
             # Draw the homes
             if x % (SCALED_SQUARE*3) == 0:
-                arcade.draw_texture_rect(self.top_homes, arcade.LBWH(x, SCALED_SQUARE*14, self.top_homes.width*SCALE, self.top_homes.height*SCALE))
+                arcade.draw_texture_rect(self.top_homes, arcade.LBWH(x, SCALED_SQUARE*13, self.top_homes.width*SCALE, self.top_homes.height*SCALE))
             if x % (SCALED_SQUARE*3) == SCALED_SQUARE*2:
-                arcade.draw_texture_rect(self.top_grass, arcade.LBWH(x, SCALED_SQUARE*14, self.top_grass.width*SCALE, self.top_grass.height*SCALE))
-                arcade.draw_texture_rect(self.top_grass, arcade.LBWH(x+self.top_grass.width*SCALE, SCALED_SQUARE*14, self.top_grass.width*SCALE, self.top_grass.height*SCALE))
+                arcade.draw_texture_rect(self.top_grass, arcade.LBWH(x, SCALED_SQUARE*13, self.top_grass.width*SCALE, self.top_grass.height*SCALE))
+                arcade.draw_texture_rect(self.top_grass, arcade.LBWH(x+self.top_grass.width*SCALE, SCALED_SQUARE*13, self.top_grass.width*SCALE, self.top_grass.height*SCALE))
 
 
     def create_example_sprites(self):
@@ -62,15 +69,26 @@ class GameView(arcade.View):
 
         # Car/Truck examples
         self.car_1_sprites = arcade.SpriteList()
-        self.car_1_sprites.append(arcade.Sprite(self.car_1, scale=SCALE, center_x=WINDOW_WIDTH/2, center_y=SCALED_SQUARE*2.5))
+        self.car_1_sprites.append(arcade.Sprite(self.car_1, scale=SCALE, center_x=WINDOW_WIDTH-SCALED_SQUARE*.5, center_y=SCALED_SQUARE*2.5))
         self.car_2_sprites = arcade.SpriteList()
-        self.car_2_sprites.append(arcade.Sprite(self.car_2, scale=SCALE, center_x=WINDOW_WIDTH/2, center_y=SCALED_SQUARE*3.5))
+        self.car_2_sprites.append(arcade.Sprite(self.car_2, scale=SCALE, center_x=SCALED_SQUARE*.5, center_y=SCALED_SQUARE*3.5))
         self.car_3_sprites = arcade.SpriteList()
-        self.car_3_sprites.append(arcade.Sprite(self.car_3, scale=SCALE, center_x=WINDOW_WIDTH/2, center_y=SCALED_SQUARE*4.5))
+        self.car_3_sprites.append(arcade.Sprite(self.car_3, scale=SCALE, center_x=WINDOW_WIDTH-SCALED_SQUARE*.5, center_y=SCALED_SQUARE*4.5))
         self.car_4_sprites = arcade.SpriteList()
-        self.car_4_sprites.append(arcade.Sprite(self.car_4, scale=SCALE, center_x=WINDOW_WIDTH/2, center_y=SCALED_SQUARE*5.5))
+        self.car_4_sprites.append(arcade.Sprite(self.car_4, scale=SCALE, center_x=SCALED_SQUARE*.5, center_y=SCALED_SQUARE*5.5))
         self.truck_sprites = arcade.SpriteList()
-        self.truck_sprites.append(arcade.Sprite(self.truck, scale=SCALE, center_x=WINDOW_WIDTH/2, center_y=SCALED_SQUARE*6.5))
+        self.truck_sprites.append(arcade.Sprite(self.truck, scale=SCALE, center_x=WINDOW_WIDTH-SCALED_SQUARE, center_y=SCALED_SQUARE*6.5))
+        
+        # Example of a small log
+        self.log_sprites = arcade.SpriteList()
+        x = SCALED_SQUARE/SCALE
+        y = SCALED_SQUARE*9.5
+        self.log_sprites.append(arcade.Sprite(self.log_left, scale=SCALE, center_x=x, center_y=y))
+        x += SCALED_SQUARE
+        self.log_sprites.append(arcade.Sprite(self.log_middle, scale=SCALE, center_x=x, center_y=y))
+        x += SCALED_SQUARE
+        self.log_sprites.append(arcade.Sprite(self.log_right, scale=SCALE, center_x=x, center_y=y))
+        x += SCALED_SQUARE
 
 
     # Resets game
@@ -83,12 +101,13 @@ class GameView(arcade.View):
 
         self.draw_background()
 
-        self.frog_sprites.draw()
         self.car_1_sprites.draw()
         self.car_2_sprites.draw()
         self.car_3_sprites.draw()
         self.car_4_sprites.draw()
         self.truck_sprites.draw()
+        self.log_sprites.draw()
+        self.frog_sprites.draw()
     
     # Frame update
     def on_update(self, delta_time):
