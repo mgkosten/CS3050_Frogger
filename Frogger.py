@@ -203,7 +203,26 @@ class GameView(arcade.View):
 
     # Frame update
     def on_update(self, delta_time):
+        # update frog position
         self.frog_sprites.update()
+
+        # get frog current position
+        frog = self.frog_sprites[0]
+        frog_x = frog.center_x
+        frog_y = frog.center_y
+
+        # check boundaries of frogs position (ensure not go offscreen)
+        # horizontal boundary check
+        if frog_x > WINDOW_WIDTH - SCALED_SQUARE/2:
+            frog.center_x = WINDOW_WIDTH - SCALED_SQUARE/2
+        elif frog_x < SCALED_SQUARE/2:
+            frog.center_x = SCALED_SQUARE/2
+
+        # vertical boundary check
+        if frog_y > WINDOW_HEIGHT - SCALED_SQUARE/2 - SCALED_SQUARE * 2:
+            frog.center_y = WINDOW_HEIGHT - SCALED_SQUARE/2 - SCALED_SQUARE * 2
+        if frog_y < SCALED_SQUARE/2 + SCALED_SQUARE:
+            frog.center_y = SCALED_SQUARE/2 + SCALED_SQUARE
 
     # Triggers when a key is released
     def on_key_release(self, key, key_modifiers):
