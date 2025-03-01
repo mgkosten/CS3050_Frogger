@@ -233,14 +233,23 @@ class GameView(arcade.View):
     # Triggers when a key is pressed
     def on_key_press(self, key, key_modifiers):
         # if player presses a key, update the speed
+        # if key == arcade.key.UP:
+        #     self.frog_sprites[0].change_y = MOVEMENT_SPEED
+        # elif key == arcade.key.DOWN:
+        #     self.frog_sprites[0].change_y = -MOVEMENT_SPEED
+        # elif key == arcade.key.LEFT:
+        #     self.frog_sprites[0].change_x = -MOVEMENT_SPEED
+        # elif key == arcade.key.RIGHT:
+        #     self.frog_sprites[0].change_x = MOVEMENT_SPEED
+        frog = self.frog_sprites[0]
         if key == arcade.key.UP:
-            self.frog_sprites[0].change_y = MOVEMENT_SPEED
+            frog.center_y += SCALED_SQUARE
         elif key == arcade.key.DOWN:
-            self.frog_sprites[0].change_y = -MOVEMENT_SPEED
+            frog.center_y -= SCALED_SQUARE
         elif key == arcade.key.LEFT:
-            self.frog_sprites[0].change_x = -MOVEMENT_SPEED
+            frog.center_x -= SCALED_SQUARE
         elif key == arcade.key.RIGHT:
-            self.frog_sprites[0].change_x = MOVEMENT_SPEED
+            frog.center_x += SCALED_SQUARE
 
 def main():
     """ Main function """
