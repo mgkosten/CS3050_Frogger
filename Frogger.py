@@ -202,6 +202,7 @@ class GameView(arcade.View):
         self.frog_sprites.draw()
 
     # Frame update
+    # TODO: Add info to change direction frog is facing based on movement
     def on_update(self, delta_time):
         # update frog position
         self.frog_sprites.update()
@@ -241,6 +242,8 @@ class GameView(arcade.View):
             frog.center_x -= SCALED_SQUARE
         elif key == arcade.key.RIGHT:
             frog.center_x += SCALED_SQUARE
+
+    # TODO: Add way to move frog when key is held down: timer or something
 
 def main():
     """ Main function """
