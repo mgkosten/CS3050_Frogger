@@ -37,9 +37,10 @@ class GameView(arcade.View):
     def load_textures(self):
         '''Loads sprite textures from the spritesheet'''
         # TODO: Figure out how to remove the black/grey backgrounds from sprites
+        #   Might just have to do it manually? that sucks
         # TODO: Add additional sprite textures like death animation, points, timer, etc
 
-        # Load the spritesheet
+        # Load the spritesheet - https://www.spriters-resource.com/arcade/frogger/sheet/11067/
         spritesheet = arcade.load_spritesheet('assets/spritesheet.png')
 
         # -- Load the background textures -- #
