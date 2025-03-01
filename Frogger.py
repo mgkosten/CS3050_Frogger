@@ -1,13 +1,10 @@
 import arcade
 
-MOVEMENT_SPEED = 5
-# Movement speed for player probably should be SCALED_SQUARE b/c that is the size of each row
-# A separate movement speed constant for the obstacles is a good idea
-
 # Change this SCALE constant to resize the window and everything is scaled appropriately
 SCALE = 2
 SPRITE_SQUARE = 16
 SCALED_SQUARE = SPRITE_SQUARE*SCALE
+MOVEMENT_SPEED = 4.5
 
 WINDOW_WIDTH = 28*8*SCALE
 WINDOW_HEIGHT = 32*8*SCALE
@@ -206,15 +203,25 @@ class GameView(arcade.View):
 
     # Frame update
     def on_update(self, delta_time):
-        pass
+        self.frog_sprites.update()
 
     # Triggers when a key is released
     def on_key_release(self, key, key_modifiers):
-
-        pass
+        if key == arcade.key.UP or key == arcade.key.DOWN:
+            self.frog_sprites[0].change_y = 0
+        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+            self.frog_sprites[0].change_x = 0
     # Triggers when a key is pressed
     def on_key_press(self, key, key_modifiers):
-        pass
+        # if player presses a key, update the speed
+        if key == arcade.key.UP:
+            self.frog_sprites[0].change_y = MOVEMENT_SPEED
+        elif key == arcade.key.DOWN:
+            self.frog_sprites[0].change_y = -MOVEMENT_SPEED
+        elif key == arcade.key.LEFT:
+            self.frog_sprites[0].change_x = -MOVEMENT_SPEED
+        elif key == arcade.key.RIGHT:
+            self.frog_sprites[0].change_x = MOVEMENT_SPEED
 
 def main():
     """ Main function """
