@@ -1,13 +1,10 @@
 import arcade
 
-MOVEMENT_SPEED = 5
-# Movement speed for player probably should be SCALED_SQUARE b/c that is the size of each row
-# A separate movement speed constant for the obstacles is a good idea
-
 # Change this SCALE constant to resize the window and everything is scaled appropriately
 SCALE = 2
 SPRITE_SQUARE = 16
 SCALED_SQUARE = SPRITE_SQUARE*SCALE
+MOVEMENT_SPEED = 4.5
 
 WINDOW_WIDTH = 28*8*SCALE
 WINDOW_HEIGHT = 32*8*SCALE
@@ -205,16 +202,48 @@ class GameView(arcade.View):
         self.frog_sprites.draw()
 
     # Frame update
+    # TODO: Add info to change direction frog is facing based on movement
     def on_update(self, delta_time):
-        pass
+        # update frog position
+        self.frog_sprites.update()
+
+        # get frog current position
+        frog = self.frog_sprites[0]
+        frog_x = frog.center_x
+        frog_y = frog.center_y
+
+        # check boundaries of frogs position (ensure not go offscreen)
+        # horizontal boundary check
+        if frog_x > WINDOW_WIDTH - SCALED_SQUARE/2:
+            frog.center_x = WINDOW_WIDTH - SCALED_SQUARE/2
+        elif frog_x < SCALED_SQUARE/2:
+            frog.center_x = SCALED_SQUARE/2
+
+        # vertical boundary check
+        if frog_y > WINDOW_HEIGHT - SCALED_SQUARE/2 - SCALED_SQUARE * 2:
+            frog.center_y = WINDOW_HEIGHT - SCALED_SQUARE/2 - SCALED_SQUARE * 2
+        if frog_y < SCALED_SQUARE/2 + SCALED_SQUARE:
+            frog.center_y = SCALED_SQUARE/2 + SCALED_SQUARE
 
     # Triggers when a key is released
     def on_key_release(self, key, key_modifiers):
-
-        pass
+        if key == arcade.key.UP or key == arcade.key.DOWN:
+            self.frog_sprites[0].change_y = 0
+        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+            self.frog_sprites[0].change_x = 0
     # Triggers when a key is pressed
     def on_key_press(self, key, key_modifiers):
-        pass
+        frog = self.frog_sprites[0]
+        if key == arcade.key.UP:
+            frog.center_y += SCALED_SQUARE
+        elif key == arcade.key.DOWN:
+            frog.center_y -= SCALED_SQUARE
+        elif key == arcade.key.LEFT:
+            frog.center_x -= SCALED_SQUARE
+        elif key == arcade.key.RIGHT:
+            frog.center_x += SCALED_SQUARE
+
+    # TODO: Add way to move frog when key is held down: timer or something
 
 def main():
     """ Main function """
