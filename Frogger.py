@@ -41,10 +41,10 @@ class GameView(arcade.View):
         # TODO: Add additional sprite textures like death animation, points, timer, etc
 
         # Load the spritesheet - https://www.spriters-resource.com/arcade/frogger/sheet/11067/
-        spritesheet = arcade.load_spritesheet('assets/spritesheet.png')
+        spritesheet = arcade.load_spritesheet('assets/spritesheet_transparent.png')
 
         # -- Load the background textures -- #
-        self.textures['background'] = spritesheet.get_texture(arcade.LBWH(1, 390, 28, 32))
+        self.textures['water'] = spritesheet.get_texture(arcade.LBWH(1, 390, 28, 32))
         self.textures['median'] = spritesheet.get_texture(
             arcade.LBWH(135, 196, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['homes'] = spritesheet.get_texture(
@@ -85,7 +85,7 @@ class GameView(arcade.View):
     def draw_background(self):
         '''Draws the background image including median strips and ending homes.'''
         # -- Draw the background -- #
-        arcade.draw_texture_rect(self.textures['background'],
+        arcade.draw_texture_rect(self.textures['water'],
             arcade.LBWH(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT))
         for x in range(0, WINDOW_WIDTH, SCALED_SQUARE):
             # Draw starting median
