@@ -17,6 +17,8 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
 
+        # Reduce the number of instance attributes to make pylint happy
+
         # Define Textures dictionary
         self.textures = {}
 
@@ -36,8 +38,6 @@ class GameView(arcade.View):
 
     def load_textures(self):
         '''Loads sprite textures from the spritesheet'''
-        # TODO: Figure out how to remove the black/grey backgrounds from sprites
-        #   Might just have to do it manually? that sucks
         # TODO: Add additional sprite textures like death animation, points, timer, etc
 
         # Load the spritesheet - https://www.spriters-resource.com/arcade/frogger/sheet/11067/
@@ -84,6 +84,7 @@ class GameView(arcade.View):
 
     def draw_background(self):
         '''Draws the background image including median strips and ending homes.'''
+
         # -- Draw the background -- #
         arcade.draw_texture_rect(self.textures['water'],
             arcade.LBWH(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -103,32 +104,40 @@ class GameView(arcade.View):
                 arcade.draw_texture_rect(self.textures['grass'],
                     arcade.LBWH(x, SCALED_SQUARE*13, SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
                 arcade.draw_texture_rect(self.textures['grass'],
-                    arcade.LBWH(x+SCALED_SQUARE*.5, SCALED_SQUARE*13, SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
+                    arcade.LBWH(x+SCALED_SQUARE*.5, SCALED_SQUARE*13,
+                                SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
 
 
     def create_example_sprites(self):
         '''Create some example sprites to demonstrate the process'''
-        y = SCALED_SQUARE*1.5
+        # pylint is unhappy about this function - says there are too many statements
+
         # Example of frog starting in the middle of bottom median
         self.frog_sprites = arcade.SpriteList()
+        y = SCALED_SQUARE*1.5
         self.frog_sprites.append(arcade.Sprite(self.textures['frog_up'], SCALE, WINDOW_WIDTH/2, y))
 
         # Car/Truck examples - ordered by rows of highway
         self.car_1_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.car_1_sprites.append(arcade.Sprite(self.textures['car_1'], SCALE, WINDOW_WIDTH-SCALED_SQUARE*.5, y))
+        self.car_1_sprites.append(arcade.Sprite(self.textures['car_1'], SCALE,
+                                                WINDOW_WIDTH-SCALED_SQUARE*.5, y))
         self.car_2_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.car_2_sprites.append(arcade.Sprite(self.textures['car_2'], SCALE, SCALED_SQUARE*.5, y))
+        self.car_2_sprites.append(arcade.Sprite(self.textures['car_2'], SCALE,
+                                                SCALED_SQUARE*.5, y))
         self.car_3_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.car_3_sprites.append(arcade.Sprite(self.textures['car_3'], SCALE, WINDOW_WIDTH-SCALED_SQUARE*.5, y))
+        self.car_3_sprites.append(arcade.Sprite(self.textures['car_3'], SCALE,
+                                                WINDOW_WIDTH-SCALED_SQUARE*.5, y))
         self.car_4_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.car_4_sprites.append(arcade.Sprite(self.textures['car_4'], SCALE, SCALED_SQUARE*.5, y))
+        self.car_4_sprites.append(arcade.Sprite(self.textures['car_4'], SCALE,
+                                                SCALED_SQUARE*.5, y))
         self.truck_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.truck_sprites.append(arcade.Sprite(self.textures['truck'], SCALE, WINDOW_WIDTH-SCALED_SQUARE, y))
+        self.truck_sprites.append(arcade.Sprite(self.textures['truck'], SCALE,
+                                                WINDOW_WIDTH-SCALED_SQUARE, y))
 
         # Example of a small log - row 1 of water
         self.small_log_sprites = arcade.SpriteList()
@@ -139,7 +148,6 @@ class GameView(arcade.View):
         self.small_log_sprites.append(arcade.Sprite(self.textures['log_middle'], SCALE, x, y))
         x += SCALED_SQUARE
         self.small_log_sprites.append(arcade.Sprite(self.textures['log_right'], SCALE, x, y))
-        x += SCALED_SQUARE
 
         # Example of 3 turtles - row 2 of water
         self.triple_turtle_sprites = arcade.SpriteList()
@@ -159,7 +167,6 @@ class GameView(arcade.View):
             self.medium_log_sprites.append(arcade.Sprite(self.textures['log_middle'], SCALE, x, y))
             x += SCALED_SQUARE
         self.medium_log_sprites.append(arcade.Sprite(self.textures['log_right'], SCALE, x, y))
-        x += SCALED_SQUARE
 
         # Example of 2 turtles - row 4 of water
         self.double_turtle_sprites = arcade.SpriteList()
@@ -179,7 +186,6 @@ class GameView(arcade.View):
             self.large_log_sprites.append(arcade.Sprite(self.textures['log_middle'], SCALE, x, y))
             x += SCALED_SQUARE
         self.large_log_sprites.append(arcade.Sprite(self.textures['log_right'], SCALE, x, y))
-        x += SCALED_SQUARE
 
 
     # Resets game
