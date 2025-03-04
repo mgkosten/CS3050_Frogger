@@ -5,6 +5,8 @@ SCALE = 2
 SPRITE_SQUARE = 16
 SCALED_SQUARE = SPRITE_SQUARE*SCALE
 MOVEMENT_SPEED = 4.5
+#for controlling animation speed
+OBSTACLE_SPEED = 3
 
 WINDOW_WIDTH = 28*8*SCALE
 WINDOW_HEIGHT = 32*8*SCALE
@@ -29,7 +31,6 @@ class GameView(arcade.View):
         self.large_log_sprites = None
         self.triple_turtle_sprites = None
         self.double_turtle_sprites = None
-
 
     def load_textures(self):
         '''Loads sprite textures from the spritesheet'''
@@ -162,7 +163,7 @@ class GameView(arcade.View):
         x = WINDOW_WIDTH-SCALED_SQUARE*.5
         y += SCALED_SQUARE
         for _ in range(2):
-            self.triple_turtle_sprites.append(arcade.Sprite(self.textures['turtle'], SCALE, x, y))
+            self.double_turtle_sprites.append(arcade.Sprite(self.textures['turtle'], SCALE, x, y))
             x -= SCALED_SQUARE
 
         # Example of a large log - row 5 of water
@@ -225,6 +226,9 @@ class GameView(arcade.View):
         if frog_y < SCALED_SQUARE/2 + SCALED_SQUARE:
             frog.center_y = SCALED_SQUARE/2 + SCALED_SQUARE
 
+        self.obstacle_movement(delta_time)
+        
+
     # Triggers when a key is released
     def on_key_release(self, key, key_modifiers):
         if key == arcade.key.UP or key == arcade.key.DOWN:
@@ -244,6 +248,51 @@ class GameView(arcade.View):
             frog.center_x += SCALED_SQUARE
 
     # TODO: Add way to move frog when key is held down: timer or something
+
+    def obstacle_movement(self, delta_time: float = 1 / 60):
+        # while car has space to move right
+        self.car_1_sprites[0].center_x -= OBSTACLE_SPEED
+        self.car_3_sprites[0].center_x -= OBSTACLE_SPEED
+        self.truck_sprites[0].center_x -= OBSTACLE_SPEED
+        if self.car_1_sprites[0].center_x < 0:
+            #reset position of car
+            self.car_1_sprites[0].center_x = WINDOW_WIDTH
+            self.car_3_sprites[0].center_x = WINDOW_WIDTH
+            self.truck_sprites[0].center_x = WINDOW_WIDTH
+        
+        self.car_2_sprites[0].center_x += OBSTACLE_SPEED
+        self.car_4_sprites[0].center_x += OBSTACLE_SPEED
+    
+        if self.car_2_sprites[0].center_x > WINDOW_WIDTH:
+            self.car_2_sprites[0].center_x = 0
+            self.car_4_sprites[0].center_x = 0
+        
+        #small log movement to the right
+        for x in range(3):
+            self.small_log_sprites[x].center_x += OBSTACLE_SPEED
+            if self.small_log_sprites[x].center_x > WINDOW_WIDTH:
+                self.small_log_sprites[x].center_x = 0
+       #medium log movement        
+        for x in range(4):  
+            self.medium_log_sprites[x].center_x += OBSTACLE_SPEED
+            if self.medium_log_sprites[x].center_x > WINDOW_WIDTH:
+                self.medium_log_sprites[x].center_x = 0
+        # large log movement
+        for x in range(6):
+            self.large_log_sprites[x].center_x += OBSTACLE_SPEED
+            if self.large_log_sprites[x].center_x > WINDOW_WIDTH:
+                self.large_log_sprites[x].center_x = 0
+        # triple turtle movement 
+        for x in range(3):
+            self.triple_turtle_sprites[x].center_x -= OBSTACLE_SPEED
+            if self.triple_turtle_sprites[x].center_x < 0:
+                self.triple_turtle_sprites[x].center_x = WINDOW_WIDTH
+        # double turtle movement 
+        for x in range(2):
+            self.double_turtle_sprites[x].center_x -= OBSTACLE_SPEED
+            if self.double_turtle_sprites[x].center_x < 0:
+                self.double_turtle_sprites[x].center_x = WINDOW_WIDTH
+        
 
 def main():
     """ Main function """
