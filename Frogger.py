@@ -1,3 +1,5 @@
+'''Frogger game implemented using Python Arcade.'''
+
 import arcade
 
 # pylint: disable=too-many-instance-attributes
@@ -14,6 +16,7 @@ WINDOW_HEIGHT = 32*8*SCALE
 WINDOW_TITLE = "Frogger"
 
 class GameView(arcade.View):
+    '''GameView class for running and displaying the game'''
     def __init__(self):
         super().__init__()
         # Reduce the number of instance attributes to make pylint happy
