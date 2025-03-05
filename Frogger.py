@@ -232,13 +232,13 @@ class GameView(arcade.View):
             frog.center_y = SCALED_SQUARE/2 + SCALED_SQUARE
 
     # Triggers when a key is released
-    def on_key_release(self, key, key_modifiers):
+    def on_key_release(self, key, modifiers):
         if key in (arcade.key.UP, arcade.key.DOWN):
             self.frog_sprites[0].change_y = 0
         elif key in (arcade.key.LEFT, arcade.key.RIGHT):
             self.frog_sprites[0].change_x = 0
     # Triggers when a key is pressed
-    def on_key_press(self, key, key_modifiers):
+    def on_key_press(self, key, modifiers):
         frog = self.frog_sprites[0]
         if key == arcade.key.UP:
             frog.center_y += SCALED_SQUARE
