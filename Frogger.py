@@ -1,6 +1,7 @@
 import arcade
 
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=fixme
 
 # Change this SCALE constant to resize the window and everything is scaled appropriately
 SCALE = 2
