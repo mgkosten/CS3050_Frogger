@@ -401,7 +401,7 @@ class GameView(arcade.View):
             frog.center_x += SCALED_SQUARE
 
     # TODO: Add way to move frog when key is held down: timer or something
-
+    # Adjusts car, frog pads and log movement in a continuous loop 
     def obstacle_movement(self):
         # while car has space to move right
         self.car_1_sprites[0].center_x -= OBSTACLE_SPEED
