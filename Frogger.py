@@ -99,7 +99,8 @@ class GameView(arcade.View):
                 arcade.draw_texture_rect(self.textures['grass'],
                     arcade.LBWH(x, SCALED_SQUARE*13, SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
                 arcade.draw_texture_rect(self.textures['grass'],
-                    arcade.LBWH(x+SCALED_SQUARE*.5, SCALED_SQUARE*13, SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
+                    arcade.LBWH(x+SCALED_SQUARE*.5, SCALED_SQUARE*13,
+                                SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
 
 
     def create_example_sprites(self):
@@ -112,19 +113,24 @@ class GameView(arcade.View):
         # Car/Truck examples - ordered by rows of highway
         self.car_1_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.car_1_sprites.append(arcade.Sprite(self.textures['car_1'], SCALE, WINDOW_WIDTH-SCALED_SQUARE*.5, y))
+        self.car_1_sprites.append(arcade.Sprite(
+            self.textures['car_1'], SCALE, WINDOW_WIDTH-SCALED_SQUARE*.5, y))
         self.car_2_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.car_2_sprites.append(arcade.Sprite(self.textures['car_2'], SCALE, SCALED_SQUARE*.5, y))
+        self.car_2_sprites.append(arcade.Sprite(
+            self.textures['car_2'], SCALE, SCALED_SQUARE*.5, y))
         self.car_3_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.car_3_sprites.append(arcade.Sprite(self.textures['car_3'], SCALE, WINDOW_WIDTH-SCALED_SQUARE*.5, y))
+        self.car_3_sprites.append(arcade.Sprite(
+            self.textures['car_3'], SCALE, WINDOW_WIDTH-SCALED_SQUARE*.5, y))
         self.car_4_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.car_4_sprites.append(arcade.Sprite(self.textures['car_4'], SCALE, SCALED_SQUARE*.5, y))
+        self.car_4_sprites.append(arcade.Sprite(
+            self.textures['car_4'], SCALE, SCALED_SQUARE*.5, y))
         self.truck_sprites = arcade.SpriteList()
         y += SCALED_SQUARE
-        self.truck_sprites.append(arcade.Sprite(self.textures['truck'], SCALE, WINDOW_WIDTH-SCALED_SQUARE, y))
+        self.truck_sprites.append(arcade.Sprite(
+            self.textures['truck'], SCALE, WINDOW_WIDTH-SCALED_SQUARE, y))
 
         # Example of a small log - row 1 of water
         self.small_log_sprites = arcade.SpriteList()
@@ -227,9 +233,9 @@ class GameView(arcade.View):
 
     # Triggers when a key is released
     def on_key_release(self, key, key_modifiers):
-        if key == arcade.key.UP or key == arcade.key.DOWN:
+        if key in (arcade.key.UP, arcade.key.DOWN):
             self.frog_sprites[0].change_y = 0
-        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+        elif key in (arcade.key.LEFT, arcade.key.RIGHT):
             self.frog_sprites[0].change_x = 0
     # Triggers when a key is pressed
     def on_key_press(self, key, key_modifiers):
