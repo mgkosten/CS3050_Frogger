@@ -373,7 +373,6 @@ class GameView(arcade.View):
             frog.center_y = SCALED_SQUARE/2 + SCALED_SQUARE
 
         self.obstacle_movement(delta_time)
-        
 
     # Triggers when a key is released
     def on_key_release(self, key, modifiers):
@@ -410,21 +409,18 @@ class GameView(arcade.View):
             self.car_1_sprites[0].center_x = WINDOW_WIDTH
             self.car_3_sprites[0].center_x = WINDOW_WIDTH
             self.truck_sprites[0].center_x = WINDOW_WIDTH
-        
         self.car_2_sprites[0].center_x += OBSTACLE_SPEED
         self.car_4_sprites[0].center_x += OBSTACLE_SPEED
-    
         if self.car_2_sprites[0].center_x > WINDOW_WIDTH:
             self.car_2_sprites[0].center_x = 0
             self.car_4_sprites[0].center_x = 0
-        
-        #small log movement to the right
+        # small log movement to the right
         for x in range(3):
             self.small_log_sprites[x].center_x += OBSTACLE_SPEED
             if self.small_log_sprites[x].center_x > WINDOW_WIDTH:
                 self.small_log_sprites[x].center_x = 0
-       #medium log movement        
-        for x in range(4):  
+       # medium log movement
+        for x in range(4):
             self.medium_log_sprites[x].center_x += OBSTACLE_SPEED
             if self.medium_log_sprites[x].center_x > WINDOW_WIDTH:
                 self.medium_log_sprites[x].center_x = 0
@@ -433,17 +429,16 @@ class GameView(arcade.View):
             self.large_log_sprites[x].center_x += OBSTACLE_SPEED
             if self.large_log_sprites[x].center_x > WINDOW_WIDTH:
                 self.large_log_sprites[x].center_x = 0
-        # triple turtle movement 
+        # triple turtle movement
         for x in range(3):
             self.triple_turtle_sprites[x].center_x -= OBSTACLE_SPEED
             if self.triple_turtle_sprites[x].center_x < 0:
                 self.triple_turtle_sprites[x].center_x = WINDOW_WIDTH
-        # double turtle movement 
+        # double turtle movement
         for x in range(2):
             self.double_turtle_sprites[x].center_x -= OBSTACLE_SPEED
             if self.double_turtle_sprites[x].center_x < 0:
                 self.double_turtle_sprites[x].center_x = WINDOW_WIDTH
-        
 
 def main():
     """ Main function """
