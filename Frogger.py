@@ -38,7 +38,6 @@ class GameView(arcade.View):
 
     def load_textures(self):
         '''Loads sprite textures from the spritesheet'''
-        # TODO: Add additional sprite textures like death animation, points, timer, etc
         # I can't figure out how get_texture_grid() works, but I think that might be useful
 
         # Load the spritesheet - https://www.spriters-resource.com/arcade/frogger/sheet/11067/
@@ -52,6 +51,7 @@ class GameView(arcade.View):
             arcade.LBWH(1, 188, SPRITE_SQUARE*2, SPRITE_SQUARE*1.5))
         self.textures['grass'] = spritesheet.get_texture(
             arcade.LBWH(35, 188, SPRITE_SQUARE*.5, SPRITE_SQUARE*1.5))
+
         self.textures['title_f'] = spritesheet.get_texture(
             arcade.LBWH(1, 232, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['title_r'] = spritesheet.get_texture(
@@ -64,6 +64,7 @@ class GameView(arcade.View):
             arcade.LBWH(73, 232, SPRITE_SQUARE, SPRITE_SQUARE))
 
         # -- Load the frog textures -- #
+        # Player
         self.textures['frog_up'] = spritesheet.get_texture(
             arcade.LBWH(1, 1, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['frog_up_jump'] = spritesheet.get_texture(
@@ -80,8 +81,29 @@ class GameView(arcade.View):
             arcade.LBWH(109, 1, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['frog_right_jump'] = spritesheet.get_texture(
             arcade.LBWH(127, 1, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['frog_home'] = spritesheet.get_texture(
+            arcade.LBWH(45, 196, SPRITE_SQUARE, SPRITE_SQUARE))
 
-        # -- Load the vehicle textures -- #
+        # Lady Frog
+        self.textures['lady_frog_up'] = spritesheet.get_texture(
+            arcade.LBWH(1, 19, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['lady_frog_up_jump'] = spritesheet.get_texture(
+            arcade.LBWH(19, 19, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['lady_frog_left'] = spritesheet.get_texture(
+            arcade.LBWH(37, 19, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['lady_frog_left_jump'] = spritesheet.get_texture(
+            arcade.LBWH(55, 19, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['lady_frog_down'] = spritesheet.get_texture(
+            arcade.LBWH(73, 19, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['lady_frog_down_jump'] = spritesheet.get_texture(
+            arcade.LBWH(91, 19, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['lady_frog_right'] = spritesheet.get_texture(
+            arcade.LBWH(109, 19, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['lady_frog_right_jump'] = spritesheet.get_texture(
+            arcade.LBWH(127, 19, SPRITE_SQUARE, SPRITE_SQUARE))
+
+        # -- Load interactive textures -- #
+        # Vehicles
         self.textures['car_1'] = spritesheet.get_texture(
             arcade.LBWH(19, 116, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['car_2'] = spritesheet.get_texture(
@@ -93,7 +115,7 @@ class GameView(arcade.View):
         self.textures['truck'] = spritesheet.get_texture(
             arcade.LBWH(73, 116, SPRITE_SQUARE*2, SPRITE_SQUARE))
 
-        # -- Load the log textures -- #
+        # Logs
         self.textures['log_left'] = spritesheet.get_texture(
             arcade.LBWH(1, 134, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['log_middle'] = spritesheet.get_texture(
@@ -101,7 +123,7 @@ class GameView(arcade.View):
         self.textures['log_right'] = spritesheet.get_texture(
             arcade.LBWH(37, 134, SPRITE_SQUARE, SPRITE_SQUARE))
 
-        # -- Load the turtle textures -- #
+        # Turtles
         self.textures['turtle_1'] = spritesheet.get_texture(
             arcade.LBWH(1, 152, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['turtle_2'] = spritesheet.get_texture(
@@ -112,6 +134,76 @@ class GameView(arcade.View):
             arcade.LBWH(55, 152, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['turtle_disappear_2'] = spritesheet.get_texture(
             arcade.LBWH(73, 152, SPRITE_SQUARE, SPRITE_SQUARE))
+
+        # Alligators
+        self.textures['alligator_1'] = spritesheet.get_texture(
+            arcade.LBWH(55, 134, SPRITE_SQUARE*3, SPRITE_SQUARE))
+        self.textures['alligator_2'] = spritesheet.get_texture(
+            arcade.LBWH(105, 134, SPRITE_SQUARE*3, SPRITE_SQUARE))
+        self.textures['alligator_home_1'] = spritesheet.get_texture(
+            arcade.LBWH(99, 196, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['alligator_home_2'] = spritesheet.get_texture(
+            arcade.LBWH(117, 196, SPRITE_SQUARE, SPRITE_SQUARE))
+
+        # Snakes
+        self.textures['snake_1'] = spritesheet.get_texture(
+            arcade.LBWH(1, 170, SPRITE_SQUARE*3, SPRITE_SQUARE))
+        self.textures['snake_2'] = spritesheet.get_texture(
+            arcade.LBWH(19, 170, SPRITE_SQUARE*3, SPRITE_SQUARE))
+        self.textures['snake_3'] = spritesheet.get_texture(
+            arcade.LBWH(37, 170, SPRITE_SQUARE*3, SPRITE_SQUARE))
+
+        # Otters
+        self.textures['otter_1'] = spritesheet.get_texture(
+            arcade.LBWH(91, 152, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['otter_2'] = spritesheet.get_texture(
+            arcade.LBWH(109, 152, SPRITE_SQUARE, SPRITE_SQUARE))
+
+        self.textures['fly'] = spritesheet.get_texture(
+            arcade.LBWH(81, 196, SPRITE_SQUARE, SPRITE_SQUARE))
+
+        # -- Load additional textures -- #
+        # Death animation
+        self.textures['death_animation_1'] = spritesheet.get_texture(
+            arcade.LBWH(1, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_2'] = spritesheet.get_texture(
+            arcade.LBWH(19, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_3'] = spritesheet.get_texture(
+            arcade.LBWH(37, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_4'] = spritesheet.get_texture(
+            arcade.LBWH(55, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_5'] = spritesheet.get_texture(
+            arcade.LBWH(73, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_6'] = spritesheet.get_texture(
+            arcade.LBWH(91, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_7'] = spritesheet.get_texture(
+            arcade.LBWH(109, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+
+        # Timer
+        self.textures['timer_green_full'] = spritesheet.get_texture(
+            arcade.LBWH(57, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
+        self.textures['timer_green_three_quarter'] = spritesheet.get_texture(
+            arcade.LBWH(67, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
+        self.textures['timer_green_half'] = spritesheet.get_texture(
+            arcade.LBWH(77, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
+        self.textures['timer_green_quarter'] = spritesheet.get_texture(
+            arcade.LBWH(87, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
+        self.textures['timer_red_full'] = spritesheet.get_texture(
+            arcade.LBWH(97, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
+        self.textures['timer_red_three_quarter'] = spritesheet.get_texture(
+            arcade.LBWH(107, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
+        self.textures['timer_red_half'] = spritesheet.get_texture(
+            arcade.LBWH(117, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
+        self.textures['timer_red_quarter'] = spritesheet.get_texture(
+            arcade.LBWH(127, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
+
+        # Miscellaneous
+        self.textures['points_100'] = spritesheet.get_texture(
+            arcade.LBWH(1, 214, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['points_200'] = spritesheet.get_texture(
+            arcade.LBWH(19, 214, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['lives'] = spritesheet.get_texture(
+            arcade.LBWH(37, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
 
 
     def draw_background(self):
@@ -172,7 +264,7 @@ class GameView(arcade.View):
         # Example of frog starting in the middle of bottom median
         self.frog_sprites = arcade.SpriteList()
         y = SCALED_SQUARE*1.5
-        self.frog_sprites.append(arcade.Sprite(self.textures['frog_up'], SCALE, WINDOW_WIDTH/2, y))
+        self.frog_sprites.append(arcade.Sprite(self.textures['otter_1'], SCALE, WINDOW_WIDTH/2, y))
 
         # Car/Truck examples - ordered by rows of highway
         self.car_1_sprites = arcade.SpriteList()
