@@ -1,5 +1,7 @@
 import arcade
 
+# pylint: disable=too-many-instance-attributes
+
 # Change this SCALE constant to resize the window and everything is scaled appropriately
 SCALE = 2
 SPRITE_SQUARE = 16
@@ -241,8 +243,13 @@ class GameView(arcade.View):
             self.frog_sprites[0].change_y = 0
         elif key in (arcade.key.LEFT, arcade.key.RIGHT):
             self.frog_sprites[0].change_x = 0
+
+
+
     # Triggers when a key is pressed
     def on_key_press(self, key, modifiers):
+        # pylint: disable=unused-argument
+
         frog = self.frog_sprites[0]
         if key == arcade.key.UP:
             frog.center_y += SCALED_SQUARE
