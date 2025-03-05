@@ -256,7 +256,7 @@ class GameView(arcade.View):
 
     def create_example_sprites(self):
         '''Create some example sprites to demonstrate the process'''
-        # pylint is unhappy about this function - says there are too many statements
+        # pylint: disable=too-many-statements
         # Example of frog starting in the middle of bottom median
         self.frog_sprites = arcade.SpriteList()
         y = SCALED_SQUARE*1.5
@@ -328,7 +328,7 @@ class GameView(arcade.View):
 
     # Resets game
     def reset(self):
-        pass
+        '''Resets the game'''
 
     # Renders everything
     def on_draw(self):
@@ -373,10 +373,12 @@ class GameView(arcade.View):
         if frog_y < SCALED_SQUARE/2 + SCALED_SQUARE:
             frog.center_y = SCALED_SQUARE/2 + SCALED_SQUARE
 
-        self.obstacle_movement(delta_time)
+        self.obstacle_movement()
 
     # Triggers when a key is released
     def on_key_release(self, key, modifiers):
+        # pylint: disable=unused-argument
+
         if key in (arcade.key.UP, arcade.key.DOWN):
             self.frog_sprites[0].change_y = 0
         elif key in (arcade.key.LEFT, arcade.key.RIGHT):
@@ -385,22 +387,22 @@ class GameView(arcade.View):
 
 
     # Triggers when a key is pressed
-    def on_key_press(self, key, modifiers):
+    def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument
 
         frog = self.frog_sprites[0]
-        if key == arcade.key.UP:
+        if symbol == arcade.key.UP:
             frog.center_y += SCALED_SQUARE
-        elif key == arcade.key.DOWN:
+        elif symbol == arcade.key.DOWN:
             frog.center_y -= SCALED_SQUARE
-        elif key == arcade.key.LEFT:
+        elif symbol == arcade.key.LEFT:
             frog.center_x -= SCALED_SQUARE
-        elif key == arcade.key.RIGHT:
+        elif symbol == arcade.key.RIGHT:
             frog.center_x += SCALED_SQUARE
 
     # TODO: Add way to move frog when key is held down: timer or something
 
-    def obstacle_movement(self, delta_time: float = 1 / 60):
+    def obstacle_movement(self):
         # while car has space to move right
         self.car_1_sprites[0].center_x -= OBSTACLE_SPEED
         self.car_3_sprites[0].center_x -= OBSTACLE_SPEED
