@@ -1,19 +1,20 @@
 '''Frogger game implemented using Python Arcade.'''
 
 import arcade
+from constants import *
 
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=fixme
 
-# Change this SCALE constant to resize the window and everything is scaled appropriately
-SCALE = 2
-SPRITE_SQUARE = 16
-SCALED_SQUARE = SPRITE_SQUARE*SCALE
-#for controlling animation speed
-OBSTACLE_SPEED = 3
-WINDOW_WIDTH = 28*8*SCALE
-WINDOW_HEIGHT = 32*8*SCALE
-WINDOW_TITLE = "Frogger"
+# # Change this SCALE constant to resize the window and everything is scaled appropriately
+# SCALE = 2
+# SPRITE_SQUARE = 16
+# SCALED_SQUARE = SPRITE_SQUARE*SCALE
+# #for controlling animation speed
+# OBSTACLE_SPEED = 3
+# WINDOW_WIDTH = 28*8*SCALE
+# WINDOW_HEIGHT = 32*8*SCALE
+# WINDOW_TITLE = "Frogger"
 
 class GameView(arcade.View):
     '''GameView class for running and displaying the game'''
