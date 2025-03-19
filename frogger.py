@@ -317,7 +317,7 @@ class GameView(arcade.View):
         x = WINDOW_WIDTH-SCALED_SQUARE*.5
         y += SCALED_SQUARE
         for _ in range(2):
-            self.triple_turtle_sprites.append(arcade.Sprite(self.textures['turtle_2'], SCALE, x, y))
+            self.double_turtle_sprites.append(arcade.Sprite(self.textures['turtle_2'], SCALE, x, y))
             x -= SCALED_SQUARE
         # Example of a large log - row 5 of water
         self.large_log_sprites = arcade.SpriteList()
