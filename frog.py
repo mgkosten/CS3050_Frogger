@@ -72,30 +72,42 @@ class Frog:
 
 
     def create_sprites(self, frog_textures):
-        '''Create some example sprites to demonstrate the process'''
-        # pylint: disable=too-many-statements
+        '''Create the frog sprite'''
         # Example of frog starting in the middle of bottom median
         self.frog_sprites = arcade.SpriteList()
         y = SCALED_SQUARE * 1.5
         self.frog_sprites.append(arcade.Sprite(self.textures['frog_up'], SCALE, WINDOW_WIDTH / 2, y))
+        # Add all the other directions to the spritelist
 
     # Resets game
     def reset(self):
-        '''Resets the game'''
+        '''Reset frog's position'''
+        # TODO: write this function which resets the frog to start position
+        # I think this would be called from the GameView class when the frog dies
 
     # Renders everything
     def draw(self):
+        '''Draw all frog sprites according to its direction'''
         self.frog_sprites.draw()
-        # TODO: show a different sprite based on which direction it's facing?
+        # TODO: show a different sprite based on which direction it's facing
 
-    # Frame update
-    # TODO: Add info to change direction frog is facing based on movement
-    def on_update(self, delta_time):
-        # update frog position
-        self.frog_sprites.update()
+    def move(self, key):
+        '''Move the frog on key press'''
+        # TODO: call this function in on_key_press
+        # upper_bound = WINDOW_HEIGHT - SCALED_SQUARE / 2 - SCALED_SQUARE * 2
+        # lower_bound =
 
-        # get frog current position
         frog = self.frog_sprites[0]
+        if key == arcade.key.UP:
+            frog.center_y += SCALED_SQUARE
+        elif key == arcade.key.DOWN:
+            frog.center_y -= SCALED_SQUARE
+        elif key == arcade.key.LEFT:
+            frog.center_x -= SCALED_SQUARE
+        elif key == arcade.key.RIGHT:
+            frog.center_x += SCALED_SQUARE
+
+        # this stuff is from update for bound checking
         frog_x = frog.center_x
         frog_y = frog.center_y
 
@@ -111,28 +123,3 @@ class Frog:
             frog.center_y = WINDOW_HEIGHT - SCALED_SQUARE / 2 - SCALED_SQUARE * 2
         if frog_y < SCALED_SQUARE / 2 + SCALED_SQUARE:
             frog.center_y = SCALED_SQUARE / 2 + SCALED_SQUARE
-
-        self.obstacle_movement()
-
-    # Triggers when a key is released
-    def on_key_release(self, key, modifiers):
-        # pylint: disable=unused-argument
-
-        if key in (arcade.key.UP, arcade.key.DOWN):
-            self.frog_sprites[0].change_y = 0
-        elif key in (arcade.key.LEFT, arcade.key.RIGHT):
-            self.frog_sprites[0].change_x = 0
-
-    # Triggers when a key is pressed
-    def on_key_press(self, symbol, modifiers):
-        # pylint: disable=unused-argument
-
-        frog = self.frog_sprites[0]
-        if symbol == arcade.key.UP:
-            frog.center_y += SCALED_SQUARE
-        elif symbol == arcade.key.DOWN:
-            frog.center_y -= SCALED_SQUARE
-        elif symbol == arcade.key.LEFT:
-            frog.center_x -= SCALED_SQUARE
-        elif symbol == arcade.key.RIGHT:
-            frog.center_x += SCALED_SQUARE

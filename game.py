@@ -9,7 +9,7 @@ class GameStates(Enum):
 
 class Game:
     def __init__(self):
-        self.timer = 60 * DURATION
+        self.timer = DURATION
         self.game_time = 0
         self.game_over = False
         self.points = 0
@@ -26,7 +26,7 @@ class Game:
     def reset(self):
         self.game_time = 0
         self.game_over = False
-        self.timer = 60 * DURATION
+        self.timer = DURATION
         self.points = 0
         self.paused = False
         self.state = GameStates.PLAYING
