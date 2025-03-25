@@ -1,72 +1,52 @@
-import constants
+from constants import *
 import arcade
-from constants import SPRITE_SQUARE
-self.car.car
-class Car:
-    def __init__(self):
-        self.car_1_sprites = None
-        self.car_2_sprites = None
-        self.car_3_sprites = None
-        self.car_4_sprites = None
 
-        self.speed = OBSTACLE_SPEED
+class Car:
+    def __init__(self, car_type, direction, xpos, ypos):
+        self.speed = OBSTACLE_SPEED * direction
+        self.car_type = car_type
+        self.xpos = xpos
+        self.ypos = ypos
+        self.sprite = None
+
+    def update(self, delta_time):
+        self.xpos += self.speed * delta_time
+        if self.xpos > WINDOW_WIDTH and self.speed > 0:
+            self.xpos = 0
+        elif self.xpos < 0 and self.speed < 0:
+            self.xpos = WINDOW_WIDTH
+
+        self.sprite.center_x = self.xpos
 
     def load_textures(self, spritesheet):
-        self.textures['car_1'] = spritesheet.get_texture(
-            arcade.LBWH(19, 116, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['car_2'] = spritesheet.get_texture(
-            arcade.LBWH(55, 116, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['car_3'] = spritesheet.get_texture(
-            arcade.LBWH(1, 116, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['car_4'] = spritesheet.get_texture(
-            arcade.LBWH(37, 116, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['truck'] = spritesheet.get_texture(
-            arcade.LBWH(73, 116, SPRITE_SQUARE*2, SPRITE_SQUARE))
+        match self.car_type:
+            case 1:
+                vehicle_texture = spritesheet.get_texture(
+                    arcade.LBWH(19, 116, SPRITE_SQUARE, SPRITE_SQUARE))
+                # y = SCALED_SQUARE * 2.5
+            case 2:
+                vehicle_texture = spritesheet.get_texture(
+                    arcade.LBWH(55, 116, SPRITE_SQUARE, SPRITE_SQUARE))
+                # y = SCALED_SQUARE * 3.5
+            case 3:
+                vehicle_texture = spritesheet.get_texture(
+                    arcade.LBWH(1, 116, SPRITE_SQUARE, SPRITE_SQUARE))
+                # y = SCALED_SQUARE * 4.5
+            case 4:
+                vehicle_texture = spritesheet.get_texture(
+                    arcade.LBWH(37, 116, SPRITE_SQUARE, SPRITE_SQUARE))
+                # y = SCALED_SQUARE * 5.5
+            case 5:
+                vehicle_texture = spritesheet.get_texture(
+                    arcade.LBWH(73, 116, SPRITE_SQUARE * 2, SPRITE_SQUARE))
+                # y = SCALED_SQUARE * 6.5
+            case _:
+                raise Exception('invalid car type:', self.car_type)
 
-    def create_cars(self):
-        self.frog_sprites = arcade.SpriteList()
-        y = SCALED_SQUARE*1.5
-        self.frog_sprites.append(arcade.Sprite(self.textures['frog_up'], SCALE, WINDOW_WIDTH/2, y))
-        # Car/Truck examples - ordered by rows of highway
-        self.car_1_sprites = arcade.SpriteList()
-        y += SCALED_SQUARE
-        self.car_1_sprites.append(arcade.Sprite(self.textures['car_1'], SCALE,
-                                                WINDOW_WIDTH-SCALED_SQUARE*.5, y))
-        self.car_2_sprites = arcade.SpriteList()
-        y += SCALED_SQUARE
-        self.car_2_sprites.append(arcade.Sprite(self.textures['car_2'], SCALE,
-                                                SCALED_SQUARE*.5, y))
-        self.car_3_sprites = arcade.SpriteList()
-        y += SCALED_SQUARE
-        self.car_3_sprites.append(arcade.Sprite(self.textures['car_3'], SCALE,
-                                                WINDOW_WIDTH-SCALED_SQUARE*.5, y))
-        self.car_4_sprites = arcade.SpriteList()
-        y += SCALED_SQUARE
-        self.car_4_sprites.append(arcade.Sprite(self.textures['car_4'], SCALE,
-                                                SCALED_SQUARE*.5, y))
-        self.truck_sprites = arcade.SpriteList()
-        y += SCALED_SQUARE
-        self.truck_sprites.append(arcade.Sprite(self.textures['truck'], SCALE,
-                                                WINDOW_WIDTH-SCALED_SQUARE, y))
+        # TODO: I think we might not need a ypos for Car and we can just set the y for the Sprite based on car_type
+        self.sprite = arcade.Sprite(vehicle_texture, SCALE, self.xpos, self.ypos)
 
     def car_movement(self):
-        self.car_1_sprites[0].center_x -= OBSTACLE_SPEED
-        self.car_3_sprites[0].center_x -= OBSTACLE_SPEED
-        self.truck_sprites[0].center_x -= OBSTACLE_SPEED
-        if self.car_1_sprites[0].center_x < 0:
-            #reset position of car
-            self.car_1_sprites[0].center_x = WINDOW_WIDTH
-            self.car_3_sprites[0].center_x = WINDOW_WIDTH
-            self.truck_sprites[0].center_x = WINDOW_WIDTH
-        self.car_2_sprites[0].center_x += OBSTACLE_SPEED
-        self.car_4_sprites[0].center_x += OBSTACLE_SPEED
-        if self.car_2_sprites[0].center_x > WINDOW_WIDTH:
-            self.car_2_sprites[0].center_x = 0
-            self.car_4_sprites[0].center_x = 0
+        pass
 
-    def on_draw(self):
-        self.car_1_sprites.draw()
-        self.car_2_sprites.draw()
-        self.car_3_sprites.draw()
-        self.car_4_sprites.draw()
-        self.truck_sprites.draw()
+

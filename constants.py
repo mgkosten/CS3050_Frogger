@@ -1,4 +1,4 @@
-SCALE = 2
+SCALE = 4
 SPRITE_SQUARE = 16
 SCALED_SQUARE = SPRITE_SQUARE*SCALE
 #for controlling animation speed
