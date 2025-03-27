@@ -28,17 +28,11 @@ class Frog:
         # TODO: write this function which resets the frog to start position
         # I think this would be called from the GameView class when the frog dies
 
-    # Renders everything
-    def draw(self):
-        '''Draw all frog sprites according to its direction'''
-        self.frog_sprites.draw()
-        # TODO: show a different sprite based on which direction it's facing
-
     def move(self, key):
         '''Move the frog on key press'''
         # TODO: call this function in on_key_press
-        # upper_bound = WINDOW_HEIGHT - SCALED_SQUARE / 2 - SCALED_SQUARE * 2
-        # lower_bound =
+        # TODO: Add way to move frog when key is held down: timer or something
+        # TODO: show a different sprite based on which direction it's facing
 
         frog = self.sprite
         if key == arcade.key.UP:
@@ -50,7 +44,6 @@ class Frog:
         elif key == arcade.key.RIGHT:
             frog.center_x += SCALED_SQUARE
 
-        # this stuff is from update for bound checking
         frog_x = frog.center_x
         frog_y = frog.center_y
 
