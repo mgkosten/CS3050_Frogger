@@ -165,7 +165,12 @@ class GameView(arcade.View):
 
     # Frame update
     def on_update(self, delta_time):
-        pass
+        for turtle in self.turtles:
+            turtle.update(delta_time)
+        for log in self.logs:
+            log.update(delta_time)
+        for car in self.cars:
+            car.update(delta_time)
 
     # Triggers when a key is released
     def on_key_release(self, key, modifiers):
