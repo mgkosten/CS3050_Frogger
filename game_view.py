@@ -207,11 +207,17 @@ class GameView(arcade.View):
             self.player.death()
 
         # determine if in water or not
-        if (SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 11):
+        if (SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13):
             # check if on log or not
-            if (not arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites) or
-                not arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites)):
+            if not (arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites) or
+                arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites)):
                 self.player.death()
+            else:
+                if (arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites)):
+                    self.player.xpos += self.logs[0].speed * delta_time
+                else:
+                    self.player.xpos += self.turtles[0].speed * delta_time
+                # self.frog_sprites[0].center_x -= OBSTACLE_SPEED
 
 
 
