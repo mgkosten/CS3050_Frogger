@@ -18,13 +18,20 @@ class GameView(arcade.View):
         self.textures = {}
 
         # Creating Containers for obstacles (and player)
-        self.player : Frog = None
+        self.player : Frog = Frog()
         self.turtles : list[Turt] = []
         self.logs : list[Log] = []
         self.cars : list[Car] = []
 
         # Creating SpriteList
         self.sprite_list = arcade.SpriteList()
+        self.car_sprites = arcade.SpriteList()
+        self.turtle_sprites = arcade.SpriteList()
+        self.log_sprites = arcade.SpriteList()
+
+        # Creating timer and game backend
+        self.backend = Game()
+        self.timer = arcade.Text("Time: " + str(int(self.backend.timer - self.backend.game_time)), 2*WINDOW_WIDTH/3, 0, arcade.color.GREEN_YELLOW, 24)
 
 
     def load_background_textures(self, spritesheet):
@@ -58,12 +65,9 @@ class GameView(arcade.View):
         self.load_background_textures(spritesheet)
 
         # Load player, log, vehicle, and turtle textures
-        self.player.load_textures(spritesheet)
-        self.sprite_list.append(self.player.sprite)
-
         for log in self.logs:
             log.load_textures(spritesheet)
-            self.sprite_list.extend(log.sprite)
+            self.log_sprites.extend(log.sprite)
 
         for car in self.cars:
             car.load_textures(spritesheet)
@@ -71,7 +75,15 @@ class GameView(arcade.View):
 
         for turtle in self.turtles:
             turtle.load_textures(spritesheet)
-            self.sprite_list.extend(turtle.sprite)
+            self.turtle_sprites.extend(turtle.sprite)
+
+        # Adding obstacle sprites to main sprite list
+        self.sprite_list.extend(self.log_sprites)
+        self.sprite_list.extend(self.car_sprites)
+        self.sprite_list.extend(self.turtle_sprites)
+
+        self.player.load_textures(spritesheet)
+        self.sprite_list.append(self.player.sprite)
 
 
     def draw_background(self):
@@ -122,10 +134,8 @@ class GameView(arcade.View):
                                                      SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
 
 
-    def create_sprites(self):
+    def make_objects(self):
         '''Create some example sprites to demonstrate the process'''
-
-        self.player = Frog(WINDOW_WIDTH/2, SCALED_SQUARE*1.5)
 
         # TODO: change the initial xpos for each of these and add more of each
         # Example vehicles
@@ -147,18 +157,29 @@ class GameView(arcade.View):
     # Resets game
     def reset(self):
         '''Resets the game'''
-        # TODO: what is this stuff doing?
-        x = SCALED_SQUARE * .5
-        y = SCALED_SQUARE * 8.5
+        self.backend.reset()
+        self.player.xpos = WINDOW_WIDTH/2
+        self.player.ypos = SCALED_SQUARE*1.5
 
-        row1 = []
-        row1.append(Log(3, 0, y))
-        row1.append(Log(3, 4*x, y))
+        self.turtles: list[Turt] = []
+        self.logs: list[Log] = []
+        self.cars: list[Car] = []
+
+        self.sprite_list = arcade.SpriteList()
+        self.car_sprites = arcade.SpriteList()
+        self.turtle_sprites = arcade.SpriteList()
+        self.log_sprites = arcade.SpriteList()
+
+        self.make_objects()
+        self.load_textures()
 
 
     # Renders everything
     def on_draw(self):
         self.clear()
+
+        # Timer Display
+        self.timer.draw()
 
         self.draw_background()
         self.sprite_list.draw()
@@ -171,6 +192,28 @@ class GameView(arcade.View):
             log.update(delta_time)
         for car in self.cars:
             car.update(delta_time)
+        self.player.update()
+
+        self.backend.update_timer(delta_time)
+        time = int(self.backend.timer - self.backend.game_time)
+        self.timer.text = "Time: " + str(time)
+        if time <= 0:
+            self.player.death()
+
+
+        # Collision detection with cars
+        if (arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites)):
+            # reset frog to starting position
+            self.player.death()
+
+        # determine if in water or not
+        if (SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 11):
+            # check if on log or not
+            if (not arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites) or
+                not arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites)):
+                self.player.death()
+
+
 
     # Triggers when a key is released
     def on_key_release(self, key, modifiers):
@@ -181,7 +224,11 @@ class GameView(arcade.View):
     # Triggers when a key is pressed
     def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument
-        self.player.move(symbol)
+        move_keys = [arcade.key.UP, arcade.key.DOWN, arcade.key.RIGHT, arcade.key.LEFT, arcade.key.W, arcade.key.A, arcade.key.S, arcade.key.D]
+        if symbol in move_keys:
+            self.player.move(symbol)
+        elif symbol == arcade.key.ESCAPE:
+            arcade.close_window()
 
 
 def main():
@@ -195,7 +242,7 @@ def main():
     window.show_view(game)
 
     # Load textures
-    game.create_sprites()
+    game.make_objects()
     game.load_textures()
 
     # Start the arcade game loop

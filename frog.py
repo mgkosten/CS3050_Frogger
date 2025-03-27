@@ -9,28 +9,26 @@ class Directions(Enum):
     down = 4
 
 class Frog:
-    def __init__(self, xpos, ypos):
-        self.xpos = xpos
-        self.ypos = ypos
+    def __init__(self):
+        self.xpos = WINDOW_WIDTH/2
+        self.ypos = SCALED_SQUARE*1.5
         self.lives = 3
         self.sprite = None
         self.direction = Directions.up
 
     def load_textures(self, spritesheet):
+        '''Load frog texture and sprite'''
         frog_up = spritesheet.get_texture(
             arcade.LBWH(1, 1, SPRITE_SQUARE, SPRITE_SQUARE))
 
         self.sprite = arcade.Sprite(frog_up, SCALE, self.xpos, self.ypos)
 
-    # Resets game
-    def reset(self):
-        '''Reset frog's position'''
-        # TODO: write this function which resets the frog to start position
-        # I think this would be called from the GameView class when the frog dies
+    def update(self):
+        self.sprite.center_x = self.xpos
+        self.sprite.center_y = self.ypos
 
     def move(self, key):
         '''Move the frog on key press'''
-        # TODO: call this function in on_key_press
         # TODO: Add way to move frog when key is held down: timer or something
         # TODO: show a different sprite based on which direction it's facing
 
@@ -45,13 +43,22 @@ class Frog:
 
         # check boundaries of frogs position (ensure not go offscreen)
         # horizontal boundary check
-        if frog_x > WINDOW_WIDTH - SCALED_SQUARE / 2:
-            frog.center_x = WINDOW_WIDTH - SCALED_SQUARE / 2
-        elif frog_x < SCALED_SQUARE / 2:
-            frog.center_x = SCALED_SQUARE / 2
+        if self.xpos > WINDOW_WIDTH - SCALED_SQUARE / 2:
+            self.xpos = WINDOW_WIDTH - SCALED_SQUARE / 2
+        elif self.xpos < SCALED_SQUARE / 2:
+            self.xpos = SCALED_SQUARE / 2
 
         # vertical boundary check
-        if frog_y > WINDOW_HEIGHT - SCALED_SQUARE / 2 - SCALED_SQUARE * 2:
-            frog.center_y = WINDOW_HEIGHT - SCALED_SQUARE / 2 - SCALED_SQUARE * 2
-        if frog_y < SCALED_SQUARE / 2 + SCALED_SQUARE:
-            frog.center_y = SCALED_SQUARE / 2 + SCALED_SQUARE
+        if self.ypos > WINDOW_HEIGHT - SCALED_SQUARE / 2 - SCALED_SQUARE * 2:
+            self.ypos = WINDOW_HEIGHT - SCALED_SQUARE / 2 - SCALED_SQUARE * 2
+        elif self.ypos < SCALED_SQUARE / 2 + SCALED_SQUARE:
+            self.ypos = SCALED_SQUARE / 2 + SCALED_SQUARE
+
+    # Resets game
+    def death(self):
+        '''Call when the player frog dies'''
+        self.lives -= 1
+
+        # Reset to starting position
+        self.xpos = WINDOW_WIDTH/2
+        self.ypos = SCALED_SQUARE*1.5
