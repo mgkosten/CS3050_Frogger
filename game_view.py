@@ -4,11 +4,10 @@ import arcade
 from constants import *
 from game import Game
 from frog import Frog
-from turtle import Turtle
+from turt import Turt
 from log import Log
 from car import Car
 
-# pylint: disable=too-many-instance-attributes
 # pylint: disable=fixme
 
 class GameView(arcade.View):
@@ -19,23 +18,16 @@ class GameView(arcade.View):
         self.textures = {}
 
         # Creating Containers for obstacles (and player)
-        self.player = Frog(WINDOW_WIDTH/2, SCALED_SQUARE*1.5)
-        self.turtles = []
-        self.logs = []
-        self.cars = []
+        self.player : Frog = None
+        self.turtles : list[Turt] = []
+        self.logs : list[Log] = []
+        self.cars : list[Car] = []
 
         # Creating SpriteList
-        self.spriteList = arcade.SpriteList()
-
-        # self.small_log_sprites = None
-        # self.medium_log_sprites = None
-        # self.large_log_sprites = None
-        # self.triple_turtle_sprites = None
-        # self.double_turtle_sprites = None
+        self.sprite_list = arcade.SpriteList()
 
 
-
-    def _load_background_textures(self, spritesheet):
+    def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
         self.textures['water'] = spritesheet.get_texture(arcade.LBWH(1, 390, 28, 32))
         self.textures['median'] = spritesheet.get_texture(
@@ -63,27 +55,24 @@ class GameView(arcade.View):
         # Load the spritesheet - https://www.spriters-resource.com/arcade/frogger/sheet/11067/
         spritesheet = arcade.load_spritesheet('assets/spritesheet_transparent.png')
 
-        # Call helper methods to load textures
-        self._load_background_textures(spritesheet)
+        self.load_background_textures(spritesheet)
+
+        # Load player, log, vehicle, and turtle textures
         self.player.load_textures(spritesheet)
-        self.spriteList.append(self.player.sprite)
+        self.sprite_list.append(self.player.sprite)
 
         for log in self.logs:
             log.load_textures(spritesheet)
-            self.spriteList.extend(log.sprite)
+            self.sprite_list.extend(log.sprite)
 
         for car in self.cars:
             car.load_textures(spritesheet)
-            self.spriteList.append(car.sprite)
+            self.sprite_list.append(car.sprite)
 
         for turtle in self.turtles:
             turtle.load_textures(spritesheet)
-            self.spriteList.extend(turtle.sprite)
+            self.sprite_list.extend(turtle.sprite)
 
-        # self.player.load_textures(spritesheet)
-        # self.cars.load_textures(spritesheet)
-        # self.logs.load_texture(spritesheet)
-        # self.turtles.load_textures(spritesheet)
 
     def draw_background(self):
         '''Draws the background image including median strips and ending homes.'''
@@ -122,10 +111,12 @@ class GameView(arcade.View):
             # Draw homes
             if x % (SCALED_SQUARE*3) == 0:
                 arcade.draw_texture_rect(self.textures['homes'],
-                                         arcade.LBWH(x, SCALED_SQUARE*13, SCALED_SQUARE*2, SCALED_SQUARE*1.5))
+                                         arcade.LBWH(x, SCALED_SQUARE*13,
+                                                     SCALED_SQUARE*2, SCALED_SQUARE*1.5))
             if x % (SCALED_SQUARE*3) == SCALED_SQUARE*2:
                 arcade.draw_texture_rect(self.textures['grass'],
-                                         arcade.LBWH(x, SCALED_SQUARE*13, SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
+                                         arcade.LBWH(x, SCALED_SQUARE*13,
+                                                     SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
                 arcade.draw_texture_rect(self.textures['grass'],
                                          arcade.LBWH(x+SCALED_SQUARE*.5, SCALED_SQUARE*13,
                                                      SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
@@ -133,87 +124,30 @@ class GameView(arcade.View):
 
     def create_sprites(self):
         '''Create some example sprites to demonstrate the process'''
-        # pylint: disable=too-many-statements
-        # Example of frog starting in the middle of bottom median
 
-        self.turtles.append(Turtle(1000, WINDOW_WIDTH/2,WINDOW_HEIGHT))
-        self.logs.append(Log(1,1,1, 1))
-        self.cars.append(Car(1, 1, 15, 5))
+        self.player = Frog(WINDOW_WIDTH/2, SCALED_SQUARE*1.5)
 
+        # TODO: change the initial xpos for each of these and add more of each
+        # Example vehicles
+        self.cars.append(Car(1, -1, WINDOW_WIDTH/2, SCALED_SQUARE*2.5))
+        self.cars.append(Car(2, 1, WINDOW_WIDTH/2, SCALED_SQUARE*3.5))
+        self.cars.append(Car(3, -1, WINDOW_WIDTH/2, SCALED_SQUARE*4.5))
+        self.cars.append(Car(4, 1, WINDOW_WIDTH/2, SCALED_SQUARE*5.5))
+        self.cars.append(Car(5, -1, WINDOW_WIDTH/2, SCALED_SQUARE*6.5))
 
-
-        # self.frog_sprites = arcade.SpriteList()
-        # y = SCALED_SQUARE*1.5
-        # self.frog_sprites.append(arcade.Sprite(self.textures['frog_up'], SCALE, WINDOW_WIDTH/2, y))
-        # # Car/Truck examples - ordered by rows of highway
-        # self.car_1_sprites = arcade.SpriteList()
-        # y += SCALED_SQUARE
-        # self.car_1_sprites.append(arcade.Sprite(self.textures['car_1'], SCALE,
-        #                                         WINDOW_WIDTH-SCALED_SQUARE*.5, y))
-        # self.car_2_sprites = arcade.SpriteList()
-        # y += SCALED_SQUARE
-        # self.car_2_sprites.append(arcade.Sprite(self.textures['car_2'], SCALE,
-        #                                         SCALED_SQUARE*.5, y))
-        # self.car_3_sprites = arcade.SpriteList()
-        # y += SCALED_SQUARE
-        # self.car_3_sprites.append(arcade.Sprite(self.textures['car_3'], SCALE,
-        #                                         WINDOW_WIDTH-SCALED_SQUARE*.5, y))
-        # self.car_4_sprites = arcade.SpriteList()
-        # y += SCALED_SQUARE
-        # self.car_4_sprites.append(arcade.Sprite(self.textures['car_4'], SCALE,
-        #                                         SCALED_SQUARE*.5, y))
-        # self.truck_sprites = arcade.SpriteList()
-        # y += SCALED_SQUARE
-        # self.truck_sprites.append(arcade.Sprite(self.textures['truck'], SCALE,
-        #                                         WINDOW_WIDTH-SCALED_SQUARE, y))
-        # # Example of a small log - row 1 of water
-        # self.small_log_sprites = arcade.SpriteList()
-        # x = SCALED_SQUARE*.5
-        # y = SCALED_SQUARE*8.5
-        # self.small_log_sprites.append(arcade.Sprite(self.textures['log_left'], SCALE, x, y))
-        # x += SCALED_SQUARE
-        # self.small_log_sprites.append(arcade.Sprite(self.textures['log_middle'], SCALE, x, y))
-        # x += SCALED_SQUARE
-        # self.small_log_sprites.append(arcade.Sprite(self.textures['log_right'], SCALE, x, y))
-        # # Example of 3 turtles - row 2 of water
-        # self.triple_turtle_sprites = arcade.SpriteList()
-        # x = WINDOW_WIDTH-SCALED_SQUARE*.5
-        # y += SCALED_SQUARE
-        # for _ in range(3):
-        #     self.triple_turtle_sprites.append(arcade.Sprite(self.textures['turtle_2'], SCALE, x, y))
-        #     x -= SCALED_SQUARE
-        # # Example of a medium log - row 3 of water
-        # self.medium_log_sprites = arcade.SpriteList()
-        # x = SCALED_SQUARE*.5
-        # y += SCALED_SQUARE
-        # self.medium_log_sprites.append(arcade.Sprite(self.textures['log_left'], SCALE, x, y))
-        # x += SCALED_SQUARE
-        # for _ in range(2):
-        #     self.medium_log_sprites.append(arcade.Sprite(self.textures['log_middle'], SCALE, x, y))
-        #     x += SCALED_SQUARE
-        # self.medium_log_sprites.append(arcade.Sprite(self.textures['log_right'], SCALE, x, y))
-        # # Example of 2 turtles - row 4 of water
-        # self.double_turtle_sprites = arcade.SpriteList()
-        # x = WINDOW_WIDTH-SCALED_SQUARE*.5
-        # y += SCALED_SQUARE
-        # for _ in range(2):
-        #     self.double_turtle_sprites.append(arcade.Sprite(self.textures['turtle_2'], SCALE, x, y))
-        #     x -= SCALED_SQUARE
-        # # Example of a large log - row 5 of water
-        # self.large_log_sprites = arcade.SpriteList()
-        # x = SCALED_SQUARE*.5
-        # y += SCALED_SQUARE
-        # self.large_log_sprites.append(arcade.Sprite(self.textures['log_left'], SCALE, x, y))
-        # x += SCALED_SQUARE
-        # for _ in range(4):
-        #     self.large_log_sprites.append(arcade.Sprite(self.textures['log_middle'], SCALE, x, y))
-        #     x += SCALED_SQUARE
-        # self.large_log_sprites.append(arcade.Sprite(self.textures['log_right'], SCALE, x, y))
+        # # Example of 3 turtles - rows 1 and 4 of water
+        self.turtles.append(Turt(3, WINDOW_WIDTH/2, SCALED_SQUARE*8.5))
+        self.turtles.append(Turt(2, WINDOW_WIDTH/2, SCALED_SQUARE*11.5))
+        # # Example of a small, medium, and large log - rows 2, 3, and 5 of water
+        self.logs.append(Log(3, WINDOW_WIDTH/2, SCALED_SQUARE*9.5))
+        self.logs.append(Log(4, WINDOW_WIDTH/2, SCALED_SQUARE*10.5))
+        self.logs.append(Log(6, WINDOW_WIDTH/2, SCALED_SQUARE*12.5))
 
 
     # Resets game
     def reset(self):
         '''Resets the game'''
+        # TODO: what is this stuff doing?
         x = SCALED_SQUARE * .5
         y = SCALED_SQUARE * 8.5
 
@@ -227,40 +161,22 @@ class GameView(arcade.View):
         self.clear()
 
         self.draw_background()
-        self.spriteList.draw()
-
-
-        # Draw example sprites
-        # self.cars.draw()
-        # self.car_1_sprites.draw()
-        # self.car_2_sprites.draw()
-        # self.car_3_sprites.draw()
-        # self.car_4_sprites.draw()
-        # self.truck_sprites.draw()
-        # self.small_log_sprites.draw()
-        # self.medium_log_sprites.draw()
-        # self.large_log_sprites.draw()
-        # self.player.draw()
-        # self.turtles.draw()
-        # self.cars.draw()
+        self.sprite_list.draw()
 
     # Frame update
-    # TODO: Add info to change direction frog is facing based on movement
     def on_update(self, delta_time):
         pass
 
     # Triggers when a key is released
     def on_key_release(self, key, modifiers):
         # pylint: disable=unused-argument
+        # TODO: do we need this function?
         pass
 
     # Triggers when a key is pressed
     def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument
-
         self.player.move(symbol)
-
-    # TODO: Add way to move frog when key is held down: timer or something
 
 
 def main():
@@ -276,12 +192,6 @@ def main():
     # Load textures
     game.create_sprites()
     game.load_textures()
-
-
-    # # Create example sprites
-    # game.create_example_sprites()
-    # self.cars.create_cars()
-    # self.turtles.create_sprites()
 
     # Start the arcade game loop
     arcade.run()
