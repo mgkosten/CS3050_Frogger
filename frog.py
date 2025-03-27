@@ -34,18 +34,14 @@ class Frog:
         # TODO: Add way to move frog when key is held down: timer or something
         # TODO: show a different sprite based on which direction it's facing
 
-        frog = self.sprite
-        if key == arcade.key.UP:
-            frog.center_y += SCALED_SQUARE
-        elif key == arcade.key.DOWN:
-            frog.center_y -= SCALED_SQUARE
-        elif key == arcade.key.LEFT:
-            frog.center_x -= SCALED_SQUARE
-        elif key == arcade.key.RIGHT:
-            frog.center_x += SCALED_SQUARE
-
-        frog_x = frog.center_x
-        frog_y = frog.center_y
+        if key in [arcade.key.UP, arcade.key.W]:
+            self.ypos += SCALED_SQUARE
+        elif key in [arcade.key.DOWN, arcade.key.S]:
+            self.ypos -= SCALED_SQUARE
+        elif key in [arcade.key.LEFT, arcade.key.A]:
+            self.xpos -= SCALED_SQUARE
+        elif key in [arcade.key.RIGHT, arcade.key.D]:
+            self.xpos += SCALED_SQUARE
 
         # check boundaries of frogs position (ensure not go offscreen)
         # horizontal boundary check

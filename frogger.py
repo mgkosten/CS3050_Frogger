@@ -6,16 +6,6 @@ from constants import *
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=fixme
 
-# # Change this SCALE constant to resize the window and everything is scaled appropriately
-# SCALE = 2
-# SPRITE_SQUARE = 16
-# SCALED_SQUARE = SPRITE_SQUARE*SCALE
-# #for controlling animation speed
-# OBSTACLE_SPEED = 3
-# WINDOW_WIDTH = 28*8*SCALE
-# WINDOW_HEIGHT = 32*8*SCALE
-# WINDOW_TITLE = "Frogger"
-
 class GameView(arcade.View):
     '''GameView class for running and displaying the game'''
     def __init__(self):
@@ -358,6 +348,35 @@ class GameView(arcade.View):
     def on_update(self, delta_time):
         # update frog position
         self.frog_sprites.update()
+
+        # check for collision with cars/trucks
+        if arcade.check_for_collision_with_list(self.frog_sprites[0], self.car_1_sprites) or \
+            arcade.check_for_collision_with_list(self.frog_sprites[0], self.car_2_sprites) or \
+            arcade.check_for_collision_with_list(self.frog_sprites[0], self.car_3_sprites) or \
+            arcade.check_for_collision_with_list(self.frog_sprites[0], self.car_4_sprites) or \
+            arcade.check_for_collision_with_list(self.frog_sprites[0], self.truck_sprites):
+            # reset frog to starting position
+            self.frog_sprites[0].center_x = WINDOW_WIDTH/2
+            self.frog_sprites[0].center_y = SCALED_SQUARE*.5
+        # check if in water
+        if SCALED_SQUARE * 8 < self.frog_sprites[0].center_y < SCALED_SQUARE * 11:
+            # determine if on log or not
+            if not (arcade.check_for_collision_with_list(self.frog_sprites[0], self.double_turtle_sprites) or \
+                arcade.check_for_collision_with_list(self.frog_sprites[0], self.triple_turtle_sprites) or \
+                arcade.check_for_collision_with_list(self.frog_sprites[0], self.small_log_sprites) or \
+                arcade.check_for_collision_with_list(self.frog_sprites[0], self.medium_log_sprites) or \
+                arcade.check_for_collision_with_list(self.frog_sprites[0], self.large_log_sprites)):
+                # reset frog to starting position
+                self.frog_sprites[0].center_x = WINDOW_WIDTH / 2
+                self.frog_sprites[0].center_y = SCALED_SQUARE * .5
+            # TODO: make it so you die upon hitting the side when on the log
+            else:
+                # move the frog with the log or turtles (determine direction below)
+                if arcade.check_for_collision_with_list(self.frog_sprites[0], self.triple_turtle_sprites) or \
+                        arcade.check_for_collision_with_list(self.frog_sprites[0], self.double_turtle_sprites):
+                    self.frog_sprites[0].center_x -= OBSTACLE_SPEED
+                else:
+                    self.frog_sprites[0].center_x += OBSTACLE_SPEED
 
         # get frog current position
         frog = self.frog_sprites[0]

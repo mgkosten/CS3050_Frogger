@@ -67,7 +67,7 @@ class GameView(arcade.View):
 
         for car in self.cars:
             car.load_textures(spritesheet)
-            self.sprite_list.append(car.sprite)
+            self.car_sprites.append(car.sprite)
 
         for turtle in self.turtles:
             turtle.load_textures(spritesheet)
