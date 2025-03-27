@@ -3,7 +3,7 @@ from constants import *
 
 class Turt:
     def __init__(self, length, xpos, ypos):
-        self.speed = OBSTACLE_SPEED
+        self.speed = -OBSTACLE_SPEED
         self.length = length
         self.xpos = xpos
         self.ypos = ypos

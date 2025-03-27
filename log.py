@@ -1,10 +1,10 @@
-from constants import *
 import arcade
+from constants import *
 
 class Log:
-    def __init__(self, length, direction, xpos, ypos):
+    def __init__(self, length, xpos, ypos):
         self.length = length
-        self.speed = direction * OBSTACLE_SPEED
+        self.speed = OBSTACLE_SPEED
         self.xpos = xpos
         self.ypos = ypos
         self.sprite = arcade.SpriteList()
@@ -33,4 +33,3 @@ class Log:
             self.sprite.append(arcade.Sprite(mid_log, SCALE, x, y))
             x += SCALED_SQUARE
         self.sprite.append(arcade.Sprite(right_log, SCALE, x, y))
-
