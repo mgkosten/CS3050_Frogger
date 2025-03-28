@@ -1,5 +1,5 @@
 '''Frogger game implemented using Python Arcade.'''
-
+# pylint: disable=wildcard-import, unused-wildcard-import, fixme, too-many-instance-attributes
 import arcade
 from constants import *
 from game import Game
@@ -7,8 +7,6 @@ from frog import Frog
 from turt import Turt
 from log import Log
 from car import Car
-
-# pylint: disable=fixme
 
 class GameView(arcade.View):
     '''GameView class for running and displaying the game'''
@@ -18,10 +16,10 @@ class GameView(arcade.View):
         self.textures = {}
 
         # Creating Containers for obstacles (and player)
-        self.player : Frog = Frog()
-        self.turtles : list[Turt] = []
-        self.logs : list[Log] = []
-        self.cars : list[Car] = []
+        self.player = Frog()
+        self.turtles = []
+        self.logs = []
+        self.cars = []
 
         # Creating SpriteList
         self.sprite_list = arcade.SpriteList()
@@ -144,7 +142,6 @@ class GameView(arcade.View):
 
     def make_objects(self):
         '''Create some example sprites to demonstrate the process'''
-
         # TODO: change the initial xpos for each of these and add more of each
         # Example vehicles
         self.cars.append(Car(1, -1, WINDOW_WIDTH/2, SCALED_SQUARE*2.5))
@@ -153,13 +150,13 @@ class GameView(arcade.View):
         self.cars.append(Car(4, 1, WINDOW_WIDTH/2, SCALED_SQUARE*5.5))
         self.cars.append(Car(5, -1, WINDOW_WIDTH/2, SCALED_SQUARE*6.5))
 
-        # # Example of 3 turtles - rows 1 and 4 of water
+        # Example of triple and double turtles - rows 1 and 4 of water
         self.turtles.append(Turt(3, WINDOW_WIDTH/2, SCALED_SQUARE*8.5))
         self.turtles.append(Turt(2, WINDOW_WIDTH/2, SCALED_SQUARE*11.5))
-        # # Example of a small, medium, and large log - rows 2, 3, and 5 of water
+        # Example of a small, large, and medium log - rows 2, 3, and 5 of water
         self.logs.append(Log(3, WINDOW_WIDTH/2, SCALED_SQUARE*9.5))
-        self.logs.append(Log(4, WINDOW_WIDTH/2, SCALED_SQUARE*10.5))
-        self.logs.append(Log(6, WINDOW_WIDTH/2, SCALED_SQUARE*12.5))
+        self.logs.append(Log(6, WINDOW_WIDTH/2, SCALED_SQUARE*10.5))
+        self.logs.append(Log(4, WINDOW_WIDTH/2, SCALED_SQUARE*12.5))
 
 
     # Resets game
@@ -169,9 +166,9 @@ class GameView(arcade.View):
         self.player.xpos = WINDOW_WIDTH/2
         self.player.ypos = SCALED_SQUARE*1.5
 
-        self.turtles: list[Turt] = []
-        self.logs: list[Log] = []
-        self.cars: list[Car] = []
+        self.turtles = []
+        self.logs = []
+        self.cars = []
 
         self.sprite_list = arcade.SpriteList()
         self.car_sprites = arcade.SpriteList()
@@ -210,18 +207,18 @@ class GameView(arcade.View):
 
 
         # Collision detection with cars
-        if (arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites)):
+        if arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites):
             # reset frog to starting position
             self.player.death()
 
         # determine if in water or not
-        if (SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13):
+        if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
             # check if on log or not
             if not (arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites) or
                 arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites)):
                 self.player.death()
             else:
-                if (arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites)):
+                if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
                     self.player.xpos += self.logs[0].speed * delta_time
                 else:
                     self.player.xpos += self.turtles[0].speed * delta_time

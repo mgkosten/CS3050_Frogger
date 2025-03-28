@@ -59,7 +59,7 @@ class Frog:
             self.ypos = SCALED_SQUARE / 2 + SCALED_SQUARE
 
     def death(self):
-        '''Call when the player frog dies'''
+        '''Call when the player frog dies to decrement lives and reset position'''
         self.lives -= 1
 
         # Reset to starting position
