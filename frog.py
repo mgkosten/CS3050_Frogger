@@ -1,45 +1,49 @@
+'''Frog class'''
+# pylint: disable=wildcard-import, unused-wildcard-import
 import arcade
 from constants import *
-from enum import Enum
-
-class Directions(Enum):
-    left = 1
-    right = 2
-    up = 3
-    down = 4
 
 class Frog:
+    '''Frog class for the player character'''
     def __init__(self):
         self.xpos = WINDOW_WIDTH/2
         self.ypos = SCALED_SQUARE*1.5
         self.lives = 3
         self.sprite = None
-        self.direction = Directions.up
+        self.textures = {}
 
     def load_textures(self, spritesheet):
         '''Load frog texture and sprite'''
-        frog_up = spritesheet.get_texture(
+        self.textures['frog_up'] = spritesheet.get_texture(
             arcade.LBWH(1, 1, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['frog_left'] = spritesheet.get_texture(
+            arcade.LBWH(37, 1, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['frog_down'] = spritesheet.get_texture(
+            arcade.LBWH(73, 1, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['frog_right'] = spritesheet.get_texture(
+            arcade.LBWH(109, 1, SPRITE_SQUARE, SPRITE_SQUARE))
 
-        self.sprite = arcade.Sprite(frog_up, SCALE, self.xpos, self.ypos)
+        self.sprite = arcade.Sprite(self.textures['frog_up'], SCALE, self.xpos, self.ypos)
 
     def update(self):
+        '''Call in on_update to keep the sprite position updated'''
         self.sprite.center_x = self.xpos
         self.sprite.center_y = self.ypos
 
     def move(self, key):
-        '''Move the frog on key press'''
-        # TODO: Add way to move frog when key is held down: timer or something
-        # TODO: show a different sprite based on which direction it's facing
-
+        '''Move the frog on key press and change the sprite texture'''
         if key in [arcade.key.UP, arcade.key.W]:
             self.ypos += SCALED_SQUARE
+            self.sprite.texture = self.textures['frog_up']
         elif key in [arcade.key.DOWN, arcade.key.S]:
             self.ypos -= SCALED_SQUARE
+            self.sprite.texture = self.textures['frog_down']
         elif key in [arcade.key.LEFT, arcade.key.A]:
             self.xpos -= SCALED_SQUARE
+            self.sprite.texture = self.textures['frog_left']
         elif key in [arcade.key.RIGHT, arcade.key.D]:
             self.xpos += SCALED_SQUARE
+            self.sprite.texture = self.textures['frog_right']
 
         # check boundaries of frogs position (ensure not go offscreen)
         # horizontal boundary check
@@ -54,7 +58,6 @@ class Frog:
         elif self.ypos < SCALED_SQUARE / 2 + SCALED_SQUARE:
             self.ypos = SCALED_SQUARE / 2 + SCALED_SQUARE
 
-    # Resets game
     def death(self):
         '''Call when the player frog dies'''
         self.lives -= 1
