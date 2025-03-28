@@ -31,7 +31,8 @@ class GameView(arcade.View):
 
         # Creating timer and game backend
         self.backend = Game()
-        self.timer = arcade.Text("Time: " + str(int(self.backend.timer - self.backend.game_time)), 2*WINDOW_WIDTH/3, 0, arcade.color.GREEN_YELLOW, 24)
+        self.timer = arcade.Text("Time: " + str(int(self.backend.timer - self.backend.game_time)),
+                                 2*WINDOW_WIDTH/3, 0, arcade.color.GREEN_YELLOW, 24)
 
 
     def load_background_textures(self, spritesheet):
@@ -54,11 +55,13 @@ class GameView(arcade.View):
             arcade.LBWH(55, 232, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['title_e'] = spritesheet.get_texture(
             arcade.LBWH(73, 232, SPRITE_SQUARE, SPRITE_SQUARE))
+        # Lives tracker
+        self.textures['lives'] = spritesheet.get_texture(
+            arcade.LBWH(37, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
 
 
     def load_textures(self):
         '''Loads sprite textures from the spritesheet'''
-        # I can't figure out how get_texture_grid() works, but I think that might be useful
         # Load the spritesheet - https://www.spriters-resource.com/arcade/frogger/sheet/11067/
         spritesheet = arcade.load_spritesheet('assets/spritesheet_transparent.png')
 
@@ -132,6 +135,11 @@ class GameView(arcade.View):
                 arcade.draw_texture_rect(self.textures['grass'],
                                          arcade.LBWH(x+SCALED_SQUARE*.5, SCALED_SQUARE*13,
                                                      SCALED_SQUARE*.5, SCALED_SQUARE*1.5))
+        # Draw remaining lives
+        for i in range(self.player.lives):
+            arcade.draw_texture_rect(self.textures['lives'],
+                                     arcade.LBWH(i*SCALED_SQUARE*.5, SCALED_SQUARE*.5,
+                                                 SCALED_SQUARE*.5, SCALED_SQUARE*.5))
 
 
     def make_objects(self):
@@ -217,20 +225,23 @@ class GameView(arcade.View):
                     self.player.xpos += self.logs[0].speed * delta_time
                 else:
                     self.player.xpos += self.turtles[0].speed * delta_time
-                # self.frog_sprites[0].center_x -= OBSTACLE_SPEED
 
+        if self.player.lives == 0:
+            # TODO: Show game over screen
+            self.backend.game_over = True
 
 
     # Triggers when a key is released
     def on_key_release(self, key, modifiers):
         # pylint: disable=unused-argument
-        # TODO: do we need this function?
+        # TODO: Add way to move frog when key is held down: timer or something
         pass
 
     # Triggers when a key is pressed
     def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument
-        move_keys = [arcade.key.UP, arcade.key.DOWN, arcade.key.RIGHT, arcade.key.LEFT, arcade.key.W, arcade.key.A, arcade.key.S, arcade.key.D]
+        move_keys = [arcade.key.UP, arcade.key.DOWN, arcade.key.RIGHT, arcade.key.LEFT,
+                     arcade.key.W, arcade.key.A, arcade.key.S, arcade.key.D]
         if symbol in move_keys:
             self.player.move(symbol)
         elif symbol == arcade.key.ESCAPE:
