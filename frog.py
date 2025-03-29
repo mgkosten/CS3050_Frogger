@@ -65,3 +65,4 @@ class Frog:
         # Reset to starting position
         self.xpos = WINDOW_WIDTH/2
         self.ypos = SCALED_SQUARE*1.5
+        self.sprite.texture = self.textures['frog_up']
