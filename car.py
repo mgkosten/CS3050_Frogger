@@ -43,10 +43,10 @@ class Car:
 
     def update(self, delta_time):
         '''Call in on_update to move the car'''
-        self.xpos += self.speed * delta_time
-        if self.xpos > WINDOW_WIDTH and self.speed > 0:
-            self.xpos = 0
-        elif self.xpos < 0 and self.speed < 0:
-            self.xpos = WINDOW_WIDTH
+        self.xpos += (self.speed + ((self.car_type-5)*5)) * delta_time
+        if self.xpos > WINDOW_WIDTH + 25 and self.speed > 0:
+            self.xpos = -25
+        elif self.xpos < -25 and self.speed < 0:
+            self.xpos = WINDOW_WIDTH + 25
 
         self.sprite.center_x = self.xpos

@@ -33,7 +33,7 @@ class Turt:
         self.xpos += self.speed * delta_time
         if self.xpos > WINDOW_WIDTH and self.speed > 0:
             self.xpos = 0
-        elif self.xpos < 0 and self.speed < 0:
+        elif self.xpos < -100 and self.speed < 0:
             self.xpos = WINDOW_WIDTH
 
         x = self.xpos

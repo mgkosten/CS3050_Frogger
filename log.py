@@ -34,9 +34,9 @@ class Log:
 
     def update(self, delta_time):
         '''Call in on_update to move the log'''
-        self.xpos += self.speed * delta_time
+        self.xpos += (self.speed - self.length*5)* delta_time
         if self.xpos > WINDOW_WIDTH and self.speed > 0:
-            self.xpos = 0
+            self.xpos = -200
         elif self.xpos < 0 and self.speed < 0:
             self.xpos = WINDOW_WIDTH
 
