@@ -32,9 +32,9 @@ class Turt:
         '''Call in on_update to move the turtle group'''
         self.xpos += self.speed * delta_time
         if self.xpos > WINDOW_WIDTH and self.speed > 0:
-            self.xpos = 0
-        elif self.xpos < -100 and self.speed < 0:
-            self.xpos = WINDOW_WIDTH
+            self.xpos = -SCALED_SQUARE
+        elif self.xpos < -SCALED_SQUARE and self.speed < 0:
+            self.xpos = WINDOW_WIDTH + SCALED_SQUARE
 
         x = self.xpos
         for sprite in self.sprite:

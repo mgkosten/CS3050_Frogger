@@ -166,7 +166,7 @@ class GameView(arcade.View):
         self.logs.append(Log(6, WINDOW_WIDTH/2, SCALED_SQUARE*10.5))
         self.logs.append(Log(6, WINDOW_WIDTH, SCALED_SQUARE*10.5))
         self.logs.append(Log(4, WINDOW_WIDTH/2, SCALED_SQUARE*12.5))
-        self.logs.append(Log(4, WINDOW_WIDTH/3, SCALED_SQUARE*12.5))
+        self.logs.append(Log(4, WINDOW_WIDTH/5, SCALED_SQUARE*12.5))
         self.logs.append(Log(4, 8*WINDOW_WIDTH/9, SCALED_SQUARE*12.5))
 
 

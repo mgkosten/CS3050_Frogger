@@ -36,7 +36,7 @@ class Log:
         '''Call in on_update to move the log'''
         self.xpos += (self.speed - self.length*5)* delta_time
         if self.xpos > WINDOW_WIDTH and self.speed > 0:
-            self.xpos = -200
+            self.xpos = -SCALED_SQUARE * self.length
         elif self.xpos < 0 and self.speed < 0:
             self.xpos = WINDOW_WIDTH
 
