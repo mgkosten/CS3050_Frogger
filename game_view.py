@@ -239,6 +239,20 @@ class GameView(arcade.View):
                     # update speed for when on turtle
                     self.player.xpos += self.turtles[0].speed * delta_time
 
+        # create home center x values
+        homes = []
+        # loop to make 5 homes
+        for i in range(5):
+            homes.append(28 + (SCALED_SQUARE * 3) * i)
+
+        # determine if frog is home
+        if self.player.ypos >= SCALED_SQUARE * 13:
+            for home in homes:
+                if home - SCALED_SQUARE/2 <= self.player.xpos < home + SCALED_SQUARE/2:
+                    print("HOME")
+                else:
+                    self.player.death()
+
         if self.player.lives == 0:
             # TODO: Show game over screen
             self.backend.game_over = True
