@@ -8,3 +8,6 @@ To run the game, rune game_view.py. This will create the game.
 - There are 3 lives. Once all 3 are used the game is over. For each frog you have to make it across within the timer time limit otherwise it is counted as a death
 - Avoid the cars (if hit you will die)
 - Ride the logs and turtles to cross the river, falling in will result in death
+
+## Old Files
+- frogger.py is included in the repo as reference from Sprint One, no longer needs to run or worry about pylint because of class restructuring
