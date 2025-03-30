@@ -189,6 +189,47 @@ class GameView(arcade.View):
         self.make_objects()
         self.load_textures()
 
+    def check_home(self):
+        '''Checks if the frog is in the home area'''
+        # create home center x values
+        homes = []
+        # loop to make 5 homes
+        for i in range(5):
+            homes.append(28 + (SCALED_SQUARE * 3) * i)
+
+        # determine if frog is home
+        if self.player.ypos >= SCALED_SQUARE * 13:
+            for home in homes:
+                if home - SCALED_SQUARE / 2 <= self.player.xpos < home + SCALED_SQUARE / 2:
+                    print("HOME")
+                else:
+                    self.player.death()
+
+    def collision_detect(self, delta_time):
+        '''Collision detection'''
+        # Collision detection with cars
+        if arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites):
+            # reset frog to starting position
+            self.player.death()
+
+        # determine if in water or not
+        if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
+            # check if on log or not
+            if not (arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites) or
+                    arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites)):
+                self.player.death()
+            else:
+                # get correct log speed
+                if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
+                    for log in self.logs:
+                        for log_sprite in log.sprite:  # Iterate over individual sprites in the log
+                            if arcade.check_for_collision(self.player.sprite, log_sprite):
+                                self.player.xpos += (log.speed - log.length * 5) * delta_time
+                                break  # Stop after finding the correct log
+                else:
+                    # update speed for when on turtle
+                    self.player.xpos += self.turtles[0].speed * delta_time
+        self.check_home()
 
     # Renders everything
     def on_draw(self):
@@ -216,42 +257,7 @@ class GameView(arcade.View):
         if time <= 0:
             self.player.death()
 
-        # Collision detection with cars
-        if arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites):
-            # reset frog to starting position
-            self.player.death()
-
-        # determine if in water or not
-        if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
-            # check if on log or not
-            if not (arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites) or
-                arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites)):
-                self.player.death()
-            else:
-                # get correct log speed
-                if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
-                    for log in self.logs:
-                        for log_sprite in log.sprite:  # Iterate over individual sprites in the log
-                            if arcade.check_for_collision(self.player.sprite, log_sprite):
-                                self.player.xpos += (log.speed - log.length * 5) * delta_time
-                                break  # Stop after finding the correct log
-                else:
-                    # update speed for when on turtle
-                    self.player.xpos += self.turtles[0].speed * delta_time
-
-        # create home center x values
-        homes = []
-        # loop to make 5 homes
-        for i in range(5):
-            homes.append(28 + (SCALED_SQUARE * 3) * i)
-
-        # determine if frog is home
-        if self.player.ypos >= SCALED_SQUARE * 13:
-            for home in homes:
-                if home - SCALED_SQUARE/2 <= self.player.xpos < home + SCALED_SQUARE/2:
-                    print("HOME")
-                else:
-                    self.player.death()
+        self.collision_detect(delta_time)
 
         if self.player.lives == 0:
             # TODO: Show game over screen
