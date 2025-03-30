@@ -196,8 +196,12 @@ class GameView(arcade.View):
             for home in homes:
                 if home - SCALED_SQUARE / 2 <= self.player.xpos < home + SCALED_SQUARE / 2:
                     print("HOME")
-                else:
-                    self.player.death()
+                    # TODO: Change this to keep frog there and start a new frog at start
+                    # reset frog
+                    self.player.xpos = WINDOW_WIDTH / 2
+                    self.player.ypos = SCALED_SQUARE * 1.5
+                    return True
+            self.player.death()
 
     def collision_detect(self, delta_time):
         '''Collision detection'''
