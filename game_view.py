@@ -215,18 +215,15 @@ class GameView(arcade.View):
         # determine if in water or not
         if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
             # check if on log or not
-            if not (arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites) or
-                    arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites)):
-                self.player.death()
+            if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
+                for log in self.logs:
+                    if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
+                        self.player.xpos += log.speed * delta_time
+            elif arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites):
+                self.player.xpos += self.turtles[0].speed * delta_time
             else:
-                # get correct log speed
-                if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
-                    for log in self.logs:
-                        if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
-                            self.player.xpos += log.speed * delta_time
-                else:
-                    # update speed for when on turtle
-                    self.player.xpos += self.turtles[0].speed * delta_time
+                self.player.death()
+
         self.check_home()
 
     # Renders everything
