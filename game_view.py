@@ -32,7 +32,6 @@ class GameView(arcade.View):
         self.timer = arcade.Text("Time: " + str(int(self.backend.timer - self.backend.game_time)),
                                  2*WINDOW_WIDTH/3, 0, arcade.color.GREEN_YELLOW, 24)
 
-
     def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
         self.textures['water'] = spritesheet.get_texture(arcade.LBWH(1, 390, 28, 32))
@@ -56,7 +55,6 @@ class GameView(arcade.View):
         # Lives tracker
         self.textures['lives'] = spritesheet.get_texture(
             arcade.LBWH(37, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
-
 
     def load_textures(self):
         '''Loads sprite textures from the spritesheet'''
@@ -85,7 +83,6 @@ class GameView(arcade.View):
 
         self.player.load_textures(spritesheet)
         self.sprite_list.append(self.player.sprite)
-
 
     def draw_background(self):
         '''Draws the background image including median strips and ending homes.'''
@@ -139,11 +136,9 @@ class GameView(arcade.View):
                                      arcade.LBWH(i*SCALED_SQUARE*.5, SCALED_SQUARE*.5,
                                                  SCALED_SQUARE*.5, SCALED_SQUARE*.5))
 
-
     def make_objects(self):
         '''Create some example sprites to demonstrate the process'''
-        # TODO: change the initial xpos for each of these and add more of each
-        # Example vehicles
+        # Create vehicles
         direction = -1
         for i in range(5):
             self.cars.append(Car(i+1,direction,WINDOW_WIDTH/2, SCALED_SQUARE*(2.5+i)))
@@ -151,7 +146,7 @@ class GameView(arcade.View):
             self.cars.append(Car(i+1,direction,7*WINDOW_WIDTH/(7+i), SCALED_SQUARE*(2.5+i)))
             direction = direction * -1
 
-        # Example of triple and double turtles - rows 1 and 4 of water
+        # Create triple and double turtles - rows 1 and 4 of water
         self.turtles.append(Turt(3, WINDOW_WIDTH/2, SCALED_SQUARE*8.5))
         self.turtles.append(Turt(3, 2*WINDOW_WIDTH/9, SCALED_SQUARE*8.5))
         self.turtles.append(Turt(3, 7*WINDOW_WIDTH/9, SCALED_SQUARE*8.5))
@@ -159,7 +154,7 @@ class GameView(arcade.View):
         self.turtles.append(Turt(2, WINDOW_WIDTH/7, SCALED_SQUARE*11.5))
         self.turtles.append(Turt(2, 6*WINDOW_WIDTH/7, SCALED_SQUARE*11.5))
 
-        # Example of a small, large, and medium log - rows 2, 3, and 5 of water
+        # Create small, large, and medium logs - rows 2, 3, and 5 of water
         self.logs.append(Log(3, WINDOW_WIDTH/2, SCALED_SQUARE*9.5))
         self.logs.append(Log(3, 6*WINDOW_WIDTH/7, SCALED_SQUARE*9.5))
         self.logs.append(Log(3, WINDOW_WIDTH/7, SCALED_SQUARE*9.5))
@@ -168,7 +163,6 @@ class GameView(arcade.View):
         self.logs.append(Log(4, WINDOW_WIDTH/2, SCALED_SQUARE*12.5))
         self.logs.append(Log(4, WINDOW_WIDTH/5, SCALED_SQUARE*12.5))
         self.logs.append(Log(4, 8*WINDOW_WIDTH/9, SCALED_SQUARE*12.5))
-
 
     # Resets game
     def reset(self):
@@ -254,10 +248,10 @@ class GameView(arcade.View):
 
         self.collision_detect(delta_time)
 
-        if self.player.lives == 0:
-            # TODO: Show game over screen
+        if self.player.lives <= 0 and not self.backend.game_over:
+            # Show game over screen
             self.backend.game_over = True
-
+            print('GAME OVER')
 
     # Triggers when a key is released
     def on_key_release(self, key, modifiers):
