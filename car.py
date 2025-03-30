@@ -12,7 +12,7 @@ class Car:
         ypos: center y position of car
     '''
     def __init__(self, car_type, direction, xpos, ypos):
-        self.speed = OBSTACLE_SPEED * direction
+        self.speed = OBSTACLE_SPEED * direction + (car_type-5)*5
         self.car_type = car_type
         self.xpos = xpos
         self.ypos = ypos
@@ -43,7 +43,7 @@ class Car:
 
     def update(self, delta_time):
         '''Call in on_update to move the car'''
-        self.xpos += (self.speed + ((self.car_type-5)*5)) * delta_time
+        self.xpos += self.speed * delta_time
         if self.xpos > WINDOW_WIDTH + SCALED_SQUARE and self.speed > 0:
             self.xpos = -SCALED_SQUARE
         elif self.xpos < -SCALED_SQUARE and self.speed < 0:
