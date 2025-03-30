@@ -15,7 +15,7 @@ class Turt:
         self.length = length
         self.xpos = xpos
         self.ypos = ypos
-        self.sprite = arcade.SpriteList()
+        self.sprite_list = arcade.SpriteList()
 
     def load_textures(self, spritesheet):
         '''Load turtle textures and sprites'''
@@ -25,18 +25,16 @@ class Turt:
             arcade.LBWH(19, 152, SPRITE_SQUARE, SPRITE_SQUARE))
 
         for _ in range(self.length):
-            self.sprite.append(arcade.Sprite(turtle_texture, SCALE, x, y))
+            self.sprite_list.append(arcade.Sprite(turtle_texture, SCALE, x, y))
             x += SCALED_SQUARE
 
     def update(self, delta_time):
         '''Call in on_update to move the turtle group'''
         self.xpos += self.speed * delta_time
-        if self.xpos > WINDOW_WIDTH and self.speed > 0:
-            self.xpos = -SCALED_SQUARE
-        elif self.xpos < -SCALED_SQUARE and self.speed < 0:
-            self.xpos = WINDOW_WIDTH + SCALED_SQUARE
+        if self.xpos < -SCALED_SQUARE * self.length:
+            self.xpos = WINDOW_WIDTH + SCALED_SQUARE/2
 
         x = self.xpos
-        for sprite in self.sprite:
+        for sprite in self.sprite_list:
             sprite.center_x = x
             x += SCALED_SQUARE

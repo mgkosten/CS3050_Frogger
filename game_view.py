@@ -76,7 +76,7 @@ class GameView(arcade.View):
 
         for turtle in self.turtles:
             turtle.load_textures(spritesheet)
-            self.turtle_sprites.extend(turtle.sprite)
+            self.turtle_sprites.extend(turtle.sprite_list)
 
         # Adding obstacle sprites to main sprite list
         self.sprite_list.extend(self.log_sprites)
