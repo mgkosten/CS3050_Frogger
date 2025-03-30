@@ -187,6 +187,8 @@ class GameView(arcade.View):
         '''Checks if the frog is in the home area'''
         # create home center x values
         homes = []
+
+        found_home = False
         # loop to make 5 homes
         for i in range(5):
             homes.append(28 + (SCALED_SQUARE * 3) * i)
@@ -200,8 +202,9 @@ class GameView(arcade.View):
                     # reset frog
                     self.player.xpos = WINDOW_WIDTH / 2
                     self.player.ypos = SCALED_SQUARE * 1.5
-                    return True
-            self.player.death()
+                    found_home = True
+            if not found_home:
+                self.player.death()
 
     def collision_detect(self, delta_time):
         '''Collision detection'''
