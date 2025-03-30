@@ -68,7 +68,7 @@ class GameView(arcade.View):
         # Load player, log, vehicle, and turtle textures
         for log in self.logs:
             log.load_textures(spritesheet)
-            self.log_sprites.extend(log.sprite)
+            self.log_sprites.extend(log.sprite_list)
 
         for car in self.cars:
             car.load_textures(spritesheet)
@@ -222,10 +222,8 @@ class GameView(arcade.View):
                 # get correct log speed
                 if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
                     for log in self.logs:
-                        for log_sprite in log.sprite:  # Iterate over individual sprites in the log
-                            if arcade.check_for_collision(self.player.sprite, log_sprite):
-                                self.player.xpos += (log.speed - log.length * 5) * delta_time
-                                break  # Stop after finding the correct log
+                        if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
+                            self.player.xpos += log.speed * delta_time
                 else:
                     # update speed for when on turtle
                     self.player.xpos += self.turtles[0].speed * delta_time

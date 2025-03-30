@@ -12,10 +12,10 @@ class Log:
     '''
     def __init__(self, length, xpos, ypos):
         self.length = length
-        self.speed = OBSTACLE_SPEED
+        self.speed = OBSTACLE_SPEED - self.length * 5
         self.xpos = xpos
         self.ypos = ypos
-        self.sprite = arcade.SpriteList()
+        self.sprite_list = arcade.SpriteList()
 
     def load_textures(self, spritesheet):
         '''Load log textures and sprites'''
@@ -25,22 +25,20 @@ class Log:
         mid_log = spritesheet.get_texture(arcade.LBWH(19, 134, SPRITE_SQUARE, SPRITE_SQUARE))
         right_log = spritesheet.get_texture(arcade.LBWH(37, 134, SPRITE_SQUARE, SPRITE_SQUARE))
 
-        self.sprite.append(arcade.Sprite(left_log, SCALE, x, y))
+        self.sprite_list.append(arcade.Sprite(left_log, SCALE, x, y))
         x += SCALED_SQUARE
         for _ in range(self.length - 2):
-            self.sprite.append(arcade.Sprite(mid_log, SCALE, x, y))
+            self.sprite_list.append(arcade.Sprite(mid_log, SCALE, x, y))
             x += SCALED_SQUARE
-        self.sprite.append(arcade.Sprite(right_log, SCALE, x, y))
+        self.sprite_list.append(arcade.Sprite(right_log, SCALE, x, y))
 
     def update(self, delta_time):
         '''Call in on_update to move the log'''
-        self.xpos += (self.speed - self.length*5)* delta_time
-        if self.xpos > WINDOW_WIDTH and self.speed > 0:
+        self.xpos += self.speed * delta_time
+        if self.xpos > WINDOW_WIDTH:
             self.xpos = -SCALED_SQUARE * self.length
-        elif self.xpos < 0 and self.speed < 0:
-            self.xpos = WINDOW_WIDTH
 
         x = self.xpos
-        for sprite in self.sprite:
+        for sprite in self.sprite_list:
             sprite.center_x = x
             x += SCALED_SQUARE
