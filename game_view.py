@@ -175,7 +175,7 @@ class GameView(arcade.View):
         self.logs.append(Log(4, 8*WINDOW_WIDTH/9, SCALED_SQUARE*12.5))
 
         # create frog home characters
-        for j in range(5):
+        for _ in range(5):
             self.frog_homes.append(Frog())
 
         # set values
