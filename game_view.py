@@ -209,6 +209,7 @@ class GameView(arcade.View):
         homes = []
 
         found_home = False
+
         # loop to make 5 homes
         for i in range(5):
             homes.append(28 + (SCALED_SQUARE * 3) * i)
@@ -217,17 +218,16 @@ class GameView(arcade.View):
         if self.player.ypos >= SCALED_SQUARE * 13:
             for home in homes:
                 if home - SCALED_SQUARE / 2 <= self.player.xpos < home + SCALED_SQUARE / 2:
-                    print("HOME")
-                    # TODO: Change this to keep frog there and start a new frog at start
                     # set frog home
                     self.frog_homes[self.frog_home_count].xpos = home
                     self.frog_homes[self.frog_home_count].ypos = SCALED_SQUARE * 13.5
                     self.frog_home_count += 1
-                    # reset frog
-                    self.player.xpos = WINDOW_WIDTH / 2
-                    self.player.ypos = SCALED_SQUARE * 1.5
                     found_home = True
-            if not found_home:
+            if found_home:
+                # reset frog
+                self.player.xpos = WINDOW_WIDTH / 2
+                self.player.ypos = SCALED_SQUARE * 1.5
+            else:
                 self.player.death()
 
     def collision_detect(self, delta_time):
@@ -248,6 +248,10 @@ class GameView(arcade.View):
                 self.player.xpos += self.turtles[0].speed * delta_time
             else:
                 self.player.death()
+
+        # if frog already in home
+        if arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites):
+            self.player.death()
 
         self.check_home()
 
@@ -280,6 +284,16 @@ class GameView(arcade.View):
             self.player.death()
 
         self.collision_detect(delta_time)
+
+        if self.frog_home_count >= 5:
+            # reset home frogs back offscreen
+            for frog in self.frog_homes:
+                frog.xpos = -WINDOW_WIDTH
+                frog.ypos = -WINDOW_HEIGHT
+
+            # reset count
+            self.frog_home_count = 0
+
 
         if self.player.lives <= 0 and not self.backend.game_over:
             # Show game over screen
