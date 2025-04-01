@@ -29,8 +29,6 @@ class GameView(arcade.View):
 
         # Creating timer and game backend
         self.backend = Game()
-        self.timer = arcade.Text(f"Time: {int(self.backend.game_time)}",
-                                 2*WINDOW_WIDTH/3, 0, arcade.color.GREEN_YELLOW, 24)
 
     def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
@@ -237,7 +235,7 @@ class GameView(arcade.View):
         self.clear()
 
         # Timer Display
-        self.timer.draw()
+        self.backend.timer_text.draw()
 
         self.draw_background()
         self.sprite_list.draw()
@@ -253,9 +251,7 @@ class GameView(arcade.View):
         self.player.update()
 
         self.backend.update_timer(delta_time)
-        time = int(self.backend.game_time)
-        self.timer.text = f"Time: {int(self.backend.game_time)}"
-        if time <= 0:
+        if self.backend.game_time <= 0:
             self.frog_death()
 
         self.collision_detect(delta_time)

@@ -1,7 +1,8 @@
 '''Game class'''
+# pylint: disable=wildcard-import, unused-wildcard-import
 from enum import Enum
-
-DURATION = 60
+import arcade
+from constants import *
 
 class GameStates(Enum):
     '''GameStates enum for tracking state/screen of the Game'''
@@ -13,6 +14,10 @@ class Game:
     '''Game class'''
     def __init__(self):
         self.game_time = DURATION
+        self.timer_text = arcade.Text(f"Time: {int(self.game_time)}",
+                                 0, 0, arcade.color.GREEN_YELLOW, SCALED_SQUARE)
+        self.timer_text.x = WINDOW_WIDTH-self.timer_text.content_width
+
         self.game_over = False
         self.points = 0
         self.paused = False
@@ -21,9 +26,7 @@ class Game:
     def update_timer(self, frame_time):
         '''Call in on_update to update the timer'''
         self.game_time -= frame_time
-        if self.game_time <= 0:
-            self.game_over = True
-            self.state = GameStates.GAME_OVER
+        self.timer_text.text = f"Time: {int(self.game_time)}"
 
     def reset(self):
         '''Reset the game to beginning state'''
