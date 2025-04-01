@@ -285,6 +285,16 @@ class GameView(arcade.View):
 
         self.collision_detect(delta_time)
 
+        if self.frog_home_count >= 5:
+            # reset home frogs back offscreen
+            for frog in self.frog_homes:
+                frog.xpos = -WINDOW_WIDTH
+                frog.ypos = -WINDOW_HEIGHT
+
+            # reset count
+            self.frog_home_count = 0
+
+
         if self.player.lives <= 0 and not self.backend.game_over:
             # Show game over screen
             self.backend.game_over = True
