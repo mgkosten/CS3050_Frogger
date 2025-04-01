@@ -168,8 +168,8 @@ class GameView(arcade.View):
     def reset(self):
         '''Resets the game'''
         self.backend.reset()
-        self.player.xpos = WINDOW_WIDTH/2
-        self.player.ypos = SCALED_SQUARE*1.5
+        self.player.reset()
+        self.player.lives = 3
 
         self.turtles = []
         self.logs = []
@@ -200,18 +200,17 @@ class GameView(arcade.View):
                     print("HOME")
                     # TODO: Change this to keep frog there and start a new frog at start
                     # reset frog
-                    self.player.xpos = WINDOW_WIDTH / 2
-                    self.player.ypos = SCALED_SQUARE * 1.5
+                    self.player.reset()
                     found_home = True
             if not found_home:
-                self.player.death()
+                self.frog_death()
 
     def collision_detect(self, delta_time):
         '''Collision detection'''
         # Collision detection with cars
         if arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites):
             # reset frog to starting position
-            self.player.death()
+            self.frog_death()
 
         # determine if in water or not
         if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
@@ -223,9 +222,15 @@ class GameView(arcade.View):
             elif arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites):
                 self.player.xpos += self.turtles[0].speed * delta_time
             else:
-                self.player.death()
+                self.frog_death()
 
         self.check_home()
+    
+    def frog_death(self):
+        '''Called when the frog dies to decrement lives counter'''
+        self.player.lives -= 1
+        self.player.reset()
+        # TODO: reset timer
 
     # Renders everything
     def on_draw(self):
@@ -251,7 +256,7 @@ class GameView(arcade.View):
         time = int(self.backend.timer - self.backend.game_time)
         self.timer.text = "Time: " + str(time)
         if time <= 0:
-            self.player.death()
+            self.frog_death()
 
         self.collision_detect(delta_time)
 
