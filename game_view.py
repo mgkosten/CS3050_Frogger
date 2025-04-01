@@ -234,8 +234,9 @@ class GameView(arcade.View):
     def on_draw(self):
         self.clear()
 
-        # Timer Display
+        # Timer/Score Display
         self.backend.timer_text.draw()
+        self.backend.score_text.draw()
 
         self.draw_background()
         self.sprite_list.draw()

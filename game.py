@@ -20,6 +20,8 @@ class Game:
 
         self.game_over = False
         self.points = 0
+        self.score_text = arcade.Text(f"Score: {self.points}",
+                                      0, 0, arcade.color.GREEN_YELLOW, SCALED_SQUARE*.5)
         self.paused = False
         self.state = GameStates.MAIN_MENU
 
