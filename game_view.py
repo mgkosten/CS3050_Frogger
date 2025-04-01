@@ -29,7 +29,7 @@ class GameView(arcade.View):
 
         # Creating timer and game backend
         self.backend = Game()
-        self.timer = arcade.Text("Time: " + str(int(self.backend.timer - self.backend.game_time)),
+        self.timer = arcade.Text(f"Time: {int(self.backend.game_time)}",
                                  2*WINDOW_WIDTH/3, 0, arcade.color.GREEN_YELLOW, 24)
 
     def load_background_textures(self, spritesheet):
@@ -225,7 +225,7 @@ class GameView(arcade.View):
                 self.frog_death()
 
         self.check_home()
-    
+
     def frog_death(self):
         '''Called when the frog dies to decrement lives counter'''
         self.player.lives -= 1
@@ -253,8 +253,8 @@ class GameView(arcade.View):
         self.player.update()
 
         self.backend.update_timer(delta_time)
-        time = int(self.backend.timer - self.backend.game_time)
-        self.timer.text = "Time: " + str(time)
+        time = int(self.backend.game_time)
+        self.timer.text = f"Time: {int(self.backend.game_time)}"
         if time <= 0:
             self.frog_death()
 
