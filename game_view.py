@@ -15,17 +15,22 @@ class GameView(arcade.View):
         # Define Textures dictionary
         self.textures = {}
 
+        # home frog count
+        self.frog_home_count = 0
+
         # Creating Containers for obstacles (and player)
         self.player = Frog()
         self.turtles = []
         self.logs = []
         self.cars = []
+        self.frog_homes = []
 
         # Creating SpriteList
         self.sprite_list = arcade.SpriteList()
         self.car_sprites = arcade.SpriteList()
         self.turtle_sprites = arcade.SpriteList()
         self.log_sprites = arcade.SpriteList()
+        self.frog_home_sprites = arcade.SpriteList()
 
         # Creating timer and game backend
         self.backend = Game()
@@ -76,10 +81,15 @@ class GameView(arcade.View):
             turtle.load_textures(spritesheet)
             self.turtle_sprites.extend(turtle.sprite_list)
 
+        for frog_home in self.frog_homes:
+            frog_home.load_textures(spritesheet)
+            self.frog_home_sprites.append(frog_home.sprite)
+
         # Adding obstacle sprites to main sprite list
         self.sprite_list.extend(self.log_sprites)
         self.sprite_list.extend(self.car_sprites)
         self.sprite_list.extend(self.turtle_sprites)
+        self.sprite_list.extend(self.frog_home_sprites)
 
         self.player.load_textures(spritesheet)
         self.sprite_list.append(self.player.sprite)
@@ -164,6 +174,16 @@ class GameView(arcade.View):
         self.logs.append(Log(4, WINDOW_WIDTH/5, SCALED_SQUARE*12.5))
         self.logs.append(Log(4, 8*WINDOW_WIDTH/9, SCALED_SQUARE*12.5))
 
+        # create frog home characters
+        for j in range(5):
+            self.frog_homes.append(Frog())
+
+        # set values
+        for frog in self.frog_homes:
+            frog.xpos = -WINDOW_WIDTH
+            frog.ypos = -WINDOW_HEIGHT
+
+
     # Resets game
     def reset(self):
         '''Resets the game'''
@@ -199,6 +219,10 @@ class GameView(arcade.View):
                 if home - SCALED_SQUARE / 2 <= self.player.xpos < home + SCALED_SQUARE / 2:
                     print("HOME")
                     # TODO: Change this to keep frog there and start a new frog at start
+                    # set frog home
+                    self.frog_homes[self.frog_home_count].xpos = home
+                    self.frog_homes[self.frog_home_count].ypos = SCALED_SQUARE * 13.5
+                    self.frog_home_count += 1
                     # reset frog
                     self.player.xpos = WINDOW_WIDTH / 2
                     self.player.ypos = SCALED_SQUARE * 1.5
@@ -245,6 +269,8 @@ class GameView(arcade.View):
             log.update(delta_time)
         for car in self.cars:
             car.update(delta_time)
+        for frog_home in self.frog_homes:
+            frog_home.update()
         self.player.update()
 
         self.backend.update_timer(delta_time)
