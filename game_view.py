@@ -197,8 +197,9 @@ class GameView(arcade.View):
                 if home - SCALED_SQUARE / 2 <= self.player.xpos < home + SCALED_SQUARE / 2:
                     print("HOME")
                     # TODO: Change this to keep frog there and start a new frog at start
-                    # reset frog
+                    # Reset frog and timer
                     self.player.reset()
+                    self.backend.game_time = DURATION
                     found_home = True
             if not found_home:
                 self.frog_death()
@@ -228,7 +229,8 @@ class GameView(arcade.View):
         '''Called when the frog dies to decrement lives counter'''
         self.player.lives -= 1
         self.player.reset()
-        # TODO: reset timer
+        # Reset timer
+        self.backend.game_time = DURATION
 
     # Renders everything
     def on_draw(self):
