@@ -6,16 +6,32 @@ from constants import *
 class Log:
     '''
     Class for logs in the water
-        length: width of the log in number of squares (at least 2)
+        log_type: LogType enum (SHORT, MEDIUM, or LONG)
         xpos: center x position of leftmost log sprite
-        ypos: center y position of the log
     '''
-    def __init__(self, length, xpos, ypos):
-        self.length = length
-        self.speed = OBSTACLE_SPEED - self.length * 5
+    def __init__(self, log_type, xpos):
+        self.speed = 0
+        self.length = 0
         self.xpos = xpos
-        self.ypos = ypos
+        self.ypos = 0
         self.sprite_list = arcade.SpriteList()
+
+        match log_type:
+            case LogType.SHORT:
+                self.speed = OBSTACLE_SPEED
+                self.length = 3
+                self.ypos = SCALED_SQUARE*9.5
+            case LogType.MEDIUM:
+                self.speed = OBSTACLE_SPEED*1.5
+                self.length = 4
+                self.ypos = SCALED_SQUARE*12.5
+            case LogType.LONG:
+                self.speed = OBSTACLE_SPEED*2
+                self.length = 6
+                self.ypos = SCALED_SQUARE*10.5
+            case _:
+                raise ValueError('invalid log type, must be LogType enum (SHORT, MEDIUM, or LONG)')
+
 
     def load_textures(self, spritesheet):
         '''Load log textures and sprites'''
