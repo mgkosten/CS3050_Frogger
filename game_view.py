@@ -8,10 +8,10 @@ from turt import Turt
 from log import Log
 from car import Car
 
-class GameView(arcade.View):
+class MyGame(arcade.Window):
     '''GameView class for running and displaying the game'''
-    def __init__(self):
-        super().__init__()
+    def __init__(self, width, height, title):
+        super().__init__(width, height, title, )
         # Define Textures dictionary
         self.textures = {}
 
@@ -36,6 +36,14 @@ class GameView(arcade.View):
         self.backend = Game()
         self.timer = arcade.Text("Time: " + str(int(self.backend.timer - self.backend.game_time)),
                                  2*WINDOW_WIDTH/3, 0, arcade.color.GREEN_YELLOW, 24)
+
+        # Making CRT Filter
+        self.crt_filter = arcade.experimental.crt_filter.CRTFilter(WINDOW_WIDTH, WINDOW_HEIGHT,
+                                                                   resolution_down_scale=DSCALE,
+                                                                   hard_scan=SCAN, hard_pix=PIX,
+                                                                   display_warp=WARP, mask_dark=DARKMASK,
+                                                                   mask_light=LIGHTMASK)
+        self.filter_on = True
 
     def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
@@ -257,13 +265,19 @@ class GameView(arcade.View):
 
     # Renders everything
     def on_draw(self):
-        self.clear()
-
-        # Timer Display
+        self.crt_filter.use()
+        self.crt_filter.clear()
         self.timer.draw()
-
         self.draw_background()
         self.sprite_list.draw()
+
+        self.use()
+        self.clear()
+        self.crt_filter.draw()
+
+        # Timer Display
+
+
 
     # Frame update
     def on_update(self, delta_time):
@@ -319,13 +333,9 @@ class GameView(arcade.View):
 
 def main():
     """ Main function """
-    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
 
     # Create and setup the GameView
-    game = GameView()
-
-    # Show GameView on screen
-    window.show_view(game)
+    game = MyGame(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
 
     # Load textures
     game.make_objects()
