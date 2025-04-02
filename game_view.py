@@ -37,6 +37,8 @@ class MyGame(arcade.Window):
 
         # Creating timer and game backend
         self.backend = Game()
+        self.timer = arcade.Text("Time: " + str(int(self.backend.timer - self.backend.game_time)),
+                                 2 * WINDOW_WIDTH / 3, 0, arcade.color.GREEN_YELLOW, 24)
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(WINDOW_WIDTH, WINDOW_HEIGHT,
