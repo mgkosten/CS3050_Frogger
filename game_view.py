@@ -148,13 +148,11 @@ class GameView(arcade.View):
         for i in range(2):
             self.cars.append(Car(5, SCALED_SQUARE*5.5*i))
 
-        # Create triple and double turtles - rows 1 and 4 of water
-        self.turtles.append(Turt(3, WINDOW_WIDTH/2, SCALED_SQUARE*8.5))
-        self.turtles.append(Turt(3, 2*WINDOW_WIDTH/9, SCALED_SQUARE*8.5))
-        self.turtles.append(Turt(3, 7*WINDOW_WIDTH/9, SCALED_SQUARE*8.5))
-        self.turtles.append(Turt(2, WINDOW_WIDTH/2, SCALED_SQUARE*11.5))
-        self.turtles.append(Turt(2, WINDOW_WIDTH/7, SCALED_SQUARE*11.5))
-        self.turtles.append(Turt(2, 6*WINDOW_WIDTH/7, SCALED_SQUARE*11.5))
+        # Create turtles - rows 1 and 4 of water
+        for i in range(3):
+            x = SCALED_SQUARE*4.5*i
+            self.turtles.append(Turt(3, x))
+            self.turtles.append(Turt(2, WINDOW_WIDTH-x))
 
         # Create small, large, and medium logs - rows 2, 3, and 5 of water
         self.logs.append(Log(3, WINDOW_WIDTH/2, SCALED_SQUARE*9.5))
