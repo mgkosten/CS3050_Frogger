@@ -58,11 +58,8 @@ class Frog:
         elif self.ypos < SCALED_SQUARE / 2 + SCALED_SQUARE:
             self.ypos = SCALED_SQUARE / 2 + SCALED_SQUARE
 
-    def death(self):
-        '''Call when the player frog dies to decrement lives and reset position'''
-        self.lives -= 1
-
-        # Reset to starting position
+    def reset(self):
+        '''Resets the frog to the starting position'''
         self.xpos = WINDOW_WIDTH/2
         self.ypos = SCALED_SQUARE*1.5
         self.sprite.texture = self.textures['frog_up']

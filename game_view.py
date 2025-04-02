@@ -18,6 +18,9 @@ class MyGame(arcade.Window):
         # home frog count
         self.frog_home_count = 0
 
+        # max y value of frog player through each level
+        self.max_frog_y = SCALED_SQUARE + SPRITE_SQUARE
+
         # Creating Containers for obstacles (and player)
         self.player = Frog()
         self.turtles = []
@@ -34,8 +37,6 @@ class MyGame(arcade.Window):
 
         # Creating timer and game backend
         self.backend = Game()
-        self.timer = arcade.Text("Time: " + str(int(self.backend.timer - self.backend.game_time)),
-                                 2*WINDOW_WIDTH/3, 0, arcade.color.GREEN_YELLOW, 24)
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(WINDOW_WIDTH, WINDOW_HEIGHT,
@@ -82,7 +83,7 @@ class MyGame(arcade.Window):
             self.log_sprites.extend(log.sprite_list)
 
         for car in self.cars:
-            car.load_textures(spritesheet)
+            car.setup(spritesheet)
             self.car_sprites.append(car.sprite)
 
         for turtle in self.turtles:
@@ -155,32 +156,24 @@ class MyGame(arcade.Window):
                                                  SCALED_SQUARE*.5, SCALED_SQUARE*.5))
 
     def make_objects(self):
-        '''Create some example sprites to demonstrate the process'''
-        # Create vehicles
-        direction = -1
-        for i in range(5):
-            self.cars.append(Car(i+1,direction,WINDOW_WIDTH/2, SCALED_SQUARE*(2.5+i)))
-            self.cars.append(Car(i+1,direction,2*WINDOW_WIDTH/(5+i), SCALED_SQUARE*(2.5+i)))
-            self.cars.append(Car(i+1,direction,7*WINDOW_WIDTH/(7+i), SCALED_SQUARE*(2.5+i)))
-            direction = direction * -1
+        '''Create obstacles: cars, logs, and turtles'''
+        for i in range(4):
+            self.turtles.append(Turt(3, SCALED_SQUARE*4*i))
+            self.turtles.append(Turt(2, WINDOW_WIDTH-SCALED_SQUARE*3.5*i))
 
-        # Create triple and double turtles - rows 1 and 4 of water
-        self.turtles.append(Turt(3, WINDOW_WIDTH/2, SCALED_SQUARE*8.5))
-        self.turtles.append(Turt(3, 2*WINDOW_WIDTH/9, SCALED_SQUARE*8.5))
-        self.turtles.append(Turt(3, 7*WINDOW_WIDTH/9, SCALED_SQUARE*8.5))
-        self.turtles.append(Turt(2, WINDOW_WIDTH/2, SCALED_SQUARE*11.5))
-        self.turtles.append(Turt(2, WINDOW_WIDTH/7, SCALED_SQUARE*11.5))
-        self.turtles.append(Turt(2, 6*WINDOW_WIDTH/7, SCALED_SQUARE*11.5))
+        for i in range(3):
+            self.cars.append(Car(1, SCALED_SQUARE*4.5*i))
+            self.cars.append(Car(2, WINDOW_WIDTH-SCALED_SQUARE*4*i))
+            self.cars.append(Car(3, WINDOW_WIDTH-SCALED_SQUARE*4*i))
+            self.cars.append(Car(4, SCALED_SQUARE*4.5*i))
 
-        # Create small, large, and medium logs - rows 2, 3, and 5 of water
-        self.logs.append(Log(3, WINDOW_WIDTH/2, SCALED_SQUARE*9.5))
-        self.logs.append(Log(3, 6*WINDOW_WIDTH/7, SCALED_SQUARE*9.5))
-        self.logs.append(Log(3, WINDOW_WIDTH/7, SCALED_SQUARE*9.5))
-        self.logs.append(Log(6, WINDOW_WIDTH/2, SCALED_SQUARE*10.5))
-        self.logs.append(Log(6, WINDOW_WIDTH, SCALED_SQUARE*10.5))
-        self.logs.append(Log(4, WINDOW_WIDTH/2, SCALED_SQUARE*12.5))
-        self.logs.append(Log(4, WINDOW_WIDTH/5, SCALED_SQUARE*12.5))
-        self.logs.append(Log(4, 8*WINDOW_WIDTH/9, SCALED_SQUARE*12.5))
+            self.logs.append(Log(LogType.SHORT, SCALED_SQUARE*5.5*i))
+            self.logs.append(Log(LogType.MEDIUM, SCALED_SQUARE*6*i))
+
+        for i in range(2):
+            self.cars.append(Car(5, SCALED_SQUARE*5.5*i))
+            self.logs.append(Log(LogType.LONG, SCALED_SQUARE*8.5*i))
+
 
         # create frog_home sprites
         for _ in range(5):
@@ -196,8 +189,8 @@ class MyGame(arcade.Window):
     def reset(self):
         '''Resets the game'''
         self.backend.reset()
-        self.player.xpos = WINDOW_WIDTH/2
-        self.player.ypos = SCALED_SQUARE*1.5
+        self.player.reset()
+        self.player.lives = 3
 
         self.turtles = []
         self.logs = []
@@ -226,6 +219,8 @@ class MyGame(arcade.Window):
         if self.player.ypos >= SCALED_SQUARE * 13:
             for home in homes:
                 if home - SCALED_SQUARE / 2 <= self.player.xpos < home + SCALED_SQUARE / 2:
+                    # reset timer
+                    self.backend.game_time = DURATION
                     # set frog home
                     self.frog_homes[self.frog_home_count].xpos = home
                     self.frog_homes[self.frog_home_count].ypos = SCALED_SQUARE * 13.5
@@ -233,8 +228,7 @@ class MyGame(arcade.Window):
                     found_home = True
             if found_home:
                 # reset frog
-                self.player.xpos = WINDOW_WIDTH / 2
-                self.player.ypos = SCALED_SQUARE * 1.5
+                self.player.reset()
             else:
                 self.player.death()
 
@@ -243,7 +237,7 @@ class MyGame(arcade.Window):
         # Collision detection with cars
         if arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites):
             # reset frog to starting position
-            self.player.death()
+            self.frog_death()
 
         # determine if in water or not
         if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
@@ -255,13 +249,27 @@ class MyGame(arcade.Window):
             elif arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites):
                 self.player.xpos += self.turtles[0].speed * delta_time
             else:
-                self.player.death()
+                self.frog_death()
 
         # if frog already in home
         if arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites):
             self.player.death()
 
         self.check_home()
+
+    def player_score(self):
+        """player points for each jump towards home"""
+        # check if player moved forward past max y
+        if self.player.ypos > self.max_frog_y:
+            self.backend.points += 10
+            self.max_frog_y = self.player.ypos
+
+    def frog_death(self):
+        '''Called when the frog dies to decrement lives counter'''
+        self.player.lives -= 1
+        self.player.reset()
+        # Reset timer
+        self.backend.game_time = DURATION
 
     # Renders everything
     def on_draw(self):
@@ -276,6 +284,11 @@ class MyGame(arcade.Window):
         self.crt_filter.draw()
 
         # Timer Display
+
+        # Timer/Score Display
+        self.backend.timer_text.draw()
+        self.backend.score_text.draw()
+
 
 
 
@@ -292,12 +305,11 @@ class MyGame(arcade.Window):
         self.player.update()
 
         self.backend.update_timer(delta_time)
-        time = int(self.backend.timer - self.backend.game_time)
-        self.timer.text = "Time: " + str(time)
-        if time <= 0:
-            self.player.death()
+        if self.backend.game_time <= 0:
+            self.frog_death()
 
         self.collision_detect(delta_time)
+        self.player_score()
 
         if self.frog_home_count >= 5:
             # reset home frogs back offscreen
