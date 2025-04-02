@@ -18,6 +18,9 @@ class GameView(arcade.View):
         # home frog count
         self.frog_home_count = 0
 
+        # max y value of frog player through each level
+        self.max_frog_y = SCALED_SQUARE + SPRITE_SQUARE
+
         # Creating Containers for obstacles (and player)
         self.player = Frog()
         self.turtles = []
@@ -246,6 +249,13 @@ class GameView(arcade.View):
 
         self.check_home()
 
+    def player_score(self):
+        """player points for each jump towards home"""
+        # check if player moved forward past max y
+        if self.player.ypos > self.max_frog_y:
+            self.backend.points += 10
+            self.max_frog_y = self.player.ypos
+
     def frog_death(self):
         '''Called when the frog dies to decrement lives counter'''
         self.player.lives -= 1
@@ -281,6 +291,7 @@ class GameView(arcade.View):
             self.frog_death()
 
         self.collision_detect(delta_time)
+        self.player_score()
 
         if self.frog_home_count >= 5:
             # reset home frogs back offscreen
