@@ -67,7 +67,7 @@ class GameView(arcade.View):
             self.log_sprites.extend(log.sprite_list)
 
         for car in self.cars:
-            car.load_textures(spritesheet)
+            car.setup(spritesheet)
             self.car_sprites.append(car.sprite)
 
         for turtle in self.turtles:
@@ -137,12 +137,16 @@ class GameView(arcade.View):
     def make_objects(self):
         '''Create some example sprites to demonstrate the process'''
         # Create vehicles
-        direction = -1
-        for i in range(5):
-            self.cars.append(Car(i+1,direction,WINDOW_WIDTH/2, SCALED_SQUARE*(2.5+i)))
-            self.cars.append(Car(i+1,direction,2*WINDOW_WIDTH/(5+i), SCALED_SQUARE*(2.5+i)))
-            self.cars.append(Car(i+1,direction,7*WINDOW_WIDTH/(7+i), SCALED_SQUARE*(2.5+i)))
-            direction = direction * -1
+        for i in range(3):
+            x = SCALED_SQUARE*4.5*i
+            self.cars.append(Car(1, x))
+            self.cars.append(Car(4, x))
+        for i in range(3):
+            x = SCALED_SQUARE*4*i
+            self.cars.append(Car(2, WINDOW_WIDTH-x))
+            self.cars.append(Car(3, WINDOW_WIDTH-x))
+        for i in range(2):
+            self.cars.append(Car(5, SCALED_SQUARE*5.5*i))
 
         # Create triple and double turtles - rows 1 and 4 of water
         self.turtles.append(Turt(3, WINDOW_WIDTH/2, SCALED_SQUARE*8.5))
