@@ -15,17 +15,22 @@ class GameView(arcade.View):
         # Define Textures dictionary
         self.textures = {}
 
+        # home frog count
+        self.frog_home_count = 0
+
         # Creating Containers for obstacles (and player)
         self.player = Frog()
         self.turtles = []
         self.logs = []
         self.cars = []
+        self.frog_homes = []
 
         # Creating SpriteList
         self.sprite_list = arcade.SpriteList()
         self.car_sprites = arcade.SpriteList()
         self.turtle_sprites = arcade.SpriteList()
         self.log_sprites = arcade.SpriteList()
+        self.frog_home_sprites = arcade.SpriteList()
 
         # Creating timer and game backend
         self.backend = Game()
@@ -74,10 +79,15 @@ class GameView(arcade.View):
             turtle.load_textures(spritesheet)
             self.turtle_sprites.extend(turtle.sprite_list)
 
+        for frog_home in self.frog_homes:
+            frog_home.load_textures(spritesheet)
+            self.frog_home_sprites.append(frog_home.sprite)
+
         # Adding obstacle sprites to main sprite list
         self.sprite_list.extend(self.log_sprites)
         self.sprite_list.extend(self.car_sprites)
         self.sprite_list.extend(self.turtle_sprites)
+        self.sprite_list.extend(self.frog_home_sprites)
 
         self.player.load_textures(spritesheet)
         self.sprite_list.append(self.player.sprite)
@@ -154,6 +164,16 @@ class GameView(arcade.View):
             self.logs.append(Log(LogType.LONG, SCALED_SQUARE*8.5*i))
 
 
+        # create frog_home sprites
+        for _ in range(5):
+            self.frog_homes.append(Frog())
+
+        # set values
+        for frog in self.frog_homes:
+            frog.xpos = -WINDOW_WIDTH
+            frog.ypos = -WINDOW_HEIGHT
+
+
     # Resets game
     def reset(self):
         '''Resets the game'''
@@ -179,6 +199,7 @@ class GameView(arcade.View):
         homes = []
 
         found_home = False
+
         # loop to make 5 homes
         for i in range(5):
             homes.append(28 + (SCALED_SQUARE * 3) * i)
@@ -187,14 +208,18 @@ class GameView(arcade.View):
         if self.player.ypos >= SCALED_SQUARE * 13:
             for home in homes:
                 if home - SCALED_SQUARE / 2 <= self.player.xpos < home + SCALED_SQUARE / 2:
-                    print("HOME")
-                    # TODO: Change this to keep frog there and start a new frog at start
-                    # Reset frog and timer
-                    self.player.reset()
+                    # reset timer
                     self.backend.game_time = DURATION
+                    # set frog home
+                    self.frog_homes[self.frog_home_count].xpos = home
+                    self.frog_homes[self.frog_home_count].ypos = SCALED_SQUARE * 13.5
+                    self.frog_home_count += 1
                     found_home = True
-            if not found_home:
-                self.frog_death()
+            if found_home:
+                # reset frog
+                self.player.reset()
+            else:
+                self.player.death()
 
     def collision_detect(self, delta_time):
         '''Collision detection'''
@@ -214,6 +239,10 @@ class GameView(arcade.View):
                 self.player.xpos += self.turtles[0].speed * delta_time
             else:
                 self.frog_death()
+
+        # if frog already in home
+        if arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites):
+            self.player.death()
 
         self.check_home()
 
@@ -243,6 +272,8 @@ class GameView(arcade.View):
             log.update(delta_time)
         for car in self.cars:
             car.update(delta_time)
+        for frog_home in self.frog_homes:
+            frog_home.update()
         self.player.update()
 
         self.backend.update_timer(delta_time)
@@ -250,6 +281,16 @@ class GameView(arcade.View):
             self.frog_death()
 
         self.collision_detect(delta_time)
+
+        if self.frog_home_count >= 5:
+            # reset home frogs back offscreen
+            for frog in self.frog_homes:
+                frog.xpos = -WINDOW_WIDTH
+                frog.ypos = -WINDOW_HEIGHT
+
+            # reset count
+            self.frog_home_count = 0
+
 
         if self.player.lives <= 0 and not self.backend.game_over:
             # Show game over screen
