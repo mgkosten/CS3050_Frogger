@@ -135,34 +135,24 @@ class GameView(arcade.View):
                                                  SCALED_SQUARE*.5, SCALED_SQUARE*.5))
 
     def make_objects(self):
-        '''Create some example sprites to demonstrate the process'''
-        # Create vehicles
+        '''Create obstacles: cars, logs, and turtles'''
+        for i in range(4):
+            self.turtles.append(Turt(3, SCALED_SQUARE*4*i))
+            self.turtles.append(Turt(2, WINDOW_WIDTH-SCALED_SQUARE*3.5*i))
+
         for i in range(3):
-            x = SCALED_SQUARE*4.5*i
-            self.cars.append(Car(1, x))
-            self.cars.append(Car(4, x))
-        for i in range(3):
-            x = SCALED_SQUARE*4*i
-            self.cars.append(Car(2, WINDOW_WIDTH-x))
-            self.cars.append(Car(3, WINDOW_WIDTH-x))
+            self.cars.append(Car(1, SCALED_SQUARE*4.5*i))
+            self.cars.append(Car(2, WINDOW_WIDTH-SCALED_SQUARE*4*i))
+            self.cars.append(Car(3, WINDOW_WIDTH-SCALED_SQUARE*4*i))
+            self.cars.append(Car(4, SCALED_SQUARE*4.5*i))
+
+            self.logs.append(Log(LogType.SHORT, SCALED_SQUARE*5.5*i))
+            self.logs.append(Log(LogType.MEDIUM, SCALED_SQUARE*6*i))
+
         for i in range(2):
             self.cars.append(Car(5, SCALED_SQUARE*5.5*i))
+            self.logs.append(Log(LogType.LONG, SCALED_SQUARE*8.5*i))
 
-        # Create turtles - rows 1 and 4 of water
-        for i in range(3):
-            x = SCALED_SQUARE*4.5*i
-            self.turtles.append(Turt(3, x))
-            self.turtles.append(Turt(2, WINDOW_WIDTH-x))
-
-        # Create small, large, and medium logs - rows 2, 3, and 5 of water
-        self.logs.append(Log(3, WINDOW_WIDTH/2, SCALED_SQUARE*9.5))
-        self.logs.append(Log(3, 6*WINDOW_WIDTH/7, SCALED_SQUARE*9.5))
-        self.logs.append(Log(3, WINDOW_WIDTH/7, SCALED_SQUARE*9.5))
-        self.logs.append(Log(6, WINDOW_WIDTH/2, SCALED_SQUARE*10.5))
-        self.logs.append(Log(6, WINDOW_WIDTH, SCALED_SQUARE*10.5))
-        self.logs.append(Log(4, WINDOW_WIDTH/2, SCALED_SQUARE*12.5))
-        self.logs.append(Log(4, WINDOW_WIDTH/5, SCALED_SQUARE*12.5))
-        self.logs.append(Log(4, 8*WINDOW_WIDTH/9, SCALED_SQUARE*12.5))
 
     # Resets game
     def reset(self):
