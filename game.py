@@ -31,6 +31,11 @@ class Game:
         self.game_time -= frame_time
         self.timer_text.text = f"Time: {int(self.game_time)}"
 
+    def update_points(self):
+        '''Call in on_update to update the points'''
+        self.score_text = arcade.Text(f"Score: {self.points}",
+                                      0, 0, arcade.color.GREEN_YELLOW, SCALED_SQUARE * .5)
+
     def reset(self):
         '''Reset the game to beginning state'''
         self.game_time = DURATION

@@ -221,6 +221,11 @@ class MyGame(arcade.Window):
         if self.player.ypos >= SCALED_SQUARE * 13:
             for home in homes:
                 if home - SCALED_SQUARE / 2 <= self.player.xpos < home + SCALED_SQUARE / 2:
+                    # add to score for reaching home
+                    self.backend.points += 160
+                    self.backend.points += (round(self.backend.game_time) * 10)
+                    # reset max y for frog
+                    self.max_frog_y = SCALED_SQUARE + SPRITE_SQUARE
                     # reset timer
                     self.backend.game_time = DURATION
                     # set frog home
@@ -232,7 +237,7 @@ class MyGame(arcade.Window):
                 # reset frog
                 self.player.reset()
             else:
-                self.player.death()
+                self.frog_death()
 
     def collision_detect(self, delta_time):
         '''Collision detection'''
@@ -255,7 +260,7 @@ class MyGame(arcade.Window):
 
         # if frog already in home
         if arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites):
-            self.player.death()
+            self.frog_death()
 
         self.check_home()
 
@@ -312,6 +317,7 @@ class MyGame(arcade.Window):
 
         self.collision_detect(delta_time)
         self.player_score()
+        self.backend.update_points()
 
         if self.frog_home_count >= 5:
             # reset home frogs back offscreen
@@ -326,6 +332,9 @@ class MyGame(arcade.Window):
         if self.player.lives <= 0 and not self.backend.game_over:
             # Show game over screen
             self.backend.game_over = True
+
+            # reset high score
+            self.backend.points = 0
             print('GAME OVER')
 
     # Triggers when a key is released
