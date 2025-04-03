@@ -1,5 +1,5 @@
 '''Frogger game implemented using Python Arcade.'''
-# pylint: disable=wildcard-import, unused-wildcard-import, fixme, too-many-instance-attributes
+# pylint: disable=wildcard-import, unused-wildcard-import, too-many-instance-attributes, abstract-method
 import arcade
 from constants import *
 from game import Game
@@ -19,7 +19,7 @@ class MyGame(arcade.Window):
         self.frog_home_count = 0
 
         # max y value of frog player through each level
-        self.max_frog_y = SCALED_SQUARE + SPRITE_SQUARE
+        self.max_frog_y = SCALED_SQUARE*1.5
 
         # Creating Containers for obstacles (and player)
         self.player = Frog()
@@ -42,9 +42,9 @@ class MyGame(arcade.Window):
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(WINDOW_WIDTH, WINDOW_HEIGHT,
                                                                    resolution_down_scale=DSCALE,
                                                                    hard_scan=SCAN, hard_pix=PIX,
-                                                                   display_warp=WARP, mask_dark=DARKMASK,
+                                                                   display_warp=WARP,
+                                                                   mask_dark=DARKMASK,
                                                                    mask_light=LIGHTMASK)
-        self.filter_on = True
 
     def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
@@ -223,7 +223,7 @@ class MyGame(arcade.Window):
                     self.backend.points += 160
                     self.backend.points += (round(self.backend.game_time) * 10)
                     # reset max y for frog
-                    self.max_frog_y = SCALED_SQUARE + SPRITE_SQUARE
+                    self.max_frog_y = SCALED_SQUARE*1.5
                     # reset timer
                     self.backend.game_time = DURATION
                     # set frog home
@@ -273,8 +273,8 @@ class MyGame(arcade.Window):
         '''Called when the frog dies to decrement lives counter'''
         self.player.lives -= 1
         self.player.reset()
-        # Reset timer
         self.backend.game_time = DURATION
+        self.max_frog_y = SCALED_SQUARE*1.5
 
     # Renders everything
     def on_draw(self):
@@ -319,7 +319,6 @@ class MyGame(arcade.Window):
             # reset count
             self.frog_home_count = 0
 
-
         if self.player.lives <= 0 and not self.backend.game_over:
             # Show game over screen
             self.backend.game_over = True
@@ -327,12 +326,6 @@ class MyGame(arcade.Window):
             # reset high score
             self.backend.points = 0
             print('GAME OVER')
-
-    # Triggers when a key is released
-    def on_key_release(self, key, modifiers):
-        # pylint: disable=unused-argument
-        # TODO: Add way to move frog when key is held down: timer or something
-        pass
 
     # Triggers when a key is pressed
     def on_key_press(self, symbol, modifiers):
