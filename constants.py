@@ -1,6 +1,6 @@
 '''File to hold constants, import as needed'''
-from pyglet.math import Vec2
 from enum import Enum
+from pyglet.math import Vec2
 
 # Scale needs to be an integer so for loops work but change as needed locally
 SCALE = 2
@@ -23,7 +23,7 @@ DURATION = 60
 OBSTACLE_SPEED = WINDOW_WIDTH/9
 
 class LogType(Enum):
+    '''LogType enum to represent short, medium, and long logs'''
     SHORT = 0
     MEDIUM = 1
     LONG = 2
-
