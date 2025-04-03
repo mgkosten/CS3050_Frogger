@@ -37,8 +37,6 @@ class MyGame(arcade.Window):
 
         # Creating timer and game backend
         self.backend = Game()
-        self.timer = arcade.Text("Time: " + str(int(self.backend.timer - self.backend.game_time)),
-                                 2 * WINDOW_WIDTH / 3, 0, arcade.color.GREEN_YELLOW, 24)
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(WINDOW_WIDTH, WINDOW_HEIGHT,
@@ -282,22 +280,15 @@ class MyGame(arcade.Window):
     def on_draw(self):
         self.crt_filter.use()
         self.crt_filter.clear()
-        self.timer.draw()
+
         self.draw_background()
+        self.backend.timer_text.draw()
+        self.backend.score_text.draw()
         self.sprite_list.draw()
 
         self.use()
         self.clear()
         self.crt_filter.draw()
-
-        # Timer Display
-
-        # Timer/Score Display
-        self.backend.timer_text.draw()
-        self.backend.score_text.draw()
-
-
-
 
     # Frame update
     def on_update(self, delta_time):

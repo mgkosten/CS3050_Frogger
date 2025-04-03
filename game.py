@@ -13,8 +13,7 @@ class GameStates(Enum):
 class Game:
     '''Game class'''
     def __init__(self):
-        self.timer = DURATION
-        self.game_time = 0
+        self.game_time = DURATION
         self.timer_text = arcade.Text(f"Time: {int(self.game_time)}",
                                  0, 0, arcade.color.GREEN_YELLOW, SCALED_SQUARE)
         self.timer_text.x = WINDOW_WIDTH-self.timer_text.content_width
@@ -33,8 +32,7 @@ class Game:
 
     def update_points(self):
         '''Call in on_update to update the points'''
-        self.score_text = arcade.Text(f"Score: {self.points}",
-                                      0, 0, arcade.color.GREEN_YELLOW, SCALED_SQUARE * .5)
+        self.score_text.text = f"Time: {int(self.points)}"
 
     def reset(self):
         '''Reset the game to beginning state'''
