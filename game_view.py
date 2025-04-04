@@ -74,34 +74,13 @@ class MyGame(arcade.Window):
         self.textures['lives'] = spritesheet.get_texture(
             arcade.LBWH(37, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
 
-    def load_death_animation_textures(self, spritesheet):
-        self.textures['death_animation_1'] = spritesheet.get_texture(
-            arcade.LBWH(1, 80, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['death_animation_2'] = spritesheet.get_texture(
-            arcade.LBWH(19, 80, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['death_animation_3'] = spritesheet.get_texture(
-            arcade.LBWH(37, 80, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['death_animation_4'] = spritesheet.get_texture(
-            arcade.LBWH(55, 80, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['death_animation_5'] = spritesheet.get_texture(
-            arcade.LBWH(73, 80, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['death_animation_6'] = spritesheet.get_texture(
-            arcade.LBWH(91, 80, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.textures['death_animation_7'] = spritesheet.get_texture(
-            arcade.LBWH(109, 80, SPRITE_SQUARE, SPRITE_SQUARE))
-
-        # add to list
-        self.death_animations.append
-        self.arcade.Sprite(self.textures['frog_up'], SCALE, self.xpos, self.ypos)
-        self.sprite_list.extend(self.frog_home_sprites)
-
     def load_textures(self):
         '''Loads sprite textures from the spritesheet'''
         # Load the spritesheet - https://www.spriters-resource.com/arcade/frogger/sheet/11067/
         spritesheet = arcade.load_spritesheet('assets/spritesheet_transparent.png')
 
         self.load_background_textures(spritesheet)
-        self.load_death_animation_textures(spritesheet)
+        # self.load_death_animation_textures(spritesheet)
 
         # Load player, log, vehicle, and turtle textures
         for log in self.logs:
@@ -117,8 +96,11 @@ class MyGame(arcade.Window):
             self.turtle_sprites.extend(turtle.sprite_list)
 
         for frog_home in self.frog_homes:
-            frog_home.load_textures(spritesheet)
+            frog_home.load_textures(spritesheet, 'frog_up')
             self.frog_home_sprites.append(frog_home.sprite)
+
+        # for death_anim in self.death_animations:
+        #     death_anim.
 
         # Adding obstacle sprites to main sprite list
         self.sprite_list.extend(self.log_sprites)
@@ -126,7 +108,7 @@ class MyGame(arcade.Window):
         self.sprite_list.extend(self.turtle_sprites)
         self.sprite_list.extend(self.frog_home_sprites)
 
-        self.player.load_textures(spritesheet)
+        self.player.load_textures(spritesheet, 'frog_up')
         self.sprite_list.append(self.player.sprite)
 
     def draw_background(self):
