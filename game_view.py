@@ -27,6 +27,7 @@ class MyGame(arcade.Window):
         self.logs = []
         self.cars = []
         self.frog_homes = []
+        self.death_animations = []
 
         # Creating SpriteList
         self.sprite_list = arcade.SpriteList()
@@ -34,6 +35,7 @@ class MyGame(arcade.Window):
         self.turtle_sprites = arcade.SpriteList()
         self.log_sprites = arcade.SpriteList()
         self.frog_home_sprites = arcade.SpriteList()
+        self.death_frog_sprites = arcade.SpriteList()
 
         # Creating timer and game backend
         self.backend = Game()
@@ -72,12 +74,31 @@ class MyGame(arcade.Window):
         self.textures['lives'] = spritesheet.get_texture(
             arcade.LBWH(37, 214, SPRITE_SQUARE/2, SPRITE_SQUARE/2))
 
+    def load_death_animation_textures(self, spritesheet):
+        self.textures['death_animation_1'] = spritesheet.get_texture(
+            arcade.LBWH(1, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_2'] = spritesheet.get_texture(
+            arcade.LBWH(19, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_3'] = spritesheet.get_texture(
+            arcade.LBWH(37, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_4'] = spritesheet.get_texture(
+            arcade.LBWH(55, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_5'] = spritesheet.get_texture(
+            arcade.LBWH(73, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_6'] = spritesheet.get_texture(
+            arcade.LBWH(91, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_7'] = spritesheet.get_texture(
+            arcade.LBWH(109, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+
+        self.sprite = arcade.Sprite(self.textures['frog_up'], SCALE, self.xpos, self.ypos)
+
     def load_textures(self):
         '''Loads sprite textures from the spritesheet'''
         # Load the spritesheet - https://www.spriters-resource.com/arcade/frogger/sheet/11067/
         spritesheet = arcade.load_spritesheet('assets/spritesheet_transparent.png')
 
         self.load_background_textures(spritesheet)
+        self.load_death_animation_textures(spritesheet)
 
         # Load player, log, vehicle, and turtle textures
         for log in self.logs:
@@ -156,6 +177,9 @@ class MyGame(arcade.Window):
             arcade.draw_texture_rect(self.textures['lives'],
                                      arcade.LBWH(i*SCALED_SQUARE*.5, SCALED_SQUARE*.5,
                                                  SCALED_SQUARE*.5, SCALED_SQUARE*.5))
+
+    def draw_death_animations(self):
+        pass
 
     def make_objects(self):
         '''Create obstacles: cars, logs, and turtles'''
