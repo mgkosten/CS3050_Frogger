@@ -18,6 +18,11 @@ class MyGame(arcade.Window):
         # home frog count
         self.frog_home_count = 0
 
+        # death animation
+        self.current_animation_index = 0
+        self.frog_death_x = 0
+        self.frog_death_y = 0
+
         # max y value of frog player through each level
         self.max_frog_y = SCALED_SQUARE + SPRITE_SQUARE
 
@@ -288,11 +293,47 @@ class MyGame(arcade.Window):
             self.max_frog_y = self.player.ypos
 
     def frog_death(self):
-        '''Called when the frog dies to decrement lives counter'''
         self.player.lives -= 1
-        self.player.reset()
-        # Reset timer
-        self.backend.game_time = DURATION
+
+        # Cache the position before hiding the frog
+        self.frog_death_x = self.player.xpos
+        self.frog_death_y = self.player.ypos
+
+        # reset so run every death
+        self.current_animation_index = 0
+
+        # start running animation
+        arcade.schedule(self.play_next_death_frame, 0.15)  # call every 0.15s
+
+    def play_next_death_frame(self, delta_time):
+        if self.current_animation_index < len(self.death_animations):
+            # Show the next animation
+            animation = self.death_animations[self.current_animation_index]
+
+            # set animation positions
+            animation.xpos = self.frog_death_x
+            animation.ypos = self.frog_death_y
+
+            # reset frog positioning
+            self.player.reset()
+
+            # Reset the PREVIOUS animation to off-screen (optional, but keeps one showing at a time)
+            if self.current_animation_index > 0:
+                prev_animation = self.death_animations[self.current_animation_index - 1]
+                prev_animation.xpos = -WINDOW_WIDTH
+                prev_animation.ypos = -WINDOW_HEIGHT
+
+            self.current_animation_index += 1
+        else:
+            # Reset the last animation
+            last_animation = self.death_animations[-1]
+            last_animation.xpos = -WINDOW_WIDTH
+            last_animation.ypos = -WINDOW_HEIGHT
+
+            # Reset game state
+            self.backend.game_time = DURATION
+            # stop running death animation
+            arcade.unschedule(self.play_next_death_frame)
 
     # Renders everything
     def on_draw(self):
@@ -325,6 +366,8 @@ class MyGame(arcade.Window):
             car.update(delta_time)
         for frog_home in self.frog_homes:
             frog_home.update()
+        for animation in self.death_animations:
+            animation.update()
         self.player.update()
 
         self.backend.update_timer(delta_time)
