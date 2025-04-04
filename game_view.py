@@ -80,7 +80,6 @@ class MyGame(arcade.Window):
         spritesheet = arcade.load_spritesheet('assets/spritesheet_transparent.png')
 
         self.load_background_textures(spritesheet)
-        # self.load_death_animation_textures(spritesheet)
 
         # Load player, log, vehicle, and turtle textures
         for log in self.logs:
@@ -99,14 +98,16 @@ class MyGame(arcade.Window):
             frog_home.load_textures(spritesheet, 'frog_up')
             self.frog_home_sprites.append(frog_home.sprite)
 
-        # for death_anim in self.death_animations:
-        #     death_anim.
+        for i, death_anim in enumerate(self.death_animations):
+            death_anim.load_textures(spritesheet, ('death_animation_' + str(i+1)))
+            self.death_frog_sprites.append(death_anim.sprite)
 
         # Adding obstacle sprites to main sprite list
         self.sprite_list.extend(self.log_sprites)
         self.sprite_list.extend(self.car_sprites)
         self.sprite_list.extend(self.turtle_sprites)
         self.sprite_list.extend(self.frog_home_sprites)
+        self.sprite_list.extend(self.death_frog_sprites)
 
         self.player.load_textures(spritesheet, 'frog_up')
         self.sprite_list.append(self.player.sprite)
@@ -163,9 +164,6 @@ class MyGame(arcade.Window):
                                      arcade.LBWH(i*SCALED_SQUARE*.5, SCALED_SQUARE*.5,
                                                  SCALED_SQUARE*.5, SCALED_SQUARE*.5))
 
-    def draw_death_animations(self):
-        pass
-
     def make_objects(self):
         '''Create obstacles: cars, logs, and turtles'''
         for i in range(4):
@@ -190,10 +188,19 @@ class MyGame(arcade.Window):
         for _ in range(5):
             self.frog_homes.append(Frog())
 
-        # set values
+        # set location
         for frog in self.frog_homes:
             frog.xpos = -WINDOW_WIDTH
             frog.ypos = -WINDOW_HEIGHT
+
+        # death animation sprites
+        for _ in range(7):
+            self.death_animations.append(Frog())
+
+        # set location
+        for animation in self.death_animations:
+            animation.xpos = -WINDOW_WIDTH
+            animation.ypos = -WINDOW_HEIGHT
 
 
     # Resets game
