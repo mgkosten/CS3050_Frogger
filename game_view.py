@@ -90,7 +90,10 @@ class MyGame(arcade.Window):
         self.textures['death_animation_7'] = spritesheet.get_texture(
             arcade.LBWH(109, 80, SPRITE_SQUARE, SPRITE_SQUARE))
 
-        self.sprite = arcade.Sprite(self.textures['frog_up'], SCALE, self.xpos, self.ypos)
+        # add to list
+        self.death_animations.append
+        self.arcade.Sprite(self.textures['frog_up'], SCALE, self.xpos, self.ypos)
+        self.sprite_list.extend(self.frog_home_sprites)
 
     def load_textures(self):
         '''Loads sprite textures from the spritesheet'''
