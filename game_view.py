@@ -112,7 +112,7 @@ class MyGame(arcade.Window):
         self.sprite_list.extend(self.car_sprites)
         self.sprite_list.extend(self.turtle_sprites)
         self.sprite_list.extend(self.frog_home_sprites)
-        self.sprite_list.extend(self.death_frog_sprites)
+        # self.sprite_list.extend(self.death_frog_sprites)
 
         self.player.load_textures(spritesheet, 'frog_up')
         self.sprite_list.append(self.player.sprite)
@@ -303,7 +303,7 @@ class MyGame(arcade.Window):
         self.current_animation_index = 0
 
         # start running animation
-        arcade.schedule(self.play_next_death_frame, 0.15)  # call every 0.15s
+        arcade.schedule(self.play_next_death_frame, 0.3)
 
     def play_next_death_frame(self, delta_time):
         if self.current_animation_index < len(self.death_animations):
@@ -342,6 +342,7 @@ class MyGame(arcade.Window):
         self.timer.draw()
         self.draw_background()
         self.sprite_list.draw()
+        self.death_frog_sprites.draw()
 
         self.use()
         self.clear()
