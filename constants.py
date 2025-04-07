@@ -1,20 +1,34 @@
 '''File to hold constants, import as needed'''
-import ctypes
+import sys
 from enum import Enum
 from pyglet.math import Vec2
 
-# Fixing CRT bug for *Windows* only!
-DISPLAY_SCALE = 1 # TODO: Figure out Mac fix
-# DISPLAY_SCALE = ctypes.windll.shcore.GetScaleFactorForDevice(0) / 100
+FILTER_ON = True
+match sys.platform:
+    case 'win32':
+        # Windows
+        import ctypes
+        DISPLAY_SCALE = ctypes.windll.shcore.GetScaleFactorForDevice(0) / 100
+    # case 'darwin':
+    #     # Mac
+    #     # TODO: Test this solution on Mac
+    #     from AppKit import NSScreen
+    #     DISPLAY_SCALE = NSScreen.mainScreen().backingScaleFactor()
+    case _:
+        # Turn off filter for other OS until figure out display scaling
+        DISPLAY_SCALE = 1
+        FILTER_ON = False
 
-# Scale needs to be an integer so for loops work but change as needed locally
-SCALE = 2
+SCALE = 4/DISPLAY_SCALE
 SPRITE_SQUARE = 16
-SCALED_SQUARE = SPRITE_SQUARE*SCALE
-
-WINDOW_WIDTH = 28*8*SCALE
-WINDOW_HEIGHT = 32*8*SCALE
+SCALED_SQUARE = int(SPRITE_SQUARE*SCALE)
+WINDOW_WIDTH = int(28*8*SCALE)
+WINDOW_HEIGHT = int(32*8*SCALE)
 WINDOW_TITLE = "Frogger"
+
+# The CRT filter doesn't respect native display scales so we have to hack it a little bit
+FILTER_WIDTH = int(WINDOW_WIDTH*DISPLAY_SCALE)
+FILTER_HEIGHT = int(WINDOW_HEIGHT*DISPLAY_SCALE)
 
 # CRT CONSTANTS
 DSCALE = 6

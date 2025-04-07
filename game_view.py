@@ -39,8 +39,7 @@ class MyGame(arcade.Window):
         self.backend = Game()
 
         # Making CRT Filter
-        self.crt_filter = arcade.experimental.crt_filter.CRTFilter(int(WINDOW_WIDTH*DISPLAY_SCALE),
-                                                                   int(WINDOW_HEIGHT*DISPLAY_SCALE),
+        self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
                                                                    resolution_down_scale=DSCALE,
                                                                    hard_scan=SCAN, hard_pix=PIX,
                                                                    display_warp=WARP,
@@ -279,17 +278,26 @@ class MyGame(arcade.Window):
 
     # Renders everything
     def on_draw(self):
-        self.crt_filter.use()
-        self.crt_filter.clear()
+        if FILTER_ON:
+            self.crt_filter.use()
+            self.crt_filter.clear()
 
-        self.draw_background()
-        self.backend.timer_text.draw()
-        self.backend.score_text.draw()
-        self.sprite_list.draw()
+            self.draw_background()
+            self.backend.timer_text.draw()
+            self.backend.score_text.draw()
+            self.sprite_list.draw()
 
-        self.use()
-        self.clear()
-        self.crt_filter.draw()
+            self.use()
+            self.clear()
+            self.crt_filter.draw()
+        else:
+            self.use()
+            self.clear()
+
+            self.draw_background()
+            self.backend.timer_text.draw()
+            self.backend.score_text.draw()
+            self.sprite_list.draw()
 
     # Frame update
     def on_update(self, delta_time):
