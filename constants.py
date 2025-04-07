@@ -9,11 +9,10 @@ match sys.platform:
         # Windows
         import ctypes
         DISPLAY_SCALE = ctypes.windll.shcore.GetScaleFactorForDevice(0) / 100
-    # case 'darwin':
-    #     # Mac
-    #     # TODO: Test this solution on Mac
-    #     from AppKit import NSScreen
-    #     DISPLAY_SCALE = NSScreen.mainScreen().backingScaleFactor()
+    case 'darwin':
+        # Mac
+        from AppKit import NSScreen
+        DISPLAY_SCALE = NSScreen.mainScreen().backingScaleFactor()
     case _:
         # Turn off filter for other OS until figure out display scaling
         DISPLAY_SCALE = 1
