@@ -18,6 +18,11 @@ class MyGame(arcade.Window):
         # home frog count
         self.frog_home_count = 0
 
+        # death animation
+        self.current_animation_index = 0
+        self.frog_death_x = 0
+        self.frog_death_y = 0
+
         # max y value of frog player through each level
         self.max_frog_y = SCALED_SQUARE*1.5
 
@@ -27,6 +32,7 @@ class MyGame(arcade.Window):
         self.logs = []
         self.cars = []
         self.frog_homes = []
+        self.death_animations = []
 
         # Creating SpriteList
         self.sprite_list = arcade.SpriteList()
@@ -34,6 +40,7 @@ class MyGame(arcade.Window):
         self.turtle_sprites = arcade.SpriteList()
         self.log_sprites = arcade.SpriteList()
         self.frog_home_sprites = arcade.SpriteList()
+        self.death_frog_sprites = arcade.SpriteList()
 
         # Creating timer and game backend
         self.backend = Game()
@@ -91,16 +98,21 @@ class MyGame(arcade.Window):
             self.turtle_sprites.extend(turtle.sprite_list)
 
         for frog_home in self.frog_homes:
-            frog_home.load_textures(spritesheet)
+            frog_home.load_textures(spritesheet, 'frog_down')
             self.frog_home_sprites.append(frog_home.sprite)
+
+        for i, death_anim in enumerate(self.death_animations):
+            death_anim.load_textures(spritesheet, ('death_animation_' + str(i+1)))
+            self.death_frog_sprites.append(death_anim.sprite)
 
         # Adding obstacle sprites to main sprite list
         self.sprite_list.extend(self.log_sprites)
         self.sprite_list.extend(self.car_sprites)
         self.sprite_list.extend(self.turtle_sprites)
         self.sprite_list.extend(self.frog_home_sprites)
+        # self.sprite_list.extend(self.death_frog_sprites)
 
-        self.player.load_textures(spritesheet)
+        self.player.load_textures(spritesheet, 'frog_up')
         self.sprite_list.append(self.player.sprite)
 
     def draw_background(self):
@@ -179,10 +191,19 @@ class MyGame(arcade.Window):
         for _ in range(5):
             self.frog_homes.append(Frog())
 
-        # set values
+        # set location
         for frog in self.frog_homes:
             frog.xpos = -WINDOW_WIDTH
             frog.ypos = -WINDOW_HEIGHT
+
+        # death animation sprites
+        for _ in range(7):
+            self.death_animations.append(Frog())
+
+        # set location
+        for animation in self.death_animations:
+            animation.xpos = -WINDOW_WIDTH
+            animation.ypos = -WINDOW_HEIGHT
 
 
     # Resets game
@@ -270,7 +291,6 @@ class MyGame(arcade.Window):
             self.max_frog_y = self.player.ypos
 
     def frog_death(self):
-        '''Called when the frog dies to decrement lives counter'''
         self.player.lives -= 1
         self.player.reset()
         self.backend.game_time = DURATION
@@ -299,6 +319,65 @@ class MyGame(arcade.Window):
             self.backend.score_text.draw()
             self.sprite_list.draw()
 
+        # Cache the position before hiding the frog
+        self.frog_death_x = self.player.xpos
+        self.frog_death_y = self.player.ypos
+
+        # reset so run every death
+        self.current_animation_index = 0
+
+        # start running animation
+        arcade.schedule(self.play_next_death_frame, 0.3)
+
+    def play_next_death_frame(self, delta_time):
+        if self.current_animation_index < len(self.death_animations):
+            # Show the next animation
+            animation = self.death_animations[self.current_animation_index]
+
+            # set animation positions
+            animation.xpos = self.frog_death_x
+            animation.ypos = self.frog_death_y
+
+            # reset frog positioning
+            self.player.reset()
+
+            # Reset the PREVIOUS animation to off-screen (optional, but keeps one showing at a time)
+            if self.current_animation_index > 0:
+                prev_animation = self.death_animations[self.current_animation_index - 1]
+                prev_animation.xpos = -WINDOW_WIDTH
+                prev_animation.ypos = -WINDOW_HEIGHT
+
+            self.current_animation_index += 1
+        else:
+            # Reset the last animation
+            last_animation = self.death_animations[-1]
+            last_animation.xpos = -WINDOW_WIDTH
+            last_animation.ypos = -WINDOW_HEIGHT
+
+            # Reset game state
+            self.backend.game_time = DURATION
+            # stop running death animation
+            arcade.unschedule(self.play_next_death_frame)
+
+    # Renders everything
+    def on_draw(self):
+        self.crt_filter.use()
+        self.crt_filter.clear()
+        self.timer.draw()
+        self.draw_background()
+        self.sprite_list.draw()
+        self.death_frog_sprites.draw()
+
+        self.use()
+        self.clear()
+        self.crt_filter.draw()
+
+        # Timer Display
+
+        # Timer/Score Display
+        self.backend.timer_text.draw()
+        self.backend.score_text.draw()
+
     # Frame update
     def on_update(self, delta_time):
         for turtle in self.turtles:
@@ -309,6 +388,8 @@ class MyGame(arcade.Window):
             car.update(delta_time)
         for frog_home in self.frog_homes:
             frog_home.update()
+        for animation in self.death_animations:
+            animation.update()
         self.player.update()
 
         self.backend.update_timer(delta_time)
