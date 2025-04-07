@@ -309,7 +309,7 @@ class MyGame(arcade.Window):
         self.current_animation_index = 0
 
         # start running animation
-        arcade.schedule(self.play_next_death_frame, 0.3)
+        arcade.schedule(self.play_next_death_frame, 0.1)
 
     def play_next_death_frame(self, delta_time):
         if self.current_animation_index < len(self.death_animations):
