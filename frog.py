@@ -12,7 +12,7 @@ class Frog:
         self.sprite = None
         self.textures = {}
 
-    def load_textures(self, spritesheet):
+    def load_textures(self, spritesheet, sprite):
         '''Load frog texture and sprite'''
         self.textures['frog_up'] = spritesheet.get_texture(
             arcade.LBWH(1, 1, SPRITE_SQUARE, SPRITE_SQUARE))
@@ -22,8 +22,22 @@ class Frog:
             arcade.LBWH(73, 1, SPRITE_SQUARE, SPRITE_SQUARE))
         self.textures['frog_right'] = spritesheet.get_texture(
             arcade.LBWH(109, 1, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_1'] = spritesheet.get_texture(
+            arcade.LBWH(1, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_2'] = spritesheet.get_texture(
+            arcade.LBWH(19, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_3'] = spritesheet.get_texture(
+            arcade.LBWH(37, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_4'] = spritesheet.get_texture(
+            arcade.LBWH(55, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_5'] = spritesheet.get_texture(
+            arcade.LBWH(73, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_6'] = spritesheet.get_texture(
+            arcade.LBWH(91, 80, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.textures['death_animation_7'] = spritesheet.get_texture(
+            arcade.LBWH(109, 80, SPRITE_SQUARE, SPRITE_SQUARE))
 
-        self.sprite = arcade.Sprite(self.textures['frog_up'], SCALE, self.xpos, self.ypos)
+        self.sprite = arcade.Sprite(self.textures[sprite], SCALE, self.xpos, self.ypos)
 
     def update(self):
         '''Call in on_update to keep the sprite position updated'''
