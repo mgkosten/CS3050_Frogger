@@ -100,7 +100,7 @@ class MyGame(arcade.Window):
             self.turtle_sprites.extend(turtle.sprite_list)
 
         for frog_home in self.frog_homes:
-            frog_home.load_textures(spritesheet, 'frog_up')
+            frog_home.load_textures(spritesheet, 'frog_down')
             self.frog_home_sprites.append(frog_home.sprite)
 
         for i, death_anim in enumerate(self.death_animations):
