@@ -1,6 +1,11 @@
 '''File to hold constants, import as needed'''
+import ctypes
 from enum import Enum
 from pyglet.math import Vec2
+
+# Fixing CRT bug for *Windows* only!
+DISPLAY_SCALE = 1 # TODO: Figure out Mac fix
+# DISPLAY_SCALE = ctypes.windll.shcore.GetScaleFactorForDevice(0) / 100
 
 # Scale needs to be an integer so for loops work but change as needed locally
 SCALE = 2

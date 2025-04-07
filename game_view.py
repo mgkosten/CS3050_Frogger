@@ -39,7 +39,8 @@ class MyGame(arcade.Window):
         self.backend = Game()
 
         # Making CRT Filter
-        self.crt_filter = arcade.experimental.crt_filter.CRTFilter(WINDOW_WIDTH, WINDOW_HEIGHT,
+        self.crt_filter = arcade.experimental.crt_filter.CRTFilter(int(WINDOW_WIDTH*DISPLAY_SCALE),
+                                                                   int(WINDOW_HEIGHT*DISPLAY_SCALE),
                                                                    resolution_down_scale=DSCALE,
                                                                    hard_scan=SCAN, hard_pix=PIX,
                                                                    display_warp=WARP,
