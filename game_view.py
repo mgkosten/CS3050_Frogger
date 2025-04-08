@@ -230,9 +230,12 @@ class MyGame(arcade.Window):
 
         found_home = False
 
+        # start home x values
+        x_val = (SPRITE_SQUARE*3)
+
         # loop to make 5 homes
         for i in range(5):
-            homes.append(28 + (SCALED_SQUARE * 3) * i)
+            homes.append(x_val + (SCALED_SQUARE * 3) * i)
 
         # determine if frog is home
         if self.player.ypos >= SCALED_SQUARE * 13:
