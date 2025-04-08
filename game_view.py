@@ -308,6 +308,9 @@ class MyGame(arcade.Window):
         # reset frog positioning
         self.player.reset()
 
+        # reset max y value of frog player through each level
+        self.max_frog_y = SCALED_SQUARE * 1.5
+
         # reset so run every death
         self.current_animation_index = 0
 
