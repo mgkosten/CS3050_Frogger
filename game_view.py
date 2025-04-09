@@ -261,7 +261,7 @@ class GameView(arcade.View):
         found_home = False
 
         # start home x values
-        x_val = (SPRITE_SQUARE*3)
+        x_val = SCALED_SQUARE
 
         # loop to make 5 homes
         for i in range(5):
