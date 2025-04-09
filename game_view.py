@@ -2,11 +2,11 @@
 # pylint: disable=wildcard-import, unused-wildcard-import, too-many-instance-attributes, abstract-method
 import arcade
 import os
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
-from firebase_admin import db
-from firebase import firebase_access
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import firestore
+# from firebase_admin import db
+# from firebase import firebase_access
 from constants import *
 from game import Game
 from frog import Frog
