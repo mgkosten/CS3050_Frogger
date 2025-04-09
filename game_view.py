@@ -8,10 +8,33 @@ from turt import Turt
 from log import Log
 from car import Car
 
-class MyGame(arcade.Window):
+# Starting View
+class InstructionView(arcade.View):
+    def on_show_view(self):
+        self.window.background_color = arcade.csscolor.BLACK
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("Controls", self.window.width / 2, self.window.height / 2+300, arcade.color.GREEN_YELLOW, font_size=50, anchor_x='center')
+        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\nD/Right = Move right\nSpace = Pause/Unpause", self.window.width / 2, self.window.height / 2+200, arcade.color.GREEN_YELLOW, font_size=50, anchor_x='center', multiline=True, width=800, align="center")
+        arcade.draw_text("Press the Space Bar to play!", self.window.width / 2, self.window.height / 2 - 225, arcade.color.GREEN_YELLOW, font_size=50, anchor_x='center')
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == arcade.key.SPACE:
+            game_view = GameView()
+            game_view.make_objects()
+            game_view.load_textures()
+            self.window.show_view(game_view)
+        if symbol == arcade.key.ESCAPE:
+            arcade.close_window()
+
+# Where the game is played
+class GameView(arcade.View):
     '''GameView class for running and displaying the game'''
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title, )
+    def __init__(self):
+        super().__init__()
+
+
         # Define Textures dictionary
         self.textures = {}
 
@@ -52,6 +75,7 @@ class MyGame(arcade.Window):
                                                                    display_warp=WARP,
                                                                    mask_dark=DARKMASK,
                                                                    mask_light=LIGHTMASK)
+        self.paused = False
 
     def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
@@ -359,11 +383,14 @@ class MyGame(arcade.Window):
             self.sprite_list.draw()
             self.death_frog_sprites.draw()
 
-            self.use()
+            if self.paused:
+                arcade.draw_text("PAUSED", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+
+            self.window.use()
             self.clear()
             self.crt_filter.draw()
         else:
-            self.use()
+            self.window.use()
             self.clear()
 
             self.draw_background()
@@ -372,44 +399,53 @@ class MyGame(arcade.Window):
             self.sprite_list.draw()
             self.death_frog_sprites.draw()
 
+            if self.paused:
+                arcade.draw_text("PAUSED", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+
     # Frame update
     def on_update(self, delta_time):
-        for turtle in self.turtles:
-            turtle.update(delta_time)
-        for log in self.logs:
-            log.update(delta_time)
-        for car in self.cars:
-            car.update(delta_time)
-        for frog_home in self.frog_homes:
-            frog_home.update()
-        for animation in self.death_animations:
-            animation.update()
-        self.player.update()
+        if not self.paused:
+            for turtle in self.turtles:
+                turtle.update(delta_time)
+            for log in self.logs:
+                log.update(delta_time)
+            for car in self.cars:
+                car.update(delta_time)
+            for frog_home in self.frog_homes:
+                frog_home.update()
+            for animation in self.death_animations:
+                animation.update()
+            self.player.update()
 
-        self.backend.update_timer(delta_time)
-        if self.backend.game_time <= 0:
-            self.frog_death()
+            self.backend.update_timer(delta_time)
+            if self.backend.game_time <= 0:
+                self.frog_death()
 
-        self.collision_detect(delta_time)
-        self.player_score()
-        self.backend.update_points()
+            self.collision_detect(delta_time)
+            self.player_score()
+            self.backend.update_points()
 
-        if self.frog_home_count >= 5:
-            # reset home frogs back offscreen
-            for frog in self.frog_homes:
-                frog.xpos = -WINDOW_WIDTH
-                frog.ypos = -WINDOW_HEIGHT
+            if self.frog_home_count >= 5:
+                # reset home frogs back offscreen
+                for frog in self.frog_homes:
+                    frog.xpos = -WINDOW_WIDTH
+                    frog.ypos = -WINDOW_HEIGHT
 
-            # reset count
-            self.frog_home_count = 0
+                # reset count
+                self.frog_home_count = 0
 
-        if self.player.lives <= 0 and not self.backend.game_over:
-            # Show game over screen
-            self.backend.game_over = True
+            if self.player.lives <= 0 and not self.backend.game_over:
+                # Show game over screen
+                self.backend.game_over = True
 
-            # reset high score
-            self.backend.points = 0
-            print('GAME OVER')
+                # reset high score
+
+                next_view = GameOverView(self.backend.points)
+                self.window.show_view(next_view)
+
+                self.backend.points = 0
+
+                print('GAME OVER')
 
     # Triggers when a key is pressed
     def on_key_press(self, symbol, modifiers):
@@ -420,19 +456,42 @@ class MyGame(arcade.Window):
             self.player.move(symbol)
         elif symbol == arcade.key.ESCAPE:
             arcade.close_window()
+        elif symbol == arcade.key.SPACE:
+            if self.paused:
+                self.paused = False
+            else:
+                self.paused = True
+
+class GameOverView(arcade.View):
+    def __init__(self, score):
+        super().__init__()
+        self.score = score
+
+    def on_show_view(self):
+        self.window.background_color = arcade.color.BLACK
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+        arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2 - 75, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+        arcade.draw_text("Press space to play again!", self.window.width / 2, self.window.height / 2 - 150, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == arcade.key.SPACE:
+            next_view = InstructionView()
+            self.window.show_view(next_view)
+        if symbol == arcade.key.ESCAPE:
+            arcade.close_window()
+
 
 
 def main():
     """ Main function """
 
     # Create and setup the GameView
-    game = MyGame(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
-
-    # Load textures
-    game.make_objects()
-    game.load_textures()
-
-    # Start the arcade game loop
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
+    start_view = InstructionView()
+    window.show_view(start_view)
     arcade.run()
 
 
