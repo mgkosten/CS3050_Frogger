@@ -1,6 +1,12 @@
 '''Frogger game implemented using Python Arcade.'''
 # pylint: disable=wildcard-import, unused-wildcard-import, too-many-instance-attributes, abstract-method
 import arcade
+import os
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+from firebase_admin import db
+from firebase import firebase_access
 from constants import *
 from game import Game
 from frog import Frog
@@ -424,6 +430,17 @@ class MyGame(arcade.Window):
 
 def main():
     """ Main function """
+
+    #path to credentials file
+    script_dir = os.path.dirname(__file__)
+    service_account_path = os.path.join(script_dir, "credentials.json")
+
+    #connect to database
+    db = firebase_access(service_account_path)
+    db = firestore.client()
+    if not db:
+        print("Firestore initialization failed")
+        exit()
 
     # Create and setup the GameView
     game = MyGame(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
