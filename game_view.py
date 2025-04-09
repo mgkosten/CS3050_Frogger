@@ -430,7 +430,7 @@ class MyGame(arcade.Window):
 
 def main():
     """ Main function """
-
+    """
     #path to credentials file
     script_dir = os.path.dirname(__file__)
     service_account_path = os.path.join(script_dir, "credentials.json")
@@ -441,7 +441,7 @@ def main():
     if not db:
         print("Firestore initialization failed")
         exit()
-
+    """
     # Create and setup the GameView
     game = MyGame(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
 
