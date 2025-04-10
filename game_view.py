@@ -40,9 +40,11 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
 
-
         # Define Textures dictionary
         self.textures = {}
+
+        # Levels
+        self.level = 1
 
         # home frog count
         self.frog_home_count = 0
@@ -240,6 +242,7 @@ class GameView(arcade.View):
         self.backend.reset()
         self.player.reset()
         self.player.lives = 3
+        self.level = 1
 
         self.turtles = []
         self.logs = []
@@ -302,9 +305,9 @@ class GameView(arcade.View):
             if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
                 for log in self.logs:
                     if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
-                        self.player.xpos += log.speed * delta_time
+                        self.player.xpos += log.speed * delta_time * (1.1 * self.level)
             elif arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites):
-                self.player.xpos += self.turtles[0].speed * delta_time
+                self.player.xpos += self.turtles[0].speed * delta_time * (1.1 * self.level)
             else:
                 self.frog_death()
 
@@ -320,13 +323,6 @@ class GameView(arcade.View):
         if self.player.ypos > self.max_frog_y:
             self.backend.points += 10
             self.max_frog_y = self.player.ypos
-
-    # def frog_death(self):
-    #     '''Called when the frog dies to decrement lives counter'''
-    #     self.player.lives -= 1
-    #     self.player.reset()
-    #     self.backend.game_time = DURATION
-    #     self.max_frog_y = SCALED_SQUARE*1.5
 
     def frog_death(self):
         self.player.lives -= 1
@@ -412,11 +408,11 @@ class GameView(arcade.View):
     def on_update(self, delta_time):
         if not self.paused:
             for turtle in self.turtles:
-                turtle.update(delta_time)
+                turtle.update(delta_time, self.level)
             for log in self.logs:
-                log.update(delta_time)
+                log.update(delta_time, self.level)
             for car in self.cars:
-                car.update(delta_time)
+                car.update(delta_time, self.level)
             for frog_home in self.frog_homes:
                 frog_home.update()
             for animation in self.death_animations:
@@ -439,6 +435,9 @@ class GameView(arcade.View):
 
                 # reset count
                 self.frog_home_count = 0
+
+                # increment level
+                self.level += 1
 
             if self.player.lives <= 0 and not self.backend.game_over:
                 # Show game over screen

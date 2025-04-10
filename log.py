@@ -48,9 +48,9 @@ class Log:
             x += SCALED_SQUARE
         self.sprite_list.append(arcade.Sprite(right_log, SCALE, x, y))
 
-    def update(self, delta_time):
+    def update(self, delta_time, level):
         '''Call in on_update to move the log'''
-        self.xpos += self.speed * delta_time
+        self.xpos += self.speed * delta_time * (1.1 * level)
         if self.xpos > WINDOW_WIDTH + SCALED_SQUARE:
             self.xpos = -SCALED_SQUARE * self.length
 
