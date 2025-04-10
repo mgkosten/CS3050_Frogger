@@ -49,9 +49,9 @@ class Car:
 
         self.sprite = arcade.Sprite(vehicle_texture, SCALE, self.xpos, self.ypos)
 
-    def update(self, delta_time):
+    def update(self, delta_time, level):
         '''Call in on_update to move the car'''
-        self.xpos += self.speed * delta_time
+        self.xpos += self.speed * delta_time * (1.1 * level)
         if self.xpos > WINDOW_WIDTH + SCALED_SQUARE and self.speed > 0:
             self.xpos = -SCALED_SQUARE
         elif self.xpos < -SCALED_SQUARE and self.speed < 0:

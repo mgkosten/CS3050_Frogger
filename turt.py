@@ -29,9 +29,9 @@ class Turt:
             self.sprite_list.append(arcade.Sprite(turtle_texture, SCALE, x, y))
             x += SCALED_SQUARE
 
-    def update(self, delta_time):
+    def update(self, delta_time, level):
         '''Call in on_update to move the turtle group'''
-        self.xpos += self.speed * delta_time
+        self.xpos += self.speed * delta_time * (1.1 * level)
         if self.xpos < -SCALED_SQUARE * self.length:
             self.xpos = WINDOW_WIDTH + SCALED_SQUARE/2
 
