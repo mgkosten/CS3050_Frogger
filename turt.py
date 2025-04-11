@@ -3,13 +3,14 @@
 import arcade
 from constants import *
 
-class Turt:
+class Turt():
     '''
     Class representing a group of turtles in the water
         length: number of turtles in the group
         xpos: center x position of leftmost turtle
     '''
     def __init__(self, length, xpos):
+        super().__init__()
         self.speed = -OBSTACLE_SPEED*1.5
         if length not in [2, 3]:
             raise ValueError('invalid turtle length, must be integer 2 or 3')

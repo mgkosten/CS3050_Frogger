@@ -18,7 +18,6 @@ from car import Car
 import random
 import time
 
-
 random.seed()
 
 # Starting View
@@ -319,13 +318,13 @@ class GameView(arcade.View):
                     if segment_collide:
                         self.player.xpos += log.speed * delta_time
 
-            elif turtle_collides:
-                if turtle_collides[0].texture == self.turtles[0].normal_texture:
-                    self.player.xpos += self.turtles[0].speed * delta_time
-                elif turtle_collides[0].texture == self.turtles[0].flipped_texture:
-                    self.frog_death()
-            else:
-                self.frog_death()
+            for turtle in self.turtles:
+                turtle_collides = arcade.check_for_collision_with_list(self.player.sprite, turtle.sprite_list)
+                if turtle_collides:
+                    if turtle_collides[0].texture == turtle.normal_texture:
+                        self.player.xpos += self.turtles[0].speed * delta_time
+                    elif turtle_collides[1].texture == turtle.flipped_texture:
+                        self.frog_death()
 
         # if frog already in home
         if home_collides:
@@ -454,14 +453,6 @@ class GameView(arcade.View):
                 else:
                     self.turtles[turtleFlipIndexes[0]].flipped = True
                     self.turtles[turtleFlipIndexes[1]].flipped = True
-
-                # for turtle in self.turtles:
-                #     rVal = random.random()
-                #     if rVal <= FLIP_CHANCE:
-                #         if turtle.flipped:
-                #             turtle.flipped = False
-                #         else:
-                #             turtle.flipped = True
 
 
             self.backend.update_timer(delta_time)
