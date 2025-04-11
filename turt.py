@@ -31,7 +31,7 @@ class Turt:
 
     def update(self, delta_time, level):
         '''Call in on_update to move the turtle group'''
-        self.xpos += self.speed * delta_time * (1.1 * level)
+        self.xpos += self.speed * delta_time * (1+ (0.15 * level))
         if self.xpos < -SCALED_SQUARE * self.length:
             self.xpos = WINDOW_WIDTH + SCALED_SQUARE/2
 

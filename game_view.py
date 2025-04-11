@@ -305,9 +305,9 @@ class GameView(arcade.View):
             if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
                 for log in self.logs:
                     if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
-                        self.player.xpos += log.speed * delta_time * (1.1 * self.level)
+                        self.player.xpos += log.speed * delta_time * (1 + (0.15 * self.level))
             elif arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites):
-                self.player.xpos += self.turtles[0].speed * delta_time * (1.1 * self.level)
+                self.player.xpos += self.turtles[0].speed * delta_time * (1 + (0.15 * self.level))
             else:
                 self.frog_death()
 
