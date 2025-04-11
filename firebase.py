@@ -16,5 +16,17 @@ def firebase_access(service_account_key_path):
         return None
 
 
-# def add entry(db) 
+def add_entry(db, score, username = "null"):
+    try:
+        scores_ref = db.collection("scores")
+        scores_ref.add({"score": score, "username" : username})
 
+    except Exception as e:
+        print("Error adding user / score")
+
+
+def get_top_five(db):
+    scores_ref = db.collection("scores")
+    query = scores_ref.order_by("score").limit_to_last(3)
+    results = query.get()
+    return results
