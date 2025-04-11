@@ -504,22 +504,7 @@ class GameOverView(arcade.View):
 
 def main():
     """ Main function """
-    
-    #path to credentials file
-    script_dir = os.path.dirname(__file__)
-    service_account_path = os.path.join(script_dir, "credentials.json")
 
-    #connect to database
-    """
-    db = firebase_access(service_account_path)
-    db = firestore.client()
-    if not db:
-        print("Firestore initialization failed")
-        exit()
-    username = "olivia"
-    score = 100
-    add_entry(db, username, score)
-    """
     # Create and setup the GameView
     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
     start_view = InstructionView()
