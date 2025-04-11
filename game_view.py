@@ -21,9 +21,9 @@ class InstructionView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Controls", self.window.width / 2, self.window.height / 2+300, arcade.color.GREEN_YELLOW, font_size=50, anchor_x='center')
-        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\nD/Right = Move right\nSpace = Pause/Unpause", self.window.width / 2, self.window.height / 2+200, arcade.color.GREEN_YELLOW, font_size=50, anchor_x='center', multiline=True, width=800, align="center")
-        arcade.draw_text("Press the Space Bar to play!", self.window.width / 2, self.window.height / 2 - 225, arcade.color.GREEN_YELLOW, font_size=50, anchor_x='center')
+        arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE*2, anchor_x='center')
+        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\nD/Right = Move right\nSpace = Pause/Unpause",WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
+        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*3, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
@@ -305,9 +305,9 @@ class GameView(arcade.View):
             if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
                 for log in self.logs:
                     if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
-                        self.player.xpos += log.speed * delta_time * (1.1 * self.level)
+                        self.player.xpos += log.speed * delta_time * (1 + (0.15 * self.level))
             elif arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites):
-                self.player.xpos += self.turtles[0].speed * delta_time * (1.1 * self.level)
+                self.player.xpos += self.turtles[0].speed * delta_time * (1 + (0.15 * self.level))
             else:
                 self.frog_death()
 
