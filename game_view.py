@@ -315,8 +315,10 @@ class GameView(arcade.View):
 
             if log_collides:
                 for log in self.logs:
-                    if log_collides:
-                        self.player.xpos += log.speed * delta_time / 16
+                    segment_collide = arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list)
+                    if segment_collide:
+                        self.player.xpos += log.speed * delta_time
+
             elif turtle_collides:
                 if turtle_collides[0].texture == self.turtles[0].normal_texture:
                     self.player.xpos += self.turtles[0].speed * delta_time
@@ -444,13 +446,22 @@ class GameView(arcade.View):
             self.turtleFlipDelay -= delta_time
             if self.turtleFlipDelay <= 0:
                 self.turtleFlipDelay = FLIP_DELAY
-                for turtle in self.turtles:
-                    rVal = random.random()
-                    if rVal <= FLIP_CHANCE:
-                        if turtle.flipped:
-                            turtle.flipped = False
-                        else:
-                            turtle.flipped = True
+
+                turtleFlipIndexes = (0, 5)
+                if self.turtles[0].flipped:
+                    self.turtles[turtleFlipIndexes[0]].flipped = False
+                    self.turtles[turtleFlipIndexes[1]].flipped = False
+                else:
+                    self.turtles[turtleFlipIndexes[0]].flipped = True
+                    self.turtles[turtleFlipIndexes[1]].flipped = True
+
+                # for turtle in self.turtles:
+                #     rVal = random.random()
+                #     if rVal <= FLIP_CHANCE:
+                #         if turtle.flipped:
+                #             turtle.flipped = False
+                #         else:
+                #             turtle.flipped = True
 
 
             self.backend.update_timer(delta_time)
