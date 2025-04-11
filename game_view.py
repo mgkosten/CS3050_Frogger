@@ -1,4 +1,6 @@
 '''Frogger game implemented using Python Arcade.'''
+from operator import truediv
+
 # pylint: disable=wildcard-import, unused-wildcard-import, too-many-instance-attributes, abstract-method
 import arcade
 import os
@@ -13,6 +15,11 @@ from frog import Frog
 from turt import Turt
 from log import Log
 from car import Car
+import random
+import time
+
+
+random.seed()
 
 # Starting View
 class InstructionView(arcade.View):
@@ -39,7 +46,6 @@ class GameView(arcade.View):
     '''GameView class for running and displaying the game'''
     def __init__(self):
         super().__init__()
-
 
         # Define Textures dictionary
         self.textures = {}
@@ -82,6 +88,7 @@ class GameView(arcade.View):
                                                                    mask_dark=DARKMASK,
                                                                    mask_light=LIGHTMASK)
         self.paused = False
+        self.turtleFlipDelay = FLIP_DELAY
 
     def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
@@ -291,25 +298,35 @@ class GameView(arcade.View):
 
     def collision_detect(self, delta_time):
         '''Collision detection'''
+
+        log_collides = arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites)
+        turtle_collides = arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites)
+        home_collides = arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites)
+        car_collides = arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites)
+
         # Collision detection with cars
-        if arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites):
+        if car_collides:
             # reset frog to starting position
             self.frog_death()
 
         # determine if in water or not
         if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
             # check if on log or not
-            if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
+
+            if log_collides:
                 for log in self.logs:
-                    if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
-                        self.player.xpos += log.speed * delta_time
-            elif arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites):
-                self.player.xpos += self.turtles[0].speed * delta_time
+                    if log_collides:
+                        self.player.xpos += log.speed * delta_time / 16
+            elif turtle_collides:
+                if turtle_collides[0].texture == self.turtles[0].normal_texture:
+                    self.player.xpos += self.turtles[0].speed * delta_time
+                elif turtle_collides[0].texture == self.turtles[0].flipped_texture:
+                    self.frog_death()
             else:
                 self.frog_death()
 
         # if frog already in home
-        if arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites):
+        if home_collides:
             self.frog_death()
 
         self.check_home()
@@ -422,6 +439,19 @@ class GameView(arcade.View):
             for animation in self.death_animations:
                 animation.update()
             self.player.update()
+
+            # Turtle flipping
+            self.turtleFlipDelay -= delta_time
+            if self.turtleFlipDelay <= 0:
+                self.turtleFlipDelay = FLIP_DELAY
+                for turtle in self.turtles:
+                    rVal = random.random()
+                    if rVal <= FLIP_CHANCE:
+                        if turtle.flipped:
+                            turtle.flipped = False
+                        else:
+                            turtle.flipped = True
+
 
             self.backend.update_timer(delta_time)
             if self.backend.game_time <= 0:
