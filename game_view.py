@@ -20,8 +20,6 @@ class InstructionView(arcade.View):
     def __init__(self):
         super().__init__()
 
-        self.filter_on = True
-
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
                                                                    resolution_down_scale=DSCALE,
@@ -33,7 +31,7 @@ class InstructionView(arcade.View):
         self.window.background_color = arcade.csscolor.BLACK
 
     def on_draw(self):
-        if self.filter_on:
+        if FILTER_ON:
             self.crt_filter.use()
             self.crt_filter.clear()
 
@@ -47,7 +45,7 @@ class InstructionView(arcade.View):
             arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2,
                              SCALED_SQUARE*3, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE,
                              anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
-            # the CRT filter to it.
+            # CRT filter applied.
             self.window.use()
             self.clear()
             self.crt_filter.draw()
@@ -524,19 +522,45 @@ class GameOverView(arcade.View):
         self.db = firebase_access(service_account_path)
         self.db = firestore.client()
         add_entry(self.db, self.score)
+
+        # Making CRT Filter
+        self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
+                                                                   resolution_down_scale=3,
+                                                                   hard_scan=SCAN, hard_pix=PIX,
+                                                                   display_warp=WARP,
+                                                                   mask_dark=DARKMASK,
+                                                                   mask_light=LIGHTMASK)
         
     def on_show_view(self):
         self.window.background_color = arcade.color.BLACK
 
     def on_draw(self):
-        self.clear()
-        arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2 + 100,
-                         arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2,
-                         arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!", self.window.width / 2,
-                         self.window.height / 2 - 50, arcade.color.GREEN_YELLOW,
-                         20, anchor_x="center", multiline = True,width=WINDOW_WIDTH, align="center")
+        if FILTER_ON:
+            self.crt_filter.use()
+            self.crt_filter.clear()
+
+            arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2 + 100,
+                             arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+            arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2,
+                             arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+            arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!", self.window.width / 2,
+                             self.window.height / 2 - 50, arcade.color.GREEN_YELLOW,
+                             20, anchor_x="center", multiline=True, width=WINDOW_WIDTH, align="center")
+
+            # CRT filter applied.
+            self.window.use()
+            self.clear()
+            self.crt_filter.draw()
+
+        else:
+            self.clear()
+            arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2 + 100,
+                             arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+            arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2,
+                             arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+            arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!", self.window.width / 2,
+                             self.window.height / 2 - 50, arcade.color.GREEN_YELLOW,
+                             20, anchor_x="center", multiline = True,width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
@@ -554,22 +578,54 @@ class LeaderboardView(arcade.View):
         self.db = db
         self.leaders = get_top_five(self.db)
 
+        # Making CRT Filter
+        self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
+                                                                   resolution_down_scale=3,
+                                                                   hard_scan=SCAN, hard_pix=PIX,
+                                                                   display_warp=WARP,
+                                                                   mask_dark=DARKMASK,
+                                                                   mask_light=LIGHTMASK)
+
     def on_show_view(self):
         self.window.background_color = arcade.color.BLACK
     
     def on_draw(self):
-        self.clear()
-        height = 0
-        arcade.draw_text("Username:     Highscore:", self.window.width / 2, self.window.height / 2 + 175, 
-                         arcade.color.GREEN_YELLOW, 25, anchor_x="center")
-        for i in self.leaders:
-            arcade.draw_text(str(self.leaders[i]["score"]), self.window.width / 3 + 150, self.window.height / 4 + height, 
+        if FILTER_ON:
+            self.crt_filter.use()
+            self.crt_filter.clear()
+
+            height = 0
+            arcade.draw_text("Username:     Highscore:", self.window.width / 2, self.window.height / 2 + 175,
                              arcade.color.GREEN_YELLOW, 25, anchor_x="center")
-            arcade.draw_text(str(self.leaders[i]["username"]), self.window.width / 3, self.window.height / 4 + height, 
+            for i in self.leaders:
+                arcade.draw_text(str(self.leaders[i]["score"]), self.window.width / 3 + 150,
+                                 self.window.height / 4 + height,
+                                 arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+                arcade.draw_text(str(self.leaders[i]["username"]), self.window.width / 3,
+                                 self.window.height / 4 + height,
+                                 arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+                height += 50
+                arcade.draw_text("Press space bar to play!", self.window.width / 2, self.window.height / 6,
+                                 arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+
+            # CRT filter applied.
+            self.window.use()
+            self.clear()
+            self.crt_filter.draw()
+
+        else:
+            self.clear()
+            height = 0
+            arcade.draw_text("Username:     Highscore:", self.window.width / 2, self.window.height / 2 + 175,
                              arcade.color.GREEN_YELLOW, 25, anchor_x="center")
-            height += 50
-            arcade.draw_text("Press space bar to play!", self.window.width / 2, self.window.height / 6,
-                         arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+            for i in self.leaders:
+                arcade.draw_text(str(self.leaders[i]["score"]), self.window.width / 3 + 150, self.window.height / 4 + height,
+                                 arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+                arcade.draw_text(str(self.leaders[i]["username"]), self.window.width / 3, self.window.height / 4 + height,
+                                 arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+                height += 50
+                arcade.draw_text("Press space bar to play!", self.window.width / 2, self.window.height / 6,
+                             arcade.color.GREEN_YELLOW, 25, anchor_x="center")
     
     def on_key_press(self,symbol, modifiers):
         if symbol == arcade.key.SPACE:
