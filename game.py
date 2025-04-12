@@ -26,9 +26,9 @@ class Game:
             arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE,
                              TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
-    def update(self, frame_time):
+    def update(self, delta_time):
         '''Call in on_update to update the timer, points, and levels'''
-        self.game_time -= frame_time
+        self.game_time -= delta_time
         self.timer_text.text = f"Time: {int(self.game_time)}"
         self.score_text.text = f"Score: {int(self.points)}"
         self.level_text.text = f"Level: {int(self.level)}"
