@@ -419,10 +419,7 @@ class GameView(arcade.View):
                 # increment level
                 self.backend.level += 1
 
-            if self.player.lives <= 0 and not self.backend.game_over:
-                # Show game over screen
-                self.backend.game_over = True
-
+            if self.player.lives <= 0:
                 next_view = GameOverView(self.backend.points)
                 self.window.show_view(next_view)
 

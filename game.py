@@ -7,7 +7,6 @@ class Game:
     '''Game class'''
     def __init__(self):
         self.paused = False
-        self.game_over = False
         self.game_time = DURATION
         self.timer_text = arcade.Text(f"Time: {int(self.game_time)}",
                                       0, 0, TEXT_COLOR, SCALED_SQUARE/2)
@@ -15,7 +14,8 @@ class Game:
         self.points = 0
         self.score_text = arcade.Text(f"Score: {self.points}", 0, 0, TEXT_COLOR, SCALED_SQUARE/2)
         self.level = 1
-        self.level_text = arcade.Text(f"Level: {self.level}", self.timer_text.x, SCALED_SQUARE/2, TEXT_COLOR, SCALED_SQUARE/2)
+        self.level_text = arcade.Text(f"Level: {self.level}", self.timer_text.x, SCALED_SQUARE/2,
+                                      TEXT_COLOR, SCALED_SQUARE/2)
 
     def draw_text(self):
         '''Call in on_draw to draw text for GameView'''
@@ -35,8 +35,7 @@ class Game:
 
     def reset(self):
         '''Reset the game to beginning state'''
-        self.game_time = DURATION
-        self.game_over = False
-        self.points = 0
         self.paused = False
+        self.game_time = DURATION
+        self.points = 0
         self.level = 1
