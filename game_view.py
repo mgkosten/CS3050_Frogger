@@ -21,9 +21,9 @@ class InstructionView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE*2, anchor_x='center')
-        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\nD/Right = Move right\nSpace = Pause/Unpause",WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
-        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*3, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
+        arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2, TEXT_COLOR, SCALED_SQUARE*2, anchor_x='center')
+        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\nD/Right = Move right\nSpace = Pause/Unpause",WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, TEXT_COLOR, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
+        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*3, TEXT_COLOR, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
@@ -386,7 +386,7 @@ class GameView(arcade.View):
             self.death_frog_sprites.draw()
 
             if self.paused:
-                arcade.draw_text("PAUSED", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+                arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
             self.window.use()
             self.clear()
@@ -402,7 +402,7 @@ class GameView(arcade.View):
             self.death_frog_sprites.draw()
 
             if self.paused:
-                arcade.draw_text("PAUSED", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+                arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
     # Frame update
     def on_update(self, delta_time):
@@ -477,9 +477,9 @@ class GameOverView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2 - 75, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text("Press space to play again!", self.window.width / 2, self.window.height / 2 - 150, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+        arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+        arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+        arcade.draw_text("Press space to play again!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
@@ -505,7 +505,7 @@ def main():
         exit()
     """
     # Create and setup the GameView
-    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Frogger")
     start_view = InstructionView()
     window.show_view(start_view)
     arcade.run()
