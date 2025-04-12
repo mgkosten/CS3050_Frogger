@@ -400,14 +400,13 @@ class GameView(arcade.View):
                 animation.update()
             self.player.update()
 
-            self.backend.update_timer(delta_time)
             if self.backend.game_time <= 0:
                 self.frog_death()
-
             self.collision_detect(delta_time)
             self.player_score()
-            self.backend.update_points()
 
+            self.backend.update(delta_time)
+            
             if self.frog_home_count >= 5:
                 # reset home frogs back offscreen
                 for frog in self.frog_homes:
