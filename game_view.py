@@ -1,11 +1,12 @@
 '''Frogger game implemented using Python Arcade.'''
-# pylint: disable=wildcard-import, unused-wildcard-import, too-many-instance-attributes, abstract-method
-import arcade
+# pylint: disable=wildcard-import, unused-wildcard-import
 import os
-import firebase_admin
-from firebase_admin import credentials
+import arcade
+# TODO: which of these imports are needed? pylint says some are unused
+# import firebase_admin
+# from firebase_admin import credentials
 from firebase_admin import firestore
-from firebase_admin import db
+# from firebase_admin import db
 from firebase import firebase_access, add_entry
 from constants import *
 from game import Game
@@ -21,10 +22,15 @@ class InstructionView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2, TEXT_COLOR, SCALED_SQUARE*2, anchor_x='center')
-        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\nD/Right = Move right\nSpace = Pause/Unpause",WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, TEXT_COLOR, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
-        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*3, TEXT_COLOR, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
-
+        arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2,
+                         TEXT_COLOR, SCALED_SQUARE*2, anchor_x='center')
+        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n" \
+                         "D/Right = Move right\nSpace = Pause/Unpause", WINDOW_WIDTH/2,
+                         WINDOW_HEIGHT-SCALED_SQUARE*4, TEXT_COLOR, SCALED_SQUARE,
+                         anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
+        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*3,
+                         TEXT_COLOR, SCALED_SQUARE, anchor_x='center', multiline=True,
+                         width=WINDOW_WIDTH, align="center")
     def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument
         if symbol == arcade.key.SPACE:
@@ -37,6 +43,8 @@ class InstructionView(arcade.View):
 
 class GameView(arcade.View):
     '''GameView class for running and displaying the game'''
+    # We don't agree with pylint setting 7 as an arbitrary limit for instance attributes
+    # pylint: disable=too-many-instance-attributes
     def __init__(self):
         super().__init__()
 
@@ -319,25 +327,29 @@ class GameView(arcade.View):
             self.max_frog_y = self.player.ypos
 
     def frog_death(self):
+        '''Called when the frog dies'''
+        # Run death animation
+        arcade.schedule(self.play_next_death_frame, 0.1)
+
+        # Reset game state
+        self.backend.game_time = DURATION
         self.player.lives -= 1
 
-        # Cache the position before hiding the frog
+        # Cache the position before reseting the frog
         self.frog_death_x = self.player.xpos
         self.frog_death_y = self.player.ypos
-
-        # reset frog positioning
         self.player.reset()
 
         # reset max y value of frog player through each level
         self.max_frog_y = SCALED_SQUARE * 1.5
 
-        # reset so run every death
+        # reset so animation will run on every death
         self.current_animation_index = 0
 
-        # start running animation
-        arcade.schedule(self.play_next_death_frame, 0.1)
-
     def play_next_death_frame(self, delta_time):
+        '''Plays death animation, call using arcade.schedule in frog_death'''
+        # arcade.schedule functions require delta_time argument even if not used
+        # pylint: disable=unused-argument
         if self.current_animation_index < len(self.death_animations):
             # Show the next animation
             animation = self.death_animations[self.current_animation_index]
@@ -359,8 +371,6 @@ class GameView(arcade.View):
             last_animation.xpos = -WINDOW_WIDTH
             last_animation.ypos = -WINDOW_HEIGHT
 
-            # Reset game state
-            self.backend.game_time = DURATION
             # stop running death animation
             arcade.unschedule(self.play_next_death_frame)
 
@@ -406,7 +416,7 @@ class GameView(arcade.View):
             self.player_score()
 
             self.backend.update(delta_time)
-            
+
             if self.frog_home_count >= 5:
                 # reset home frogs back offscreen
                 for frog in self.frog_homes:
@@ -444,17 +454,17 @@ class GameOverView(arcade.View):
     def __init__(self, score):
         super().__init__()
         self.score = score
-        
+
         #path to credentials file
         script_dir = os.path.dirname(__file__)
         service_account_path = os.path.join(script_dir, "credentials.json")
 
-        # initialize firebase 
+        # initialize firebase
         db = firebase_access(service_account_path)
         db = firestore.client()
         if not db:
             print("Firestore initialization failed")
-            exit()
+            arcade.close_window()
         add_entry(db, self.score)
 
     def on_show_view(self):
@@ -462,9 +472,12 @@ class GameOverView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-        arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-        arcade.draw_text("Press space to play again!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+        arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE,
+                         TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+        arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
+                         TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+        arcade.draw_text("Press space to play again", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE,
+                         TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
     def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument
