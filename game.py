@@ -14,14 +14,12 @@ class Game:
     '''Game class'''
     def __init__(self):
         self.game_time = DURATION
-        self.timer_text = arcade.Text(f"Time: {int(self.game_time)}",
-                                 0, 0, arcade.color.GREEN_YELLOW, SCALED_SQUARE)
+        self.timer_text = arcade.Text(f"Time: {int(self.game_time)}", 0, 0, TEXT_COLOR, SCALED_SQUARE)
         self.timer_text.x = WINDOW_WIDTH-self.timer_text.content_width
 
         self.game_over = False
         self.points = 0
-        self.score_text = arcade.Text(f"Score: {self.points}",
-                                      0, 0, arcade.color.GREEN_YELLOW, SCALED_SQUARE*.5)
+        self.score_text = arcade.Text(f"Score: {self.points}", 0, 0, TEXT_COLOR, SCALED_SQUARE*.5)
         self.paused = False
         self.state = GameStates.MAIN_MENU
 
