@@ -14,7 +14,8 @@ class Game:
     '''Game class'''
     def __init__(self):
         self.game_time = DURATION
-        self.timer_text = arcade.Text(f"Time: {int(self.game_time)}", 0, 0, TEXT_COLOR, SCALED_SQUARE)
+        self.timer_text = arcade.Text(f"Time: {int(self.game_time)}",
+                                      0, 0, TEXT_COLOR, SCALED_SQUARE)
         self.timer_text.x = WINDOW_WIDTH-self.timer_text.content_width
 
         self.game_over = False
@@ -22,6 +23,15 @@ class Game:
         self.score_text = arcade.Text(f"Score: {self.points}", 0, 0, TEXT_COLOR, SCALED_SQUARE*.5)
         self.paused = False
         self.state = GameStates.MAIN_MENU
+
+    def draw_text(self):
+        '''Call in on_draw to draw text for GameView'''
+        self.timer_text.draw()
+        self.score_text.draw()
+        if self.paused:
+            arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+
 
     def update_timer(self, frame_time):
         '''Call in on_update to update the timer'''

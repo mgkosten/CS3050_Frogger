@@ -83,7 +83,6 @@ class GameView(arcade.View):
                                                                    display_warp=WARP,
                                                                    mask_dark=DARKMASK,
                                                                    mask_light=LIGHTMASK)
-        self.paused = False
 
     def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
@@ -380,13 +379,9 @@ class GameView(arcade.View):
             self.crt_filter.clear()
 
             self.draw_background()
-            self.backend.timer_text.draw()
-            self.backend.score_text.draw()
             self.sprite_list.draw()
             self.death_frog_sprites.draw()
-
-            if self.paused:
-                arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+            self.backend.draw_text()
 
             self.window.use()
             self.clear()
@@ -396,17 +391,13 @@ class GameView(arcade.View):
             self.clear()
 
             self.draw_background()
-            self.backend.timer_text.draw()
-            self.backend.score_text.draw()
             self.sprite_list.draw()
             self.death_frog_sprites.draw()
-
-            if self.paused:
-                arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+            self.backend.draw_text()
 
     # Frame update
     def on_update(self, delta_time):
-        if not self.paused:
+        if not self.backend.paused:
             for turtle in self.turtles:
                 turtle.update(delta_time, self.level)
             for log in self.logs:
@@ -462,10 +453,10 @@ class GameView(arcade.View):
         elif symbol == arcade.key.ESCAPE:
             arcade.close_window()
         elif symbol == arcade.key.SPACE:
-            if self.paused:
-                self.paused = False
+            if self.backend.paused:
+                self.backend.paused = False
             else:
-                self.paused = True
+                self.backend.paused = True
 
 class GameOverView(arcade.View):
     def __init__(self, score):
