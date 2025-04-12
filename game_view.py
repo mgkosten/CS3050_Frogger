@@ -1,11 +1,12 @@
 '''Frogger game implemented using Python Arcade.'''
-# pylint: disable=wildcard-import, unused-wildcard-import, too-many-instance-attributes, abstract-method
+# pylint: disable=wildcard-import, unused-wildcard-import
 import os
 import arcade
+# TODO: which of these imports are needed? pylint says some are unused
 # import firebase_admin
-from firebase_admin import credentials
+# from firebase_admin import credentials
 from firebase_admin import firestore
-from firebase_admin import db
+# from firebase_admin import db
 from firebase import firebase_access, add_entry
 from constants import *
 from game import Game
@@ -14,7 +15,6 @@ from turt import Turt
 from log import Log
 from car import Car
 
-# Starting View
 class InstructionView(arcade.View):
     """Creates the introduction screen of the game."""
     def on_show_view(self):
@@ -24,16 +24,15 @@ class InstructionView(arcade.View):
         self.clear()
         arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2,
                          TEXT_COLOR, SCALED_SQUARE*2, anchor_x='center')
-        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n"
-                         "D/Right = Move right\nSpace = Pause/Unpause",
-                         WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, TEXT_COLOR,
-                         font_size=SCALED_SQUARE, anchor_x='center', multiline=True,
-                         width=WINDOW_WIDTH, align="center")
-        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2,
-                         SCALED_SQUARE*3, TEXT_COLOR, font_size=SCALED_SQUARE,
+        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n" \
+                         "D/Right = Move right\nSpace = Pause/Unpause", WINDOW_WIDTH/2,
+                         WINDOW_HEIGHT-SCALED_SQUARE*4, TEXT_COLOR, SCALED_SQUARE,
                          anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
-
+        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*3,
+                         TEXT_COLOR, SCALED_SQUARE, anchor_x='center', multiline=True,
+                         width=WINDOW_WIDTH, align="center")
     def on_key_press(self, symbol, modifiers):
+        # pylint: disable=unused-argument
         if symbol == arcade.key.SPACE:
             game_view = GameView()
             game_view.make_objects()
@@ -42,17 +41,15 @@ class InstructionView(arcade.View):
         if symbol == arcade.key.ESCAPE:
             arcade.close_window()
 
-# Where the game is played
 class GameView(arcade.View):
     '''GameView class for running and displaying the game'''
+    # We don't agree with pylint setting 7 as an arbitrary limit for instance attributes
+    # pylint: disable=too-many-instance-attributes
     def __init__(self):
         super().__init__()
 
         # Define Textures dictionary
         self.textures = {}
-
-        # Levels
-        self.level = 1
 
         # home frog count
         self.frog_home_count = 0
@@ -91,7 +88,6 @@ class GameView(arcade.View):
                                                                    display_warp=WARP,
                                                                    mask_dark=DARKMASK,
                                                                    mask_light=LIGHTMASK)
-        self.paused = False
 
     def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
@@ -244,13 +240,11 @@ class GameView(arcade.View):
             animation.xpos = -WINDOW_WIDTH
             animation.ypos = -WINDOW_HEIGHT
 
-    # Resets game
     def reset(self):
         '''Resets the game'''
         self.backend.reset()
         self.player.reset()
         self.player.lives = 3
-        self.level = 1
 
         self.turtles = []
         self.logs = []
@@ -313,9 +307,9 @@ class GameView(arcade.View):
             if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
                 for log in self.logs:
                     if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
-                        self.player.xpos += log.speed * delta_time * (1 + (0.15 * self.level))
+                        self.player.xpos += log.speed * delta_time * (1 + (0.15 * self.backend.level))
             elif arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites):
-                self.player.xpos += self.turtles[0].speed * delta_time * (1 + (0.15 * self.level))
+                self.player.xpos += self.turtles[0].speed * delta_time * (1 + (0.15 * self.backend.level))
             else:
                 self.frog_death()
 
@@ -334,26 +328,28 @@ class GameView(arcade.View):
 
     def frog_death(self):
         """Initiates frog death, reset frog & start animation"""
+        # Run death animation
+        arcade.schedule(self.play_next_death_frame, 0.1)
+
+        # Reset game state
+        self.backend.game_time = DURATION
         self.player.lives -= 1
 
-        # Cache the position before hiding the frog
+        # Cache the position before reseting the frog
         self.frog_death_x = self.player.xpos
         self.frog_death_y = self.player.ypos
-
-        # reset frog positioning
         self.player.reset()
 
         # reset max y value of frog player through each level
         self.max_frog_y = SCALED_SQUARE * 1.5
 
-        # reset so run every death
+        # reset so animation will run on every death
         self.current_animation_index = 0
-
-        # start running animation
-        arcade.schedule(self.play_next_death_frame, 0.1)
 
     def play_next_death_frame(self, delta_time):
         """Creates animation for when frog dies"""
+        # arcade.schedule functions require delta_time argument even if not used
+        # pylint: disable=unused-argument
         if self.current_animation_index < len(self.death_animations):
             # Show the next animation
             animation = self.death_animations[self.current_animation_index]
@@ -361,9 +357,6 @@ class GameView(arcade.View):
             # set animation positions
             animation.xpos = self.frog_death_x
             animation.ypos = self.frog_death_y
-
-            # # reset frog positioning
-            # self.player.reset()
 
             # Reset the PREVIOUS animation to off-screen (optional, but keeps one showing at a time)
             if self.current_animation_index > 0:
@@ -378,25 +371,18 @@ class GameView(arcade.View):
             last_animation.xpos = -WINDOW_WIDTH
             last_animation.ypos = -WINDOW_HEIGHT
 
-            # Reset game state
-            self.backend.game_time = DURATION
             # stop running death animation
             arcade.unschedule(self.play_next_death_frame)
 
-    # Renders everything
     def on_draw(self):
         if FILTER_ON:
             self.crt_filter.use()
             self.crt_filter.clear()
 
             self.draw_background()
-            self.backend.timer_text.draw()
-            self.backend.score_text.draw()
             self.sprite_list.draw()
             self.death_frog_sprites.draw()
-
-            if self.paused:
-                arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+            self.backend.draw_text()
 
             self.window.use()
             self.clear()
@@ -406,36 +392,30 @@ class GameView(arcade.View):
             self.clear()
 
             self.draw_background()
-            self.backend.timer_text.draw()
-            self.backend.score_text.draw()
             self.sprite_list.draw()
             self.death_frog_sprites.draw()
+            self.backend.draw_text()
 
-            if self.paused:
-                arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-
-    # Frame update
     def on_update(self, delta_time):
-        if not self.paused:
+        if not self.backend.paused:
             for turtle in self.turtles:
-                turtle.update(delta_time, self.level)
+                turtle.update(delta_time, self.backend.level)
             for log in self.logs:
-                log.update(delta_time, self.level)
+                log.update(delta_time, self.backend.level)
             for car in self.cars:
-                car.update(delta_time, self.level)
+                car.update(delta_time, self.backend.level)
             for frog_home in self.frog_homes:
                 frog_home.update()
             for animation in self.death_animations:
                 animation.update()
             self.player.update()
 
-            self.backend.update_timer(delta_time)
             if self.backend.game_time <= 0:
                 self.frog_death()
-
             self.collision_detect(delta_time)
             self.player_score()
-            self.backend.update_points()
+
+            self.backend.update(delta_time)
 
             if self.frog_home_count >= 5:
                 # reset home frogs back offscreen
@@ -447,22 +427,14 @@ class GameView(arcade.View):
                 self.frog_home_count = 0
 
                 # increment level
-                self.level += 1
+                self.backend.level += 1
 
-            if self.player.lives <= 0 and not self.backend.game_over:
-                # Show game over screen
-                self.backend.game_over = True
-
-                # reset high score
-
+            if self.player.lives <= 0:
                 next_view = GameOverView(self.backend.points)
                 self.window.show_view(next_view)
 
                 self.backend.points = 0
 
-                print('GAME OVER')
-
-    # Triggers when a key is pressed
     def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument
         move_keys = [arcade.key.UP, arcade.key.DOWN, arcade.key.RIGHT, arcade.key.LEFT,
@@ -472,10 +444,10 @@ class GameView(arcade.View):
         elif symbol == arcade.key.ESCAPE:
             arcade.close_window()
         elif symbol == arcade.key.SPACE:
-            if self.paused:
-                self.paused = False
+            if self.backend.paused:
+                self.backend.paused = False
             else:
-                self.paused = True
+                self.backend.paused = True
 
 class GameOverView(arcade.View):
     """Creates the game over screen"""
@@ -492,7 +464,7 @@ class GameOverView(arcade.View):
         db = firestore.client()
         if not db:
             print("Firestore initialization failed")
-            exit()
+            arcade.close_window()
         add_entry(db, self.score)
 
     def on_show_view(self):
@@ -500,11 +472,15 @@ class GameOverView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-        arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-        arcade.draw_text("Press space to play again!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+        arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE,
+                         TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+        arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
+                         TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+        arcade.draw_text("Press space to play again", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE,
+                         TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
     def on_key_press(self, symbol, modifiers):
+        # pylint: disable=unused-argument
         if symbol == arcade.key.SPACE:
             next_view = InstructionView()
             self.window.show_view(next_view)
@@ -512,16 +488,13 @@ class GameOverView(arcade.View):
             arcade.close_window()
 
 
-
 def main():
     """ Main function """
-
     # Create and setup the GameView
     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Frogger")
     start_view = InstructionView()
     window.show_view(start_view)
     arcade.run()
-
 
 if __name__ == "__main__":
     main()
