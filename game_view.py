@@ -1,8 +1,8 @@
 '''Frogger game implemented using Python Arcade.'''
 # pylint: disable=wildcard-import, unused-wildcard-import, too-many-instance-attributes, abstract-method
-import arcade
 import os
-import firebase_admin
+import arcade
+# import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import db
@@ -16,14 +16,22 @@ from car import Car
 
 # Starting View
 class InstructionView(arcade.View):
+    """Creates the introduction screen of the game."""
     def on_show_view(self):
         self.window.background_color = arcade.csscolor.BLACK
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2, TEXT_COLOR, SCALED_SQUARE*2, anchor_x='center')
-        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\nD/Right = Move right\nSpace = Pause/Unpause",WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, TEXT_COLOR, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
-        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*3, TEXT_COLOR, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
+        arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2,
+                         TEXT_COLOR, SCALED_SQUARE*2, anchor_x='center')
+        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n"
+                         "D/Right = Move right\nSpace = Pause/Unpause",
+                         WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, TEXT_COLOR,
+                         font_size=SCALED_SQUARE, anchor_x='center', multiline=True,
+                         width=WINDOW_WIDTH, align="center")
+        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2,
+                         SCALED_SQUARE*3, TEXT_COLOR, font_size=SCALED_SQUARE,
+                         anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
@@ -325,6 +333,7 @@ class GameView(arcade.View):
             self.max_frog_y = self.player.ypos
 
     def frog_death(self):
+        """Initiates frog death, reset frog & start animation"""
         self.player.lives -= 1
 
         # Cache the position before hiding the frog
@@ -344,6 +353,7 @@ class GameView(arcade.View):
         arcade.schedule(self.play_next_death_frame, 0.1)
 
     def play_next_death_frame(self, delta_time):
+        """Creates animation for when frog dies"""
         if self.current_animation_index < len(self.death_animations):
             # Show the next animation
             animation = self.death_animations[self.current_animation_index]
@@ -468,15 +478,16 @@ class GameView(arcade.View):
                 self.paused = True
 
 class GameOverView(arcade.View):
+    """Creates the game over screen"""
     def __init__(self, score):
         super().__init__()
         self.score = score
-        
+
         #path to credentials file
         script_dir = os.path.dirname(__file__)
         service_account_path = os.path.join(script_dir, "credentials.json")
 
-        # initialize firebase 
+        # initialize firebase
         db = firebase_access(service_account_path)
         db = firestore.client()
         if not db:
