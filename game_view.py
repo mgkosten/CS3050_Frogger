@@ -14,8 +14,8 @@ from turt import Turt
 from log import Log
 from car import Car
 
-# Starting View
 class InstructionView(arcade.View):
+    '''InstructionView class for showing initial instructions screen'''
     def on_show_view(self):
         self.window.background_color = arcade.csscolor.BLACK
 
@@ -26,6 +26,7 @@ class InstructionView(arcade.View):
         arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*3, TEXT_COLOR, font_size=SCALED_SQUARE, anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
+        # pylint: disable=unused-argument
         if symbol == arcade.key.SPACE:
             game_view = GameView()
             game_view.make_objects()
@@ -34,7 +35,6 @@ class InstructionView(arcade.View):
         if symbol == arcade.key.ESCAPE:
             arcade.close_window()
 
-# Where the game is played
 class GameView(arcade.View):
     '''GameView class for running and displaying the game'''
     def __init__(self):
@@ -235,7 +235,6 @@ class GameView(arcade.View):
             animation.xpos = -WINDOW_WIDTH
             animation.ypos = -WINDOW_HEIGHT
 
-    # Resets game
     def reset(self):
         '''Resets the game'''
         self.backend.reset()
@@ -351,9 +350,6 @@ class GameView(arcade.View):
             animation.xpos = self.frog_death_x
             animation.ypos = self.frog_death_y
 
-            # # reset frog positioning
-            # self.player.reset()
-
             # Reset the PREVIOUS animation to off-screen (optional, but keeps one showing at a time)
             if self.current_animation_index > 0:
                 prev_animation = self.death_animations[self.current_animation_index - 1]
@@ -372,7 +368,6 @@ class GameView(arcade.View):
             # stop running death animation
             arcade.unschedule(self.play_next_death_frame)
 
-    # Renders everything
     def on_draw(self):
         if FILTER_ON:
             self.crt_filter.use()
@@ -395,7 +390,6 @@ class GameView(arcade.View):
             self.death_frog_sprites.draw()
             self.backend.draw_text()
 
-    # Frame update
     def on_update(self, delta_time):
         if not self.backend.paused:
             for turtle in self.turtles:
@@ -434,16 +428,11 @@ class GameView(arcade.View):
                 # Show game over screen
                 self.backend.game_over = True
 
-                # reset high score
-
                 next_view = GameOverView(self.backend.points)
                 self.window.show_view(next_view)
 
                 self.backend.points = 0
 
-                print('GAME OVER')
-
-    # Triggers when a key is pressed
     def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument
         move_keys = [arcade.key.UP, arcade.key.DOWN, arcade.key.RIGHT, arcade.key.LEFT,
@@ -459,6 +448,7 @@ class GameView(arcade.View):
                 self.backend.paused = True
 
 class GameOverView(arcade.View):
+    '''GameOverView class for showing game over screen'''
     def __init__(self, score):
         super().__init__()
         self.score = score
@@ -485,6 +475,7 @@ class GameOverView(arcade.View):
         arcade.draw_text("Press space to play again!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
     def on_key_press(self, symbol, modifiers):
+        # pylint: disable=unused-argument
         if symbol == arcade.key.SPACE:
             next_view = InstructionView()
             self.window.show_view(next_view)
@@ -492,16 +483,13 @@ class GameOverView(arcade.View):
             arcade.close_window()
 
 
-
 def main():
     """ Main function """
-
     # Create and setup the GameView
     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Frogger")
     start_view = InstructionView()
     window.show_view(start_view)
     arcade.run()
-
 
 if __name__ == "__main__":
     main()
