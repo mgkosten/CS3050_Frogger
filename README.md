@@ -1,5 +1,7 @@
 # CS3050_Frogger
 In order to run the file one must install arcade. (pip install arcade)
+If using and IDE to run the file, make sure that firebase-admin is installed in the python interpreter it is using. 
+For example, if using pycharm, do file>>settings>>project Name>>Python interpreter, click the + button in the left corner, search for firebase-admin and install if it needed. 
 
 To run the game, rune game_view.py. This will create the game.
 
