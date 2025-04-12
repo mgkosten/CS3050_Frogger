@@ -17,21 +17,52 @@ from car import Car
 # Starting View
 class InstructionView(arcade.View):
     """Creates the introduction screen of the game."""
+    def __init__(self):
+        super().__init__()
+
+        self.filter_on = True
+
+        # Making CRT Filter
+        self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
+                                                                   resolution_down_scale=DSCALE,
+                                                                   hard_scan=SCAN, hard_pix=PIX,
+                                                                   display_warp=WARP,
+                                                                   mask_dark=DARKMASK,
+                                                                   mask_light=LIGHTMASK)
     def on_show_view(self):
         self.window.background_color = arcade.csscolor.BLACK
 
     def on_draw(self):
-        self.clear()
-        arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2,
-                         arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE*2, anchor_x='center')
-        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n"
-                         "D/Right = Move right\nSpace = Pause/Unpause",
-                         WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, arcade.color.GREEN_YELLOW,
-                         font_size=SCALED_SQUARE, anchor_x='center', multiline=True,
-                         width=WINDOW_WIDTH, align="center")
-        arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2,
-                         SCALED_SQUARE*3, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE,
-                         anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
+        if self.filter_on:
+            self.crt_filter.use()
+            self.crt_filter.clear()
+
+            arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2,
+                             arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE*2, anchor_x='center')
+            arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n"
+                             "D/Right = Move right\nSpace = Pause/Unpause",
+                             WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, arcade.color.GREEN_YELLOW,
+                             font_size=SCALED_SQUARE, anchor_x='center', multiline=True,
+                             width=WINDOW_WIDTH, align="center")
+            arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2,
+                             SCALED_SQUARE*3, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE,
+                             anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
+            # the CRT filter to it.
+            self.window.use()
+            self.clear()
+            self.crt_filter.draw()
+        else:
+            self.clear()
+            arcade.draw_text("Controls", WINDOW_WIDTH / 2, WINDOW_HEIGHT - SCALED_SQUARE * 2,
+                             arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE * 2, anchor_x='center')
+            arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n"
+                             "D/Right = Move right\nSpace = Pause/Unpause",
+                             WINDOW_WIDTH / 2, WINDOW_HEIGHT - SCALED_SQUARE * 4, arcade.color.GREEN_YELLOW,
+                             font_size=SCALED_SQUARE, anchor_x='center', multiline=True,
+                             width=WINDOW_WIDTH, align="center")
+            arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH / 2,
+                             SCALED_SQUARE * 3, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE,
+                             anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
