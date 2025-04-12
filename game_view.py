@@ -2,7 +2,7 @@
 # pylint: disable=wildcard-import, unused-wildcard-import, too-many-instance-attributes, abstract-method
 import os
 import arcade
-import firebase_admin
+# import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import db
