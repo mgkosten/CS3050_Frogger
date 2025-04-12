@@ -43,9 +43,6 @@ class GameView(arcade.View):
         # Define Textures dictionary
         self.textures = {}
 
-        # Levels
-        self.level = 1
-
         # home frog count
         self.frog_home_count = 0
 
@@ -240,7 +237,6 @@ class GameView(arcade.View):
         self.backend.reset()
         self.player.reset()
         self.player.lives = 3
-        self.level = 1
 
         self.turtles = []
         self.logs = []
@@ -303,9 +299,9 @@ class GameView(arcade.View):
             if arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites):
                 for log in self.logs:
                     if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
-                        self.player.xpos += log.speed * delta_time * (1 + (0.15 * self.level))
+                        self.player.xpos += log.speed * delta_time * (1 + (0.15 * self.backend.level))
             elif arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites):
-                self.player.xpos += self.turtles[0].speed * delta_time * (1 + (0.15 * self.level))
+                self.player.xpos += self.turtles[0].speed * delta_time * (1 + (0.15 * self.backend.level))
             else:
                 self.frog_death()
 
@@ -393,11 +389,11 @@ class GameView(arcade.View):
     def on_update(self, delta_time):
         if not self.backend.paused:
             for turtle in self.turtles:
-                turtle.update(delta_time, self.level)
+                turtle.update(delta_time, self.backend.level)
             for log in self.logs:
-                log.update(delta_time, self.level)
+                log.update(delta_time, self.backend.level)
             for car in self.cars:
-                car.update(delta_time, self.level)
+                car.update(delta_time, self.backend.level)
             for frog_home in self.frog_homes:
                 frog_home.update()
             for animation in self.death_animations:
@@ -422,7 +418,7 @@ class GameView(arcade.View):
                 self.frog_home_count = 0
 
                 # increment level
-                self.level += 1
+                self.backend.level += 1
 
             if self.player.lives <= 0 and not self.backend.game_over:
                 # Show game over screen
