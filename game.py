@@ -1,14 +1,7 @@
 '''Game class'''
 # pylint: disable=wildcard-import, unused-wildcard-import
-from enum import Enum
 import arcade
 from constants import *
-
-class GameStates(Enum):
-    '''GameStates enum for tracking state/screen of the Game'''
-    MAIN_MENU = 0
-    PLAYING = 1
-    GAME_OVER = 2
 
 class Game:
     '''Game class'''
@@ -22,7 +15,6 @@ class Game:
         self.points = 0
         self.score_text = arcade.Text(f"Score: {self.points}", 0, 0, TEXT_COLOR, SCALED_SQUARE*.5)
         self.paused = False
-        self.state = GameStates.MAIN_MENU
 
     def draw_text(self):
         '''Call in on_draw to draw text for GameView'''
@@ -31,7 +23,6 @@ class Game:
         if self.paused:
             arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE,
                              TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-
 
     def update_timer(self, frame_time):
         '''Call in on_update to update the timer'''
@@ -48,4 +39,3 @@ class Game:
         self.game_over = False
         self.points = 0
         self.paused = False
-        self.state = GameStates.PLAYING
