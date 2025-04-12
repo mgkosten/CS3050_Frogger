@@ -6,7 +6,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import db
-from firebase import firebase_access, add_entry
+from firebase import firebase_access, add_entry, get_top_five
 from constants import *
 from game import Game
 from frog import Frog
@@ -477,29 +477,56 @@ class GameOverView(arcade.View):
         service_account_path = os.path.join(script_dir, "credentials.json")
 
         # initialize firebase 
-        db = firebase_access(service_account_path)
-        db = firestore.client()
-        if not db:
+        self.db = firebase_access(service_account_path)
+        self.db = firestore.client()
+        if not self.db:
             print("Firestore initialization failed")
             exit()
-        add_entry(db, self.score)
-
+        add_entry(self.db, self.score)
+        #print(get_top_five(db))
     def on_show_view(self):
         self.window.background_color = arcade.color.BLACK
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2 - 75, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text("Press space to play again!", self.window.width / 2, self.window.height / 2 - 150, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+        arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2 + 100, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+        arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+        arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!", self.window.width / 2, self.window.height / 2 - 50, arcade.color.GREEN_YELLOW, 20, anchor_x="center", multiline = True,width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
             next_view = InstructionView()
             self.window.show_view(next_view)
+        if symbol == arcade.key.L:
+            next_view = LeaderboardView(self.db)
+            self.window.show_view(next_view)
         if symbol == arcade.key.ESCAPE:
             arcade.close_window()
 
+class LeaderboardView(arcade.View):
+    def __init__(self, db):
+        super().__init__()
+        self.db = db
+        self.leaders = get_top_five(self.db)
+
+    def on_show_view(self):
+        self.window.background_color = arcade.color.BLACK
+    
+    def on_draw(self):
+        self.clear()
+        height = 0
+        arcade.draw_text("Username:     Highscore:", self.window.width / 2, self.window.height / 2 + 175, arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+        for i in self.leaders:
+            arcade.draw_text(str(self.leaders[i]["score"]), self.window.width / 3 + 150, self.window.height / 4 + height, arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+            arcade.draw_text(str(self.leaders[i]["username"]), self.window.width / 3, self.window.height / 4 + height, arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+            height += 50
+    
+    def on_key_press(self,symbol, modifiers):
+        if symbol == arcade.key.SPACE:
+            next_view = InstructionView()
+            self.window.show_view(next_view)
+        if symbol == arcade.key.ESCAPE:
+            arcade.close_window()
 
 
 def main():

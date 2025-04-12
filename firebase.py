@@ -26,7 +26,10 @@ def add_entry(db, score, username = "null"):
 
 
 def get_top_five(db):
+    scores_dict = {}
     scores_ref = db.collection("scores")
-    query = scores_ref.order_by("score").limit_to_last(3)
-    results = query.get()
-    return results
+    query = scores_ref.order_by("score").limit_to_last(5)
+    docs = query.get()
+    for doc in docs:
+        scores_dict[doc.id] = doc.to_dict()
+    return scores_dict
