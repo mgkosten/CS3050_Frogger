@@ -24,7 +24,8 @@ class InstructionView(arcade.View):
         self.clear()
         arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2,
                          arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE*2, anchor_x='center')
-        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\nD/Right = Move right\nSpace = Pause/Unpause",
+        arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n"
+                         "D/Right = Move right\nSpace = Pause/Unpause",
                          WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4, arcade.color.GREEN_YELLOW,
                          font_size=SCALED_SQUARE, anchor_x='center', multiline=True,
                          width=WINDOW_WIDTH, align="center")
