@@ -489,39 +489,23 @@ class GameOverView(arcade.View):
         script_dir = os.path.dirname(__file__)
         service_account_path = os.path.join(script_dir, "credentials.json")
 
-<<<<<<< HEAD
         # initialize firebase 
         self.db = firebase_access(service_account_path)
         self.db = firestore.client()
-        if not self.db:
-=======
-        # initialize firebase
-        db = firebase_access(service_account_path)
-        db = firestore.client()
-        if not db:
->>>>>>> c1e9be254666e13cf349eb35ab9885f07239e543
-            print("Firestore initialization failed")
-            exit()
         add_entry(self.db, self.score)
-        #print(get_top_five(db))
+        
     def on_show_view(self):
         self.window.background_color = arcade.color.BLACK
 
     def on_draw(self):
         self.clear()
-<<<<<<< HEAD
-        arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2 + 100, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2, arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!", self.window.width / 2, self.window.height / 2 - 50, arcade.color.GREEN_YELLOW, 20, anchor_x="center", multiline = True,width=WINDOW_WIDTH, align="center")
-=======
-        arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2,
+        arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2 + 100,
                          arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2 - 75,
+        arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2,
                          arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-        arcade.draw_text("Press space to play again!", self.window.width / 2,
-                         self.window.height / 2 - 150, arcade.color.GREEN_YELLOW,
-                         50, anchor_x="center")
->>>>>>> c1e9be254666e13cf349eb35ab9885f07239e543
+        arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!", self.window.width / 2,
+                         self.window.height / 2 - 50, arcade.color.GREEN_YELLOW,
+                         20, anchor_x="center", multiline = True,width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
@@ -545,11 +529,16 @@ class LeaderboardView(arcade.View):
     def on_draw(self):
         self.clear()
         height = 0
-        arcade.draw_text("Username:     Highscore:", self.window.width / 2, self.window.height / 2 + 175, arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+        arcade.draw_text("Username:     Highscore:", self.window.width / 2, self.window.height / 2 + 175, 
+                         arcade.color.GREEN_YELLOW, 25, anchor_x="center")
         for i in self.leaders:
-            arcade.draw_text(str(self.leaders[i]["score"]), self.window.width / 3 + 150, self.window.height / 4 + height, arcade.color.GREEN_YELLOW, 25, anchor_x="center")
-            arcade.draw_text(str(self.leaders[i]["username"]), self.window.width / 3, self.window.height / 4 + height, arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+            arcade.draw_text(str(self.leaders[i]["score"]), self.window.width / 3 + 150, self.window.height / 4 + height, 
+                             arcade.color.GREEN_YELLOW, 25, anchor_x="center")
+            arcade.draw_text(str(self.leaders[i]["username"]), self.window.width / 3, self.window.height / 4 + height, 
+                             arcade.color.GREEN_YELLOW, 25, anchor_x="center")
             height += 50
+            arcade.draw_text("Press space bar to play!", self.window.width / 2, self.window.height / 6,
+                         arcade.color.GREEN_YELLOW, 25, anchor_x="center")
     
     def on_key_press(self,symbol, modifiers):
         if symbol == arcade.key.SPACE:

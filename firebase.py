@@ -27,11 +27,8 @@ def add_entry(db, score, username = "null"):
 
 
 def get_top_five(db):
-<<<<<<< HEAD
-    scores_dict = {}
-=======
     """Get top five highscores"""
->>>>>>> c1e9be254666e13cf349eb35ab9885f07239e543
+    scores_dict = {}
     scores_ref = db.collection("scores")
     query = scores_ref.order_by("score").limit_to_last(5)
     docs = query.get()
