@@ -6,6 +6,8 @@ from arcade import color
 
 FILTER_ON = True
 match sys.platform:
+    # Pylint doesn't like that AppKit can't be imported on Windows
+    # pylint: disable=import-error
     case 'win32':
         # Windows
         import ctypes
@@ -15,7 +17,7 @@ match sys.platform:
         from AppKit import NSScreen
         DISPLAY_SCALE = NSScreen.mainScreen().backingScaleFactor()
     case _:
-        # Turn off filter for other OS until figure out display scaling
+        # Turn off filter for any other OS
         DISPLAY_SCALE = 1
         FILTER_ON = False
 
@@ -29,9 +31,8 @@ TEXT_COLOR = color.GREEN_YELLOW
 # The CRT filter doesn't respect native display scales so we have to hack it a little bit
 FILTER_WIDTH = int(WINDOW_WIDTH*DISPLAY_SCALE)
 FILTER_HEIGHT = int(WINDOW_HEIGHT*DISPLAY_SCALE)
-
 # CRT CONSTANTS
-DSCALE = 6
+DSCALE = 3
 SCAN = -8
 PIX = -3
 WARP = Vec2(1.0 / 32.0, 1.0 / 24.0)
