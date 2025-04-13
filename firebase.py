@@ -1,3 +1,4 @@
+"""Firebase highscore tracker"""
 from firebase_admin import initialize_app, credentials, firestore
 
 def firebase_access(service_account_key_path):

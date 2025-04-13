@@ -1,3 +1,4 @@
+"""Firebase admin file to setup firestore"""
 import os
 import sys
 from firebase_admin import firestore

@@ -2,7 +2,6 @@
 # pylint: disable=wildcard-import, unused-wildcard-import
 import os
 import arcade
-from firebase_admin import firestore
 from firebase import firebase_access, add_entry, get_top_five
 from constants import *
 from game import Game
@@ -328,7 +327,8 @@ class GameView(arcade.View):
 
         # determine if in water or not
         if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
-            if not arcade.check_for_collision_with_lists(self.player.sprite, (self.log_sprites, self.turtle_sprites)):
+            if not arcade.check_for_collision_with_lists(self.player.sprite,
+                                                         (self.log_sprites, self.turtle_sprites)):
                 self.frog_death()
 
             # Collision detection with logs
@@ -338,7 +338,8 @@ class GameView(arcade.View):
 
             # Collision detection with turtles
             for turtle in self.turtles:
-                collides = arcade.check_for_collision_with_list(self.player.sprite, turtle.sprite_list)
+                collides = arcade.check_for_collision_with_list(self.player.sprite,
+                                                                turtle.sprite_list)
                 if collides:
                     if collides[0].texture == turtle.normal_texture:
                         self.player.xpos += turtle.speed*delta_time*(1 + 0.15*self.backend.level)
@@ -534,12 +535,12 @@ class GameOverView(arcade.View):
 
             arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2.5,
                              TEXT_COLOR, SCALED_SQUARE*2, anchor_x="center")
-            arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2-SCALED_SQUARE,
-                             WINDOW_HEIGHT/2+SCALED_SQUARE*1.5, TEXT_COLOR,
-                             SCALED_SQUARE, anchor_x="center")
-            arcade.draw_text(f"Enter name: {self.username}", SCALED_SQUARE, WINDOW_HEIGHT/2,
-                             TEXT_COLOR, SCALED_SQUARE, anchor_x= "left")
-            arcade.draw_text("Press space to play again!\nPress enter to save score and view Leaderboard!",
+            arcade.draw_text(f"Score: {self.score}", SCALED_SQUARE*4.25,
+                             WINDOW_HEIGHT/2+SCALED_SQUARE*1.5, TEXT_COLOR, SCALED_SQUARE)
+            arcade.draw_text(f"Enter name: {self.username}", SCALED_SQUARE,
+                             WINDOW_HEIGHT/2, TEXT_COLOR, SCALED_SQUARE)
+            arcade.draw_text("Press space to play again!\n"
+                             "Press enter to save score and view Leaderboard!",
                              WINDOW_WIDTH/2, SCALED_SQUARE*5, TEXT_COLOR,
                              SCALED_SQUARE, anchor_x="center", multiline=True,
                              width=WINDOW_WIDTH, align="center")
@@ -553,12 +554,12 @@ class GameOverView(arcade.View):
             self.clear()
             arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2.5,
                              TEXT_COLOR, SCALED_SQUARE*2, anchor_x="center")
-            arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2-SCALED_SQUARE,
-                             WINDOW_HEIGHT/2+SCALED_SQUARE*1.5, TEXT_COLOR,
-                             SCALED_SQUARE, anchor_x="center")
-            arcade.draw_text(f"Enter name: {self.username}", SCALED_SQUARE, WINDOW_HEIGHT/2,
-                             TEXT_COLOR, SCALED_SQUARE, anchor_x= "left")
-            arcade.draw_text("Press space to play again!\nPress enter to save score and view Leaderboard!",
+            arcade.draw_text(f"Score: {self.score}", SCALED_SQUARE*4.25,
+                             WINDOW_HEIGHT/2+SCALED_SQUARE*1.5, TEXT_COLOR, SCALED_SQUARE)
+            arcade.draw_text(f"Enter name: {self.username}", SCALED_SQUARE,
+                             WINDOW_HEIGHT/2, TEXT_COLOR, SCALED_SQUARE)
+            arcade.draw_text("Press space to play again!\n"
+                             "Press enter to save score and view Leaderboard!",
                              WINDOW_WIDTH/2, SCALED_SQUARE*5, TEXT_COLOR,
                              SCALED_SQUARE, anchor_x="center", multiline=True,
                              width=WINDOW_WIDTH, align="center")
