@@ -40,7 +40,9 @@ DARKMASK = .5
 LIGHTMASK = 1.5
 
 DURATION = 60
-OBSTACLE_SPEED = WINDOW_WIDTH/15
+OBSTACLE_SPEED = WINDOW_WIDTH/9
+FLIP_DELAY = 1
+FLIP_CHANCE = .5 #0 to 1
 
 class LogType(Enum):
     '''LogType enum to represent short, medium, and long logs'''
