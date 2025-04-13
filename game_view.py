@@ -13,6 +13,7 @@ from frog import Frog
 from turt import Turt
 from log import Log
 from car import Car
+from fly import Fly
 
 # Starting View
 class InstructionView(arcade.View):
@@ -36,33 +37,31 @@ class InstructionView(arcade.View):
             self.crt_filter.clear()
 
             arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2,
-                             arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE*2,
-                             anchor_x='center')
+                             TEXT_COLOR, SCALED_SQUARE*2, anchor_x='center')
             arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n"
                              "D/Right = Move right\nSpace = Pause/Unpause",
                              WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4,
-                             arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE, anchor_x='center',
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x='center',
                              multiline=True, width=WINDOW_WIDTH, align="center")
             arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2,
-                             SCALED_SQUARE*3, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE,
-                             anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
+                             SCALED_SQUARE*3, TEXT_COLOR, SCALED_SQUARE, anchor_x='center',
+                             multiline=True, width=WINDOW_WIDTH, align="center")
             # CRT filter applied.
             self.window.use()
             self.clear()
             self.crt_filter.draw()
         else:
             self.clear()
-            arcade.draw_text("Controls", WINDOW_WIDTH / 2, WINDOW_HEIGHT - SCALED_SQUARE * 2,
-                             arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE * 2,
-                             anchor_x='center')
+            arcade.draw_text("Controls", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2,
+                             TEXT_COLOR, SCALED_SQUARE*2, anchor_x='center')
             arcade.draw_text("W/Up = Move up\nA/Left = Move left\nS/Down = Move down\n"
                              "D/Right = Move right\nSpace = Pause/Unpause",
-                             WINDOW_WIDTH / 2, WINDOW_HEIGHT - SCALED_SQUARE * 4,
-                             arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE, anchor_x='center',
+                             WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*4,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x='center',
                              multiline=True, width=WINDOW_WIDTH, align="center")
-            arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH / 2,
-                             SCALED_SQUARE * 3, arcade.color.GREEN_YELLOW, font_size=SCALED_SQUARE,
-                             anchor_x='center', multiline=True, width=WINDOW_WIDTH, align="center")
+            arcade.draw_text("Press the Space Bar to play!", WINDOW_WIDTH/2,
+                             SCALED_SQUARE*3, TEXT_COLOR, SCALED_SQUARE, anchor_x='center',
+                             multiline=True, width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
@@ -98,6 +97,7 @@ class GameView(arcade.View):
 
         # Creating Containers for obstacles (and player)
         self.player = Frog()
+        self.fly = Fly()
         self.turtles = []
         self.logs = []
         self.cars = []
@@ -155,7 +155,7 @@ class GameView(arcade.View):
 
         self.load_background_textures(spritesheet)
 
-        # Load player, log, vehicle, and turtle textures
+        # Load all textures and add to sprite lists
         for log in self.logs:
             log.load_textures(spritesheet)
             self.log_sprites.extend(log.sprite_list)
@@ -171,6 +171,9 @@ class GameView(arcade.View):
         for frog_home in self.frog_homes:
             frog_home.load_textures(spritesheet, 'frog_down')
             self.frog_home_sprites.append(frog_home.sprite)
+        
+        self.fly.load_textures(spritesheet)
+        self.sprite_list.append(self.fly.sprite)
 
         # Adding obstacle sprites to main sprite list
         self.sprite_list.extend(self.log_sprites)
@@ -184,6 +187,7 @@ class GameView(arcade.View):
 
         self.player.load_textures(spritesheet, 'frog_up')
         self.sprite_list.append(self.player.sprite)
+
 
     def draw_background(self):
         '''Draws the background image including median strips and ending homes.'''
@@ -297,17 +301,9 @@ class GameView(arcade.View):
 
     def check_home(self):
         '''Checks if the frog is in the home area'''
-        # create home center x values
-        homes = []
-
+        # create 5 home center x values
+        homes = [SCALED_SQUARE + (SCALED_SQUARE*3*i) for i in range(5)]
         found_home = False
-
-        # start home x values
-        x_val = SCALED_SQUARE
-
-        # loop to make 5 homes
-        for i in range(5):
-            homes.append(x_val + (SCALED_SQUARE * 3) * i)
 
         # determine if frog is home
         if self.player.ypos >= SCALED_SQUARE * 13:
@@ -325,6 +321,8 @@ class GameView(arcade.View):
                     self.frog_homes[self.frog_home_count].ypos = SCALED_SQUARE * 13.5
                     self.frog_home_count += 1
                     found_home = True
+                    # remove home from fly appearance options
+                    self.fly.empty_homes_x.remove(home)
             if found_home:
                 # reset frog
                 self.player.reset()
@@ -353,6 +351,11 @@ class GameView(arcade.View):
         # if frog already in home
         if arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites):
             self.frog_death()
+        
+        if arcade.check_for_collision(self.player.sprite, self.fly.sprite):
+            self.fly.collected = True
+            self.backend.points += 200
+            self.fly.set_offscreen()
 
         self.check_home()
 
@@ -427,8 +430,7 @@ class GameView(arcade.View):
             self.death_frog_sprites.draw()
 
             if self.paused:
-                arcade.draw_text("PAUSED", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
-                                 arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+                arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
             self.window.use()
             self.clear()
@@ -444,8 +446,7 @@ class GameView(arcade.View):
             self.death_frog_sprites.draw()
 
             if self.paused:
-                arcade.draw_text("PAUSED", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
-                                 arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+                arcade.draw_text("PAUSED", WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
     # Frame update
     def on_update(self, delta_time):
@@ -460,6 +461,7 @@ class GameView(arcade.View):
                 frog_home.update()
             for animation in self.death_animations:
                 animation.update()
+            self.fly.update(delta_time)
             self.player.update()
 
             self.backend.update_timer(delta_time)
@@ -475,6 +477,9 @@ class GameView(arcade.View):
                 for frog in self.frog_homes:
                     frog.xpos = -WINDOW_WIDTH
                     frog.ypos = -WINDOW_HEIGHT
+                
+                # reset fly
+                self.fly.level_reset()
 
                 # reset count
                 self.frog_home_count = 0
@@ -527,7 +532,7 @@ class GameOverView(arcade.View):
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
-                                                                   resolution_down_scale=3,
+                                                                   resolution_down_scale=DSCALE,
                                                                    hard_scan=SCAN, hard_pix=PIX,
                                                                    display_warp=WARP,
                                                                    mask_dark=DARKMASK,
@@ -540,14 +545,13 @@ class GameOverView(arcade.View):
             self.crt_filter.use()
             self.crt_filter.clear()
 
-            arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2 + 100,
-                             arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-            arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2,
-                             arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+            arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
             arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!",
-                             self.window.width / 2, self.window.height / 2 - 50,
-                             arcade.color.GREEN_YELLOW,20, anchor_x="center", multiline=True,
-                             width=WINDOW_WIDTH, align="center")
+                             WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE,
+                             anchor_x="center", multiline=True, width=WINDOW_WIDTH, align="center")
 
             # CRT filter applied.
             self.window.use()
@@ -556,14 +560,13 @@ class GameOverView(arcade.View):
 
         else:
             self.clear()
-            arcade.draw_text("Score: ", self.window.width / 2, self.window.height / 2 + 100,
-                             arcade.color.GREEN_YELLOW, 50, anchor_x="center")
-            arcade.draw_text(str(self.score), self.window.width / 2, self.window.height / 2,
-                             arcade.color.GREEN_YELLOW, 50, anchor_x="center")
+            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+            arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
             arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!",
-                             self.window.width / 2, self.window.height / 2 - 50,
-                             arcade.color.GREEN_YELLOW,20, anchor_x="center", multiline = True,
-                             width=WINDOW_WIDTH, align="center")
+                             WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE,
+                             anchor_x="center", multiline=True, width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
@@ -584,7 +587,7 @@ class LeaderboardView(arcade.View):
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
-                                                                   resolution_down_scale=3,
+                                                                   resolution_down_scale=DSCALE,
                                                                    hard_scan=SCAN, hard_pix=PIX,
                                                                    display_warp=WARP,
                                                                    mask_dark=DARKMASK,
@@ -649,7 +652,7 @@ def main():
     """ Main function """
 
     # Create and setup the GameView
-    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Frogger")
     start_view = InstructionView()
     window.show_view(start_view)
     arcade.run()

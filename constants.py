@@ -2,6 +2,7 @@
 import sys
 from enum import Enum
 from pyglet.math import Vec2
+from arcade import color
 
 FILTER_ON = True
 match sys.platform:
@@ -23,7 +24,7 @@ SPRITE_SQUARE = 16
 SCALED_SQUARE = int(SPRITE_SQUARE*SCALE)
 WINDOW_WIDTH = int(28*8*SCALE)
 WINDOW_HEIGHT = int(32*8*SCALE)
-WINDOW_TITLE = "Frogger"
+TEXT_COLOR = color.GREEN_YELLOW
 
 # The CRT filter doesn't respect native display scales so we have to hack it a little bit
 FILTER_WIDTH = int(WINDOW_WIDTH*DISPLAY_SCALE)
