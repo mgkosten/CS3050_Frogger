@@ -1,13 +1,8 @@
 '''Frogger game implemented using Python Arcade.'''
 # pylint: disable=wildcard-import, unused-wildcard-import
-from operator import truediv
 import os
 import arcade
-# TODO: which of these imports are needed? pylint says some are unused
-# import firebase_admin
-# from firebase_admin import credentials
 from firebase_admin import firestore
-# from firebase_admin import db
 from firebase import firebase_access, add_entry, get_top_five
 from constants import *
 from game import Game
@@ -16,10 +11,6 @@ from turt import Turt
 from log import Log
 from car import Car
 from fly import Fly
-import random
-import time
-
-random.seed()
 
 class InstructionView(arcade.View):
     """Creates the introduction screen of the game."""
@@ -595,21 +586,18 @@ class LeaderboardView(arcade.View):
             self.crt_filter.use()
             self.crt_filter.clear()
 
-            height = 0
-            arcade.draw_text("Username:     Highscore:", self.window.width / 2,
-                             self.window.height / 2 + 175, arcade.color.GREEN_YELLOW,
-                             25, anchor_x="center")
-            for i in self.leaders:
-                arcade.draw_text(str(self.leaders[i]["score"]), self.window.width / 3 + 150,
-                                 self.window.height / 4 + height,
-                                 arcade.color.GREEN_YELLOW, 25, anchor_x="center")
-                arcade.draw_text(str(self.leaders[i]["username"]), self.window.width / 3,
-                                 self.window.height / 4 + height,
-                                 arcade.color.GREEN_YELLOW, 25, anchor_x="center")
-                height += 50
-                arcade.draw_text("Press space bar to play!", self.window.width / 2,
-                                 self.window.height / 6, arcade.color.GREEN_YELLOW,
-                                 25, anchor_x="center")
+            arcade.draw_text("Username:     Highscore:", WINDOW_WIDTH/2,
+                             WINDOW_HEIGHT-SCALED_SQUARE*2.5, TEXT_COLOR,
+                             SCALED_SQUARE, anchor_x="center")
+            for i, leader in enumerate(self.leaders.values()):
+                arcade.draw_text(str(leader["username"]), WINDOW_WIDTH/4,
+                                 WINDOW_HEIGHT/4 + SCALED_SQUARE*2*i,
+                                 TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+                arcade.draw_text(str(leader["score"]), WINDOW_WIDTH*3/4,
+                                 WINDOW_HEIGHT/4 + SCALED_SQUARE*2*i,
+                                 TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+            arcade.draw_text("Press space bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*2.5,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
             # CRT filter applied.
             self.window.use()
@@ -618,21 +606,18 @@ class LeaderboardView(arcade.View):
 
         else:
             self.clear()
-            height = 0
-            arcade.draw_text("Username:     Highscore:", self.window.width / 2,
-                             self.window.height / 2 + 175, arcade.color.GREEN_YELLOW,
-                             25, anchor_x="center")
-            for i in self.leaders:
-                arcade.draw_text(str(self.leaders[i]["score"]), self.window.width / 3 + 150,
-                                 self.window.height / 4 + height, arcade.color.GREEN_YELLOW,
-                                 25, anchor_x="center")
-                arcade.draw_text(str(self.leaders[i]["username"]), self.window.width / 3,
-                                 self.window.height / 4 + height, arcade.color.GREEN_YELLOW,
-                                 25, anchor_x="center")
-                height += 50
-                arcade.draw_text("Press space bar to play!", self.window.width / 2,
-                                 self.window.height / 6, arcade.color.GREEN_YELLOW,
-                                 25, anchor_x="center")
+            arcade.draw_text("Username:     Highscore:", WINDOW_WIDTH/2,
+                             WINDOW_HEIGHT-SCALED_SQUARE*2.5, TEXT_COLOR,
+                             SCALED_SQUARE, anchor_x="center")
+            for i, leader in enumerate(self.leaders.values()):
+                arcade.draw_text(str(leader["username"]), WINDOW_WIDTH/4,
+                                 WINDOW_HEIGHT/4 + SCALED_SQUARE*2*i,
+                                 TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+                arcade.draw_text(str(leader["score"]), WINDOW_WIDTH*3/4,
+                                 WINDOW_HEIGHT/4 + SCALED_SQUARE*2*i,
+                                 TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
+            arcade.draw_text("Press space bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*2.5,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
 
     def on_key_press(self,symbol, modifiers):
         if symbol == arcade.key.SPACE:
