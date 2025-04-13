@@ -326,19 +326,24 @@ class GameView(arcade.View):
         if arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites):
             self.frog_death()
 
-        # Collision detection with logs
-        for log in self.logs:
-            if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
-                self.player.xpos += log.speed*delta_time*(1 + 0.15*self.backend.level)
+        # determine if in water or not
+        if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
+            if not arcade.check_for_collision_with_lists(self.player.sprite, (self.log_sprites, self.turtle_sprites)):
+                self.frog_death()
 
-        # Collision detection with turtles
-        for turtle in self.turtles:
-            collides = arcade.check_for_collision_with_list(self.player.sprite, turtle.sprite_list)
-            if collides:
-                if collides[0].texture == turtle.normal_texture:
-                    self.player.xpos += turtle.speed*delta_time*(1 + 0.15*self.backend.level)
-                elif collides[0].texture == turtle.flipped_texture:
-                    self.frog_death()
+            # Collision detection with logs
+            for log in self.logs:
+                if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
+                    self.player.xpos += log.speed*delta_time*(1 + 0.15*self.backend.level)
+
+            # Collision detection with turtles
+            for turtle in self.turtles:
+                collides = arcade.check_for_collision_with_list(self.player.sprite, turtle.sprite_list)
+                if collides:
+                    if collides[0].texture == turtle.normal_texture:
+                        self.player.xpos += turtle.speed*delta_time*(1 + 0.15*self.backend.level)
+                    elif collides[0].texture == turtle.flipped_texture:
+                        self.frog_death()
 
         # Collision detection with home frogs
         if arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites):
@@ -450,10 +455,10 @@ class GameView(arcade.View):
 
                 if self.turtles[0].flipped:
                     self.turtles[0].flipped = False
-                    self.turtles[4].flipped = False
+                    self.turtles[-1].flipped = True
                 else:
                     self.turtles[0].flipped = True
-                    self.turtles[4].flipped = True
+                    self.turtles[-1].flipped = False
 
             if self.backend.game_time <= 0:
                 self.frog_death()
@@ -502,6 +507,7 @@ class GameOverView(arcade.View):
     def __init__(self, score):
         super().__init__()
         self.score = score
+        self.username = ""
 
         #path to credentials file
         script_dir = os.path.dirname(__file__)
@@ -509,8 +515,6 @@ class GameOverView(arcade.View):
 
         # initialize firebase
         self.db = firebase_access(service_account_path)
-        self.db = firestore.client()
-        add_entry(self.db, self.score)
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
@@ -519,6 +523,7 @@ class GameOverView(arcade.View):
                                                                    display_warp=WARP,
                                                                    mask_dark=DARKMASK,
                                                                    mask_light=LIGHTMASK)
+
     def on_show_view(self):
         self.window.background_color = arcade.color.BLACK
 
@@ -527,12 +532,15 @@ class GameOverView(arcade.View):
             self.crt_filter.use()
             self.crt_filter.clear()
 
-            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE*1.5,
-                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-            arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
-                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-            arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!",
-                             WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE*1.5, TEXT_COLOR,
+            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2.5,
+                             TEXT_COLOR, SCALED_SQUARE*2, anchor_x="center")
+            arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2-SCALED_SQUARE,
+                             WINDOW_HEIGHT/2+SCALED_SQUARE*1.5, TEXT_COLOR,
+                             SCALED_SQUARE, anchor_x="center")
+            arcade.draw_text(f"Enter name: {self.username}", SCALED_SQUARE, WINDOW_HEIGHT/2,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x= "left")
+            arcade.draw_text("Press space to play again!\nPress enter to save score and view Leaderboard!",
+                             WINDOW_WIDTH/2, SCALED_SQUARE*5, TEXT_COLOR,
                              SCALED_SQUARE, anchor_x="center", multiline=True,
                              width=WINDOW_WIDTH, align="center")
 
@@ -543,25 +551,35 @@ class GameOverView(arcade.View):
 
         else:
             self.clear()
-            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE*1.5,
-                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-            arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
-                             TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
-            arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!",
-                             WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE*1.5, TEXT_COLOR,
+            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT-SCALED_SQUARE*2.5,
+                             TEXT_COLOR, SCALED_SQUARE*2, anchor_x="center")
+            arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2-SCALED_SQUARE,
+                             WINDOW_HEIGHT/2+SCALED_SQUARE*1.5, TEXT_COLOR,
+                             SCALED_SQUARE, anchor_x="center")
+            arcade.draw_text(f"Enter name: {self.username}", SCALED_SQUARE, WINDOW_HEIGHT/2,
+                             TEXT_COLOR, SCALED_SQUARE, anchor_x= "left")
+            arcade.draw_text("Press space to play again!\nPress enter to save score and view Leaderboard!",
+                             WINDOW_WIDTH/2, SCALED_SQUARE*5, TEXT_COLOR,
                              SCALED_SQUARE, anchor_x="center", multiline=True,
                              width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument
-        if symbol == arcade.key.SPACE:
-            next_view = InstructionView()
-            self.window.show_view(next_view)
-        if symbol == arcade.key.L:
-            next_view = LeaderboardView(self.db)
-            self.window.show_view(next_view)
         if symbol == arcade.key.ESCAPE:
             arcade.close_window()
+        elif symbol == arcade.key.SPACE:
+            next_view = InstructionView()
+            self.window.show_view(next_view)
+        elif symbol == arcade.key.ENTER:
+            add_entry(self.db, self.score, self.username)
+            next_view = LeaderboardView(self.db)
+            self.window.show_view(next_view)
+        elif symbol == arcade.key.BACKSPACE:
+            if len(self.username) > 0:
+                self.username = self.username[:-1]
+        elif arcade.key.A <= symbol <= arcade.key.Z:
+            if len(self.username) < 8:
+                self.username += chr(symbol)
 
 class LeaderboardView(arcade.View):
     """Creates the leaderboard view"""
@@ -589,12 +607,12 @@ class LeaderboardView(arcade.View):
             arcade.draw_text("Username:     Highscore:", WINDOW_WIDTH/2,
                              WINDOW_HEIGHT-SCALED_SQUARE*2.5, TEXT_COLOR,
                              SCALED_SQUARE, anchor_x="center")
-            for i, leader in enumerate(self.leaders.values()):
+            for i, leader in enumerate(reversed(self.leaders.values())):
                 arcade.draw_text(str(leader["username"]), WINDOW_WIDTH/4,
-                                 WINDOW_HEIGHT/4 + SCALED_SQUARE*2*i,
+                                 WINDOW_HEIGHT - SCALED_SQUARE*(2*i + 4),
                                  TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
                 arcade.draw_text(str(leader["score"]), WINDOW_WIDTH*3/4,
-                                 WINDOW_HEIGHT/4 + SCALED_SQUARE*2*i,
+                                 WINDOW_HEIGHT - SCALED_SQUARE*(2*i + 4),
                                  TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
             arcade.draw_text("Press space bar to play!", WINDOW_WIDTH/2, SCALED_SQUARE*2.5,
                              TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
