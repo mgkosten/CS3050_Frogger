@@ -173,7 +173,7 @@ class GameView(arcade.View):
         for frog_home in self.frog_homes:
             frog_home.load_textures(spritesheet, 'frog_down')
             self.frog_home_sprites.append(frog_home.sprite)
-        
+
         self.fly.load_textures(spritesheet)
         self.sprite_list.append(self.fly.sprite)
 
@@ -331,45 +331,34 @@ class GameView(arcade.View):
 
     def collision_detect(self, delta_time):
         '''Collision detection'''
-
-        log_collides = arcade.check_for_collision_with_list(self.player.sprite, self.log_sprites)
-        turtle_collides = arcade.check_for_collision_with_list(self.player.sprite, self.turtle_sprites)
-        home_collides = arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites)
-        car_collides = arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites)
-
         # Collision detection with cars
-        if car_collides:
-            # reset frog to starting position
+        if arcade.check_for_collision_with_list(self.player.sprite, self.car_sprites):
             self.frog_death()
 
-        # determine if in water or not
-        if SCALED_SQUARE * 8 < self.player.ypos < SCALED_SQUARE * 13:
-            # check if on log or not
+        # Collision detection with logs
+        for log in self.logs:
+            if arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list):
+                self.player.xpos += log.speed*delta_time*(1 + 0.15*self.backend.level)
 
-            if log_collides:
-                for log in self.logs:
-                    segment_collide = arcade.check_for_collision_with_list(self.player.sprite, log.sprite_list)
-                    if segment_collide:
-                        self.player.xpos += log.speed*delta_time*(1 + 0.15*self.backend.level)
+        # Collision detection with turtles
+        for turtle in self.turtles:
+            collides = arcade.check_for_collision_with_list(self.player.sprite, turtle.sprite_list)
+            if collides:
+                if collides[0].texture == turtle.normal_texture:
+                    self.player.xpos += turtle.speed*delta_time*(1 + 0.15*self.backend.level)
+                elif collides[0].texture == turtle.flipped_texture:
+                    self.frog_death()
 
-            for turtle in self.turtles:
-                turtle_collides = arcade.check_for_collision_with_list(self.player.sprite, turtle.sprite_list)
-                if turtle_collides:
-                    if turtle_collides[0].texture == turtle.normal_texture:
-                        self.player.xpos += self.turtles[0].speed*delta_time*(1 + 0.15*self.backend.level)
-                    elif turtle_collides[0].texture == turtle.flipped_texture:
-                        self.frog_death()
-
-        # if frog already in home
-        if home_collides:
+        # Collision detection with home frogs
+        if arcade.check_for_collision_with_list(self.player.sprite, self.frog_home_sprites):
             self.frog_death()
-        
+        self.check_home()
+
+        # Collision detection with fly
         if arcade.check_for_collision(self.player.sprite, self.fly.sprite):
             self.fly.collected = True
             self.backend.points += 200
             self.fly.set_offscreen()
-
-        self.check_home()
 
     def player_score(self):
         """player points for each jump towards home"""
@@ -468,13 +457,12 @@ class GameView(arcade.View):
             if self.turtleFlipDelay <= 0:
                 self.turtleFlipDelay = FLIP_DELAY
 
-                turtleFlipIndexes = (0, 5)
                 if self.turtles[0].flipped:
-                    self.turtles[turtleFlipIndexes[0]].flipped = False
-                    self.turtles[turtleFlipIndexes[1]].flipped = False
+                    self.turtles[0].flipped = False
+                    self.turtles[4].flipped = False
                 else:
-                    self.turtles[turtleFlipIndexes[0]].flipped = True
-                    self.turtles[turtleFlipIndexes[1]].flipped = True
+                    self.turtles[0].flipped = True
+                    self.turtles[4].flipped = True
 
             if self.backend.game_time <= 0:
                 self.frog_death()
@@ -488,7 +476,7 @@ class GameView(arcade.View):
                 for frog in self.frog_homes:
                     frog.xpos = -WINDOW_WIDTH
                     frog.ypos = -WINDOW_HEIGHT
-                
+
                 # reset fly
                 self.fly.level_reset()
 
@@ -548,13 +536,14 @@ class GameOverView(arcade.View):
             self.crt_filter.use()
             self.crt_filter.clear()
 
-            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE,
+            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE*1.5,
                              TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
             arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
                              TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
             arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!",
-                             WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE,
-                             anchor_x="center", multiline=True, width=WINDOW_WIDTH, align="center")
+                             WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE*1.5, TEXT_COLOR,
+                             SCALED_SQUARE, anchor_x="center", multiline=True,
+                             width=WINDOW_WIDTH, align="center")
 
             # CRT filter applied.
             self.window.use()
@@ -563,13 +552,14 @@ class GameOverView(arcade.View):
 
         else:
             self.clear()
-            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE,
+            arcade.draw_text("Game Over!", WINDOW_WIDTH/2, WINDOW_HEIGHT/2+SCALED_SQUARE*1.5,
                              TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
             arcade.draw_text(f"Score: {self.score}", WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
                              TEXT_COLOR, SCALED_SQUARE, anchor_x="center")
             arcade.draw_text("Press space to play again!\nPress L to view the Leaderboard!",
-                             WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE, TEXT_COLOR, SCALED_SQUARE,
-                             anchor_x="center", multiline=True, width=WINDOW_WIDTH, align="center")
+                             WINDOW_WIDTH/2, WINDOW_HEIGHT/2-SCALED_SQUARE*1.5, TEXT_COLOR,
+                             SCALED_SQUARE, anchor_x="center", multiline=True,
+                             width=WINDOW_WIDTH, align="center")
 
     def on_key_press(self, symbol, modifiers):
         # pylint: disable=unused-argument

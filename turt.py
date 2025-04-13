@@ -9,6 +9,8 @@ class Turt():
         length: number of turtles in the group
         xpos: center x position of leftmost turtle
     '''
+    # We don't agree with pylint setting 7 as an arbitrary limit for instance attributes
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, length, xpos):
         super().__init__()
         self.speed = -OBSTACLE_SPEED*1.5
@@ -29,7 +31,8 @@ class Turt():
         y = self.ypos
         self.normal_texture = spritesheet.get_texture(
             arcade.LBWH(19, 152, SPRITE_SQUARE, SPRITE_SQUARE))
-        self.flipped_texture = spritesheet.get_texture(arcade.LBWH(73, 152, SPRITE_SQUARE, SPRITE_SQUARE))
+        self.flipped_texture = spritesheet.get_texture(
+            arcade.LBWH(73, 152, SPRITE_SQUARE, SPRITE_SQUARE))
 
         for _ in range(self.length):
             self.sprite_list.append(arcade.Sprite(self.normal_texture, SCALE, x, y))
