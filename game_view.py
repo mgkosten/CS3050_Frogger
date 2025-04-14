@@ -181,7 +181,7 @@ class GameView(arcade.View):
                                  arcade.LBWH(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT))
         # Draw the title
         title_x = WINDOW_WIDTH/2-SCALED_SQUARE*3.5
-        title_y = SCALED_SQUARE*14.5
+        title_y = SCALED_SQUARE*14.75
         arcade.draw_texture_rect(self.textures['title_f'],
                                  arcade.LBWH(title_x, title_y, SCALED_SQUARE, SCALED_SQUARE))
         title_x += SCALED_SQUARE
