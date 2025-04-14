@@ -1,4 +1,5 @@
 """Firebase highscore tracker"""
+# pylint: disable=broad-exception-caught
 from firebase_admin import initialize_app, credentials, firestore
 
 def firebase_access(service_account_key_path):
@@ -13,16 +14,13 @@ def firebase_access(service_account_key_path):
         print(f"Error initializing Firebase: {e}")
         return None
 
-
 def add_entry(db, score, username = "null"):
     """Add record to database"""
     try:
         scores_ref = db.collection("scores")
         scores_ref.add({"score": score, "username" : username})
-
     except Exception as e:
         print(f"Error adding user / score: {e}")
-
 
 def get_top_five(db):
     """Get top five highscores"""

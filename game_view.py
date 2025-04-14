@@ -18,11 +18,9 @@ class InstructionView(arcade.View):
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
-                                                                   resolution_down_scale=DSCALE,
-                                                                   hard_scan=SCAN, hard_pix=PIX,
-                                                                   display_warp=WARP,
-                                                                   mask_dark=DARKMASK,
-                                                                   mask_light=LIGHTMASK)
+                                                                   DSCALE, SCAN, PIX, WARP,
+                                                                   DARKMASK, LIGHTMASK)
+
     def on_show_view(self):
         self.window.background_color = arcade.csscolor.BLACK
 
@@ -56,8 +54,7 @@ class InstructionView(arcade.View):
                              SCALED_SQUARE*3, TEXT_COLOR, SCALED_SQUARE, anchor_x='center',
                              multiline=True, width=WINDOW_WIDTH, align="center")
 
-    def on_key_press(self, symbol, modifiers):
-        # pylint: disable=unused-argument
+    def on_key_press(self, symbol, _):
         if symbol == arcade.key.SPACE:
             game_view = GameView()
             game_view.make_objects()
@@ -87,6 +84,8 @@ class GameView(arcade.View):
         # max y value of frog player through each level
         self.max_frog_y = SCALED_SQUARE*1.5
 
+        self.turtle_flip_timer = FLIP_DELAY
+
         # Creating Containers for obstacles (and player)
         self.player = Frog()
         self.fly = Fly()
@@ -109,12 +108,8 @@ class GameView(arcade.View):
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
-                                                                   resolution_down_scale=DSCALE,
-                                                                   hard_scan=SCAN, hard_pix=PIX,
-                                                                   display_warp=WARP,
-                                                                   mask_dark=DARKMASK,
-                                                                   mask_light=LIGHTMASK)
-        self.turtleFlipDelay = FLIP_DELAY
+                                                                   DSCALE, SCAN, PIX, WARP,
+                                                                   DARKMASK, LIGHTMASK)
 
     def load_background_textures(self, spritesheet):
         '''Loads background textures from the spritesheet into the textures dictionary'''
@@ -179,7 +174,6 @@ class GameView(arcade.View):
 
         self.player.load_textures(spritesheet, 'frog_up')
         self.sprite_list.append(self.player.sprite)
-
 
     def draw_background(self):
         '''Draws the background image including median strips and ending homes.'''
@@ -384,10 +378,8 @@ class GameView(arcade.View):
         # reset so animation will run on every death
         self.current_animation_index = 0
 
-    def play_next_death_frame(self, delta_time):
+    def play_next_death_frame(self, _):
         """Creates animation for when frog dies"""
-        # arcade.schedule functions require delta_time argument even if not used
-        # pylint: disable=unused-argument
         if self.current_animation_index < len(self.death_animations):
             # Show the next animation
             animation = self.death_animations[self.current_animation_index]
@@ -411,6 +403,19 @@ class GameView(arcade.View):
 
             # stop running death animation
             arcade.unschedule(self.play_next_death_frame)
+
+    def flip_turtle(self, delta_time):
+        """Turtle flipping"""
+        self.turtle_flip_timer -= delta_time
+        if self.turtle_flip_timer <= 0:
+            self.turtle_flip_timer = FLIP_DELAY
+
+            if self.turtles[0].flipped:
+                self.turtles[0].flipped = False
+                self.turtles[-1].flipped = True
+            else:
+                self.turtles[0].flipped = True
+                self.turtles[-1].flipped = False
 
     def on_draw(self):
         if FILTER_ON:
@@ -449,24 +454,13 @@ class GameView(arcade.View):
             self.fly.update(delta_time)
             self.player.update()
 
-            # Turtle flipping
-            self.turtleFlipDelay -= delta_time
-            if self.turtleFlipDelay <= 0:
-                self.turtleFlipDelay = FLIP_DELAY
+            self.flip_turtle(delta_time)
 
-                if self.turtles[0].flipped:
-                    self.turtles[0].flipped = False
-                    self.turtles[-1].flipped = True
-                else:
-                    self.turtles[0].flipped = True
-                    self.turtles[-1].flipped = False
-
+            self.backend.update(delta_time)
             if self.backend.game_time <= 0:
                 self.frog_death()
             self.collision_detect(delta_time)
             self.player_score()
-
-            self.backend.update(delta_time)
 
             if self.frog_home_count >= 5:
                 # reset home frogs back offscreen
@@ -489,8 +483,7 @@ class GameView(arcade.View):
 
                 self.backend.points = 0
 
-    def on_key_press(self, symbol, modifiers):
-        # pylint: disable=unused-argument
+    def on_key_press(self, symbol, _):
         move_keys = [arcade.key.UP, arcade.key.DOWN, arcade.key.RIGHT, arcade.key.LEFT,
                      arcade.key.W, arcade.key.A, arcade.key.S, arcade.key.D]
         if symbol in move_keys:
@@ -519,11 +512,8 @@ class GameOverView(arcade.View):
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
-                                                                   resolution_down_scale=DSCALE,
-                                                                   hard_scan=SCAN, hard_pix=PIX,
-                                                                   display_warp=WARP,
-                                                                   mask_dark=DARKMASK,
-                                                                   mask_light=LIGHTMASK)
+                                                                   DSCALE, SCAN, PIX, WARP,
+                                                                   DARKMASK, LIGHTMASK)
 
     def on_show_view(self):
         self.window.background_color = arcade.color.BLACK
@@ -564,8 +554,7 @@ class GameOverView(arcade.View):
                              SCALED_SQUARE, anchor_x="center", multiline=True,
                              width=WINDOW_WIDTH, align="center")
 
-    def on_key_press(self, symbol, modifiers):
-        # pylint: disable=unused-argument
+    def on_key_press(self, symbol, _):
         if symbol == arcade.key.ESCAPE:
             arcade.close_window()
         elif symbol == arcade.key.SPACE:
@@ -591,11 +580,8 @@ class LeaderboardView(arcade.View):
 
         # Making CRT Filter
         self.crt_filter = arcade.experimental.crt_filter.CRTFilter(FILTER_WIDTH, FILTER_HEIGHT,
-                                                                   resolution_down_scale=DSCALE,
-                                                                   hard_scan=SCAN, hard_pix=PIX,
-                                                                   display_warp=WARP,
-                                                                   mask_dark=DARKMASK,
-                                                                   mask_light=LIGHTMASK)
+                                                                   DSCALE, SCAN, PIX, WARP,
+                                                                   DARKMASK, LIGHTMASK)
 
     def on_show_view(self):
         self.window.background_color = arcade.color.BLACK
